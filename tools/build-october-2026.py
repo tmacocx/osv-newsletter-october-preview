@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T303, round two).
+"""Build the October 2026 Our Special Village newsletter (T303 + T323 visual storytelling).
 
 Writes newsletter-october-subscriber-preview.html, an identical index.html, and
 newsletter-october-2026.txt (plain-text alternative for the MailerLite send).
@@ -163,6 +163,18 @@ def button(href, label, fill, text_color, align="left"):
             f'<a href="{href}" style="display:block;font-family:{FONT};font-size:16px;line-height:20px;'
             f'color:{text_color};font-weight:700;text-decoration:none;">'
             f'<span style="color:{text_color};">{label}</span></a></td></tr></table>')
+
+
+
+def story_img(src, width, alt, radius=12, link=None, extra_style=""):
+    """Full-width section image; optional wrap link (featured CTAs)."""
+    img = (f'<img src="{src}" width="{width}" alt="{alt}" '
+           f'style="display:block;width:100%;max-width:{width}px;height:auto;border:0;outline:none;'
+           f'text-decoration:none;border-radius:{radius}px;{extra_style}">')
+    if link:
+        return (f'<a href="{link}" style="display:block;text-decoration:none;border:0;outline:none;">'
+                f'{img}</a>')
+    return img
 
 
 def step(n, text):
@@ -437,10 +449,29 @@ def build_html(base):
     o.append(sp(14))
     o.append(padrow(p("Dates confirmed Sept 14. If something changed, reply and we will fix it.", 13, 20, MUTED, 400)))
 
-    # The month ahead
+    # Featured: All Access Night (Rem T323) — image linked to reserve URL, above event copy
+    MONSTERS_URL = "https://www.explorethedc.org/event/monsters-in-the-museum/"
+    o.append(sp(48))
+    featured_art = story_img(
+        art("featured-monsters-museum.jpg"), 560,
+        "Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones",
+        radius=12, link=MONSTERS_URL)
+    featured_copy = (p("Featured", 13, 18, ACCENT, 700, margin="14px 0 4px 0")
+                     + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 18, 25, INK, 700)
+                     + p("6:00&ndash;8:00 PM &middot; Discovery Center at Murfree Spring, Murfreesboro &middot; Free, registration required &middot; In Murfreesboro", 16, 24, BODY, 400, margin="4px 0 0 0")
+                     + p(sensory("after-hours museum with smaller crowds and reduced stimulation, at your own pace. A free night, close to home, built for exactly this.", a(MONSTERS_URL, "Reserve your spot")), 16, 24, BODY, 400, margin="4px 0 0 0"))
+    o.append(padrow(card(featured_art + featured_copy, pad="12px 20px 18px 20px")))
+
+    # The month ahead — autumn collage once above the event list (not per-event thumbs)
     o.append(sp(48))
     o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro."))
     o.append(sp(20))
+    collage = story_img(
+        art("autumn-events-collage.jpg"), 600,
+        "Coordinated autumn sensory-friendly outings: museum, gazebo walk, lantern zoo night, indoor play, trunk-or-treat",
+        radius=12)
+    o.append(padrow(collage, pad="0 0 0 0"))
+    o.append(sp(16))
     ev_rows = []
     for i, e in enumerate(EVENTS):
         feat = e.get("featured", False)
@@ -462,21 +493,35 @@ def build_html(base):
         + '</td></tr>'])
     o.append(padrow(card(weekly)))
 
-    # New in the library (grief guide featured)
+    # New in the library — matching Rem/Vincent card images (560; -280 optional srcset)
     o.append(sp(48))
     o.append(section_head("library", "New in the library"))
     o.append(sp(20))
-    therapy = (p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 6px 0")
+    therapy_img = (
+        f'<img src="{art("guide-therapy-styles.jpg")}" srcset="{art("guide-therapy-styles-280.jpg")} 280w, {art("guide-therapy-styles.jpg")} 560w" '
+        f'sizes="(max-width:620px) 280px, 560px" width="560" '
+        f'alt="Adult and child sharing a calm sensory play tray in a warm playroom" '
+        f'style="display:block;width:100%;max-width:560px;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 14px 0;">'
+    )
+    therapy = (therapy_img
+               + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 6px 0")
                + p("Therapy styles: play, structure, and compliance", 18, 25, INK, 700)
                + p("Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like.", 16, 24, BODY, 400, margin="8px 0 0 0")
                + p(a(f"{SITE}/resources/therapy-styles", "Read the guide"), 16, 24, BODY, 400, margin="12px 0 0 0"))
-    o.append(padrow(card(therapy, pad="18px 20px 20px 20px")))
+    o.append(padrow(card(therapy, pad="12px 20px 20px 20px")))
     o.append(sp(24))
-    grief = (p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 6px 0")
+    grief_img = (
+        f'<img src="{art("guide-grief.jpg")}" srcset="{art("guide-grief-280.jpg")} 280w, {art("guide-grief.jpg")} 560w" '
+        f'sizes="(max-width:620px) 280px, 560px" width="560" '
+        f'alt="Parent on a porch in autumn while a child plays nearby in leaves - quiet and hopeful" '
+        f'style="display:block;width:100%;max-width:560px;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 14px 0;">'
+    )
+    grief = (grief_img
+             + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 6px 0")
              + p("Grief and disability: the loss nobody sends a card for", 22, 29, INK, 700)
              + p("This kind of grief rarely has an occasion attached to it. It shows up at a birthday party, at a milestone that did not arrive, in the parking lot after an evaluation. The guide covers what it actually looks like, why it circles back instead of ending, how it can land differently on each parent in the same house, what siblings end up carrying, and when it has turned into something worth taking to a counselor.", 16, 25, BODY, 400, margin="10px 0 0 0")
              + p(a(f"{SITE}/resources/grieving-the-life-you-imagined", "Read the grief guide"), 16, 24, BODY, 400, margin="14px 0 0 0"))
-    o.append(padrow(card(grief, pad="20px 20px 22px 20px")))
+    o.append(padrow(card(grief, pad="12px 20px 22px 20px")))
 
     # Wall of Hope
     o.append(sp(48))
@@ -509,10 +554,16 @@ def build_html(base):
           + p("Parent-to-parent guidance, not legal advice.", 13, 20, MUTED, 400, margin="12px 0 0 0"))
     o.append(padrow(card(qa, pad="18px 20px 20px 20px")))
 
-    # Village Hall (illustration removed; the block itself carries the section)
+    # Village Hall — Rem/Vincent IEP workshop art above Oct 10 block
     o.append(sp(48))
     o.append(section_head("village-hall", "Village Hall", "One topic, one guest expert, your questions. Second Saturday of every month, online. Pay what you can, including nothing."))
     o.append(sp(20))
+    vh_art = story_img(
+        art("village-hall-iep.jpg"), 600,
+        "Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting",
+        radius=12)
+    o.append(padrow(vh_art, pad="0 0 0 0"))
+    o.append(sp(16))
     vh = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
           '<tr><td align="left" style="padding:26px 26px 26px 26px;">'
           + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 6px 0")
@@ -531,19 +582,20 @@ def build_html(base):
                    f'mso-line-height-rule:exactly;color:{INK};font-weight:700;">About Our Special Village</h2>')
                   + "".join(p(t, 15, 22, BODY, 400, margin="8px 0 0 0") for t in ABOUT_PARAS)
                   + p(a(f"{SITE}/about", "About the Village &rarr;") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/editorial-policy", "How we check information &rarr;"), 15, 22, BODY, 400, margin="12px 0 0 0"))
-    photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="220" class="os-photocell" bgcolor="{BLUSH}" '
-             f'style="width:220px;border-collapse:separate;background-color:{BLUSH};border-radius:14px;">'
-             f'<tr><td class="os-photocell" align="center" style="width:220px;vertical-align:middle;border-radius:14px;">'
-             f'<img class="os-photo" src="{art("about-family-bowling.jpg")}" width="220" height="220" alt="Taylor, her husband, and their daughter at a bowling alley." '
-             f'style="display:block;width:220px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:14px;font-family:{FONT};font-size:13px;line-height:18px;color:{BODY};"></td></tr></table>')
+    # About photo ~280–320 wide (T323 shrink/resize from full bleed)
+    photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="280" class="os-photocell" bgcolor="{BLUSH}" '
+             f'style="width:280px;border-collapse:separate;background-color:{BLUSH};border-radius:14px;">'
+             f'<tr><td class="os-photocell" align="center" style="width:280px;vertical-align:middle;border-radius:14px;">'
+             f'<img class="os-photo" src="{art("about-family-bowling.jpg")}" width="280" height="280" alt="Taylor, her husband, and their daughter at a bowling alley." '
+             f'style="display:block;width:280px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:14px;font-family:{FONT};font-size:13px;line-height:18px;color:{BODY};"></td></tr></table>')
     # Hybrid columns: side-by-side on desktop (align=left tables), photo-on-top on mobile.
     about = (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr><td align="left" style="padding:0;">'
-        '<!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="492"><tr><td width="220" valign="top"><![endif]-->'
-        f'<table role="presentation" class="os-col os-col-photo" align="left" cellpadding="0" cellspacing="0" border="0" width="220" style="width:220px;max-width:220px;border-collapse:collapse;">'
+        '<!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560"><tr><td width="280" valign="top"><![endif]-->'
+        f'<table role="presentation" class="os-col os-col-photo" align="left" cellpadding="0" cellspacing="0" border="0" width="280" style="width:280px;max-width:280px;border-collapse:collapse;">'
         f'<tr><td style="padding:0;">{photo}</td></tr></table>'
-        '<!--[if mso]></td><td width="16"></td><td width="256" valign="top"><![endif]-->'
-        f'<table role="presentation" class="os-col" align="left" cellpadding="0" cellspacing="0" border="0" width="256" style="width:256px;max-width:256px;border-collapse:collapse;">'
+        '<!--[if mso]></td><td width="16"></td><td width="264" valign="top"><![endif]-->'
+        f'<table role="presentation" class="os-col" align="left" cellpadding="0" cellspacing="0" border="0" width="264" style="width:264px;max-width:264px;border-collapse:collapse;">'
         f'<tr><td style="padding:0 0 0 16px;">{about_copy}</td></tr></table>'
         '<!--[if mso]></td></tr></table><![endif]-->'
         '</td></tr></table>'
@@ -786,6 +838,12 @@ def main():
         assert "art/icons/" not in s
     assert 'alt="Taylor"' in html
     assert 'alt="Taylor, her husband, and their daughter at a bowling alley."' in html
+    assert "featured-monsters-museum.jpg" in html
+    assert "autumn-events-collage.jpg" in html
+    assert "guide-therapy-styles.jpg" in html
+    assert "guide-grief.jpg" in html
+    assert "village-hall-iep.jpg" in html
+    assert "explorethedc.org/event/monsters-in-the-museum/" in html
     assert "Register for Village Hall" in html
     assert "Save my seat" in html
     assert "Numbers worth keeping" in html
