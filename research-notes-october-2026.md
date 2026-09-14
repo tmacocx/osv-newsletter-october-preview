@@ -8,11 +8,11 @@ Everything dated in **Deadline watch** and **The month ahead** was checked again
 |---|---|---|
 | 1 | Scrub process/narration lines; one verification line at the end of Deadline watch; hero ≠ subject; short subject | "Every listing was checked…", "Only dates we could confirm…", "Nothing here is a guess", the footer "details come from organizers' pages" line, and the old "Dates checked Sept 14, 2026 against the linked pages…" line are gone. The only verification line is **"Dates confirmed Sept 14. If something changed, reply and we will fix it."** Subject (in `<title>` and the head comment): **"October: sensory-friendly events + deadlines"** (44 chars). Hero stays "October in the Village". |
 | 2 | Weekly groups as a stacked list, OSV Thursday first; brand-color phone; Thursday off the dated Oct 1 card; fix "begins" | "Every week" card is now two stacked rows, Thursday group first. Phone numbers are `tel:` links in the brand accent. The Oct 1 dated card is removed (the group is a regular weekly meeting, not a special session). Wording: "Meeting weekly since September, so join any Thursday." |
-| 3 | Library: two cards, Therapy Styles then the grief guide | Two cards. Grief card links `/resources/grieving-the-life-you-imagined` with the published title "Grieving the life you imagined". Card copy is the site's own library blurb for each guide (see "Copy sources" below). |
+| 3 | Library: two cards, Therapy Styles then the grief guide | Two cards. Grief card uses her exact card copy from Agents #299 (title "Grief and disability: the loss nobody sends a card for", her blurb, link label "Read the grief guide") and links the published slug `/resources/grieving-the-life-you-imagined` (published page title "Grieving the life you imagined"). Therapy Styles copy is the site's own library blurb (see "Copy sources" below). |
 | 4 | Deadline watch in four labeled groups; verify new items or omit; compress On the radar | Groups: **School** (fall break + conferences, ACT Nov 6), **Insurance** (Medicare OE, HealthCare.gov OE, Katie Beckett any time), **Money** (FAFSA Oct 1, COLA Oct 14, TN Promise Nov 2), **Community** (voter registration Oct 5 with early voting and absentee dates, clocks fall back Nov 1). On the radar is three one-liners (Angel Tree, EFS, IEA). |
 | 5 | No Teams meeting ID/passcode; registration link only; pay-what-you-can incl. nothing everywhere | Meeting ID and passcode removed. The only Village Hall link is `/village-hall` ("Register for Village Hall"). "Pay what you can, including nothing" appears on the event card, the Q&A tie-in, the Village Hall intro, and the Village Hall block (with the $0 / $10 / $20 / $35 ladder from the live page). |
 | 6 | View in browser + In this issue anchors; 3-line events; keep all 10 events; cut length | "View in browser" (`{$url}`) above the masthead; "In this issue" anchor line under the hero (`#events #deadlines #library #hope #question #village-hall`). Each event is title / logistics / sensory+link. All 10 events remain (9 dated + the Thursday group in the weekly list). Rendered height at 760px: 8,379px vs 8,514px before, even with the added note, contents line, second guide card, and sensory lines. |
-| 7 | Taylor note above events, below hero | Peach card "A note from Taylor" between the contents line and The month ahead. **The body is a drafted placeholder** (her exact copy was not in the repo or the prior run); marked with an HTML comment. |
+| 7 | Taylor note above events, below hero | Peach card "A note from Taylor" between the contents line and The month ahead. Body is her exact copy from Agents #299 (four paragraphs, signed "Taylor"). |
 | 8 | Sensory line + drive time on every event | Every event has a bold **Sensory:** line and a drive time ("About 45 min", "In Murfreesboro", "No drive" for online). |
 | 9 | Wall of Hope as invitation only | Section header "Wall of Hope", card "Borrow a little hope, or lend some", one link to `/hope`. No placeholder story. |
 | 10 | Name Q&A recurring + submit link; keep parent-to-parent line under answer; drop footer duplicate | Intro: "Our recurring column: one real question from a local parent, answered plainly, every issue. Send us your question →" (`/contact`). Card eyebrow "October's question". "Parent-to-parent guidance, not legal advice." stays under the answer; the footer disclaimer sentence is removed. |
@@ -69,11 +69,11 @@ Computed Sept 14 with OSRM (free-flow driving time, no traffic) from Murfreesbor
 
 ## Copy sources
 
-- **Grief guide card**: title and blurb are the site's own library entry for [/resources/grieving-the-life-you-imagined](https://ourspecialvillagetn.com/resources/grieving-the-life-you-imagined): "Why grief after a diagnosis does not make you less affirming, what parents are really grieving, and how letting go of the expected story makes room for the child in front of you." If the build request has a different blurb, paste it verbatim.
+- **Grief guide card**: her exact card copy from Agents #299 (eyebrow "New guide · reviewed Sept 2026", title "Grief and disability: the loss nobody sends a card for", blurb, link label "Read the grief guide"), kept as written per the ticket. The link goes to the live slug [/resources/grieving-the-life-you-imagined](https://ourspecialvillagetn.com/resources/grieving-the-life-you-imagined), whose published page title is "Grieving the life you imagined."
 - **Therapy Styles card**: the site's library blurb: "Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like."
 - **Footer framing**: the live homepage: "An autism-focused resource hub for families in Murfreesboro and surrounding areas — built around autism, open to every kind of difference and disability."
 - **Postal address**: Our Special Village is "owned and operated by Little Luminaries Therapy Services, PLLC" (site footer). The practice's published address is **1810 Ward Dr, Suite 101, Murfreesboro, TN 37129** ([littleluminariestn.com/contact](https://www.littleluminariestn.com/contact)). Swap in a different mailing address if OSV prefers one.
-- **Taylor note**: drafted placeholder in her voice. Replace with her exact copy.
+- **Taylor note**: her exact copy from Agents #299, pasted verbatim (four paragraphs, signed "Taylor").
 - **Q&A steps**: unchanged from T293 (TDOE dispute-resolution page, Administrative Complaint Manual, Timelines in Special Education; STEP TN and DRT numbers match the OSV IEP & 504 guide).
 
 ## Accessibility and rendering
@@ -106,9 +106,7 @@ MailerLite: `{$url}` (view in browser) and `{$unsubscribe}` (one-click unsubscri
 
 ## Editor to-dos before send
 
-1. **Paste Taylor's exact note** into the "A note from Taylor" card (drafted placeholder now; see HTML comment).
-2. Confirm the grief-guide blurb matches the one she gave; the card currently uses the site's library blurb.
-3. Update ourspecialvillagetn.com/village-hall (still "First guest TBD · Registration not open") and /group + homepage (still "First meeting October 1, 2026") so they match the email.
-4. Re-check We Rock the Spectrum for Spooktacular time/cost; replace "Time and cost not posted yet" if published.
-5. Confirm the footer mailing address (Little Luminaries, 1810 Ward Dr, Suite 101) is the one OSV wants on the newsletter.
-6. If Angel Tree registration reopens, promote it back into Money with the date.
+1. Update ourspecialvillagetn.com/village-hall (still "First guest TBD · Registration not open") and /group + homepage (still "First meeting October 1, 2026") so they match the email.
+2. Re-check We Rock the Spectrum for Spooktacular time/cost; replace "Time and cost not posted yet" if published.
+3. Confirm the footer mailing address (Little Luminaries, 1810 Ward Dr, Suite 101) is the one OSV wants on the newsletter.
+4. If Angel Tree registration reopens, promote it back into Money with the date.
