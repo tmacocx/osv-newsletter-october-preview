@@ -1,6 +1,30 @@
-# Research notes — October 2026 issue (T293 → T299)
+# Research notes - October 2026 issue (T293 → T299 → T303)
 
-Everything dated in **Deadline watch** and **The month ahead** was checked against the organizer's or agency's own page. T293 items were checked Sept 14, 2026; T299 re-checked the items marked below the same day and added the new ones. Items that could not be verified were left out and are listed at the end.
+Everything dated in **Deadline watch** and **The month ahead** was checked against the organizer's or agency's own page. T293 items were checked Sept 14, 2026; T299 re-checked the same day. T303 is a design and hierarchy pass on that same issue; dates were not re-litigated. Items that could not be verified were left out and are listed at the end.
+
+HTML and `index.html` are generated from `tools/build-october-2026.py`. Edit that file and re-run it. Do not hand-edit the HTML. Plain-text alternative: `newsletter-october-2026.txt`.
+
+## T303 round two - what changed and why
+
+| # | Request | Done |
+|---|---|---|
+| 1 | Note from Taylor, plain, below hero, above the first section; cursive PNG signature | Exact copy. No card, border, photo, or icon. "With love," in Figtree, then `art/signature-taylor.png` at 140px (`alt="Taylor"`, `display:block`, no border). PNG is 280×110 (2× display). HTML comment notes the first line is for new subscribers. |
+| 2 | Drop section icons | Calendar, clock, book, heart, and house icons are gone. Section titles sit under a 3px terracotta rule. |
+| 3 | Fixed About block, bowling photo, above footer / below Village Hall | Copy from the live About page (independence, not bio). Photo `art/about-family-bowling.jpg` is a 600×600 square crop of Rem-confirmed IMG_7672, 73KB, blush fallback, rounded corners, alt "Taylor, her husband, and their daughter at a bowling alley." Hybrid columns: photo left / copy right on desktop, photo on top on mobile. Links: `/about` and `/editorial-policy`. |
+| 4 | View in browser is the platform archive tag | Still `{$url}`. Dead on GitHub Pages by design; confirm in a MailerLite test send. |
+| 5 | Deadline watch above events | TOC and body order are Deadline watch, then The month ahead. Preheader leads with the two Oct 5 deadlines. |
+| 6 | Separate teen and college deadlines | **For every family** (fall break + voter on Oct 5, COLA, Medicare, clocks + HealthCare.gov, Katie Beckett, Angel Tree) then **Teens and college** (FAFSA + EFS office hours on Oct 1, TN Promise, ACT, IEA) with a skip line for parents of young kids. |
+| 7 | Rebuild On the radar as stacked rows | No nested blob. Those items are dated rows in the same chip format: Angel Tree (no date), EFS office hours with FAFSA on Oct 1, IEA on Feb 16 2027. |
+| 8 | Range chips; group the two Oct 5 deadlines | Boo at the Zoo chip: Oct 16 to Nov 1. Medicare: Oct 15 to Dec 7. Fall break and voter registration share one **Mon 5 Oct** chip (fall break range is in the title). |
+| 9 | Subscribe + forward | "Know a family who could use this? Forward it along." plus `/newsletter`. |
+| 10 | Village Picks | Mention removed. There is no Pick in this issue, so the word is gone rather than unexplained. |
+| 11 | Village Hall button and event-card link | Button label **Register for Village Hall** → `/village-hall`. Oct 10 event card links the same page (no "scroll to the bottom" line). Thursday group is a filled **Save my seat** button → `/group`. |
+| 12 | Numbers worth keeping | Four lines near the footer: 988, STEP TN (800-280-7837 / Español 800-975-2919), Disability Rights Tennessee (800-342-1660), TN SHIP (1-877-801-0044). |
+| 13 | Sponsor block to one footer line | "Local businesses and practices help keep the Village free and ad-free. Sponsorship options." Rate-card card is gone. |
+| 14 | Plain text alternative | `newsletter-october-2026.txt` mirrors the HTML, including `{$url}` and `{$unsubscribe}`. HTML ~98.5KB (under Gmail's ~102KB clip). |
+| 15 | Hierarchy, type, cards, contrast, buttons, featured, dark mode, one illustration, typefaces | Body 16px / 1.5. H1 30px/700, section heads 21px under a rule with space above. ~48px between sections, ~24px between cards, ~12px inside. White cards with hairline `#e6dcc6` + light shadow; blush is for date chips only. Letter-spaced uppercase only on the masthead "Our Special Village". All links including `tel:` and `mailto:` use `#964720`. Featured: Oct 5 deadlines, Discovery Center All Access Night, grief guide. Light palette forced (`color-scheme: light only` plus dark-mode and Outlook.com overrides that re-assert cream/navy). Village Hall illustration cut. Figtree 400/700 with Segoe UI / Helvetica / Arial fallbacks; Outlook forced to Arial. |
+
+Art reused: `art/signature-taylor.png` (terracotta cursive, transparent, 2×) and `art/about-family-bowling.jpg` (square crop of IMG_7672-confirmed.jpg). Both are under the image-weight budget.
 
 ## T299 build pass — what changed and why
 
@@ -73,7 +97,8 @@ Computed Sept 14 with OSRM (free-flow driving time, no traffic) from Murfreesbor
 - **Therapy Styles card**: the site's library blurb: "Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like."
 - **Footer framing**: the live homepage: "An autism-focused resource hub for families in Murfreesboro and surrounding areas — built around autism, open to every kind of difference and disability."
 - **Postal address**: Our Special Village is "owned and operated by Little Luminaries Therapy Services, PLLC" (site footer). The practice's published address is **1810 Ward Dr, Suite 101, Murfreesboro, TN 37129** ([littleluminariestn.com/contact](https://www.littleluminariestn.com/contact)). Swap in a different mailing address if OSV prefers one.
-- **Taylor note**: her exact copy from Agents #299, pasted verbatim (four paragraphs, signed "Taylor").
+- **Taylor note (T303)**: exact round-two copy (Welcome to the Our Special Village family… With love, Taylor). The T299 four-paragraph calendar note is replaced. Swap the first line once returning readers outnumber new subscribers.
+- **Taylor note (T299, superseded)**: four paragraphs about October getting full, signed "Taylor".
 - **Q&A steps**: unchanged from T293 (TDOE dispute-resolution page, Administrative Complaint Manual, Timelines in Special Education; STEP TN and DRT numbers match the OSV IEP & 504 guide).
 
 ## Accessibility and rendering
@@ -90,11 +115,11 @@ Contrast (WCAG 2.x, all body/label sizes):
 | Button text `#1b2340` on gold `#d4ac4d` | 7.2 |
 | Dark mode: body `#d5d2c8`, headings `#f3efe4`, links `#f0b27a` on card `#1f2740` / tint `#2a2438` / page `#151a2b` | ≥ 7.0 everywhere |
 
-Dark mode: `@media (prefers-color-scheme: dark)` overrides on `.os-*` classes (page, cards, tints, badges, text, links, buttons, section-icon chips), plus `[data-ogsc]`/`[data-ogsb]` equivalents for Outlook.com. Gmail ignores both and auto-inverts; the palette survives inversion because every text/background pair is set explicitly.
+Dark mode (T303): force the light palette rather than invert. `color-scheme: light only`, `@media (prefers-color-scheme: dark)` re-asserts cream / white / navy / terracotta, and Outlook.com `[data-ogsc]`/`[data-ogsb]` do the same. Wrapper is `width:100%;max-width:600px` so narrow clients shrink without a media query. Gmail may still auto-invert; every text/background pair is set explicitly.
 
-Rendering: headless Chrome at 390px and 760px, light and dark. No horizontal overflow; links wrap between labels, not inside them; masthead stays on one line at 390px. Tag balance verified. All `href`/`src` return 200 except the known bot-check hosts (autismtn.org, evergreenls.org, ssa.gov, all confirmed by browser fetch) and tn.gov (times out for curl, pages confirmed by fetch/search).
+Rendering: desktop 760px and a constrained 390px pass. Tag balance verified (`table`/`tr`/`td`/`h1`/`h2`). Signature PNG `alt="Taylor"`; About photo alt as specified. HTML 98.5KB.
 
-MailerLite: `{$url}` (view in browser) and `{$unsubscribe}` (one-click unsubscribe) are the platform's link variables and only resolve inside MailerLite; List-Unsubscribe headers are added by the platform at send.
+MailerLite: `{$url}` (view in browser / hosted archive) and `{$unsubscribe}` (one-click unsubscribe) only resolve inside MailerLite. Send with `newsletter-october-2026.txt` as the plain-text part. Confirm `{$url}` in a real test send to Gmail, Outlook, and Yahoo.
 
 ## Considered and left out
 
@@ -106,7 +131,12 @@ MailerLite: `{$url}` (view in browser) and `{$unsubscribe}` (one-click unsubscri
 
 ## Editor to-dos before send
 
-1. Update ourspecialvillagetn.com/village-hall (still "First guest TBD · Registration not open") and /group + homepage (still "First meeting October 1, 2026") so they match the email.
-2. Re-check We Rock the Spectrum for Spooktacular time/cost; replace "Time and cost not posted yet" if published.
-3. Confirm the footer mailing address (Little Luminaries, 1810 Ward Dr, Suite 101) is the one OSV wants on the newsletter.
-4. If Angel Tree registration reopens, promote it back into Money with the date.
+1. Confirm the archive merge tag `{$url}` resolves in a real MailerLite test send (dead on the GitHub preview by design).
+2. Confirm the signature PNG carries `alt="Taylor"` and the About photo carries "Taylor, her husband, and their daughter at a bowling alley."
+3. Test dark mode in Apple Mail and Outlook (light palette is forced; Gmail may still auto-invert).
+4. Test the full send, with the plain-text part, to a Gmail, an Outlook, and a Yahoo address.
+5. Check total message size against Gmail's clipping limit with both images in place (HTML is 98.5KB; images are hosted, bowling 73KB, signature 11KB).
+6. Update ourspecialvillagetn.com/village-hall (still "First guest TBD · Registration not open") and /group + homepage (still "First meeting October 1, 2026") so they match the email.
+7. Re-check We Rock the Spectrum for Spooktacular time/cost; replace "Time and cost not posted yet" if published.
+8. Once returning readers outnumber new subscribers, swap the first line of the Taylor note and keep the rest.
+9. If Angel Tree registration reopens, give it a date chip in For every family.
