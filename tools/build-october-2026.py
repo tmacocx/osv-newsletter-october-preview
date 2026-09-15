@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T299 content/structure shorten).
+"""Build the October 2026 Our Special Village newsletter (T299 Hickok feedback pass).
 
 Writes newsletter-october-subscriber-preview.html, an identical index.html,
 newsletter-october-2026.txt, and deadlines-october-2026.html (full deadline list).
+
+Keeps shorten/art wins; restores her October note, extended Village Hall + support
+group, drops Sensory lines, centers family photo, clarifies voter deadline date.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
 
@@ -171,7 +174,8 @@ def step(n, text):
 
 
 def sensory(text, link_html):
-    return f'{b("Sensory:")} {text} &nbsp;{link_html}'
+    """Legacy helper — T299 feedback: do not emit Sensory: lines; link only."""
+    return link_html
 
 
 SECONDARY_EVENTS = [
@@ -207,8 +211,8 @@ FALL_BREAK = item(
      + a("https://www.rcschools.net/o/rcs/page/rcs-academic-calendars", "RCS") + " &nbsp;&middot;&nbsp; "
      + a("https://www.cityschools.net/calendar", "MCS")], featured=True)
 VOTER = item(
-    "Voter registration deadline for the Nov 3 election",
-    ["Register or update your address at GoVoteTN.gov by Oct 5. Early voting Oct 14 to 29. Voters with a disability can request a mail ballot by Sat Oct 24. &nbsp;"
+    "Voter registration deadline: Mon Oct 5",
+    ["For the Nov 3 election. Register or update your address at GoVoteTN.gov by Mon Oct 5. Early voting Oct 14 to 29. Voters with a disability can request a mail ballot by Sat Oct 24. &nbsp;"
      + a("https://govotetn.gov/", "GoVoteTN")], featured=True, first=False)
 CLOCKS = item(
     "Clocks fall back one hour on Sun Nov 1",
@@ -220,8 +224,17 @@ TOP_DEADLINE_ROWS = [
     row(chip("Sun", "1", "Nov"), CLOCKS, last=True),
 ]
 
-NOTE = ("October gets full fast. Fall break is the first week, conferences come right behind it, "
-        "and the holiday season starts asking things of us before we are ready for any of it.")
+# Her exact October note (T303 / prior iteration) — not the agent "October gets full fast…" paragraph.
+NOTE_PARAS = [
+    ("Welcome to the Our Special Village family! I am a speech language pathologist running a "
+     "private practice here in Murfreesboro. I&rsquo;m neurodivergent myself, married to my "
+     "neurodivergent husband, and we have an AuDHD daughter together."),
+    ("I built this site because I saw one too many families feel lost, isolated, and confused by "
+     "the system, and I noticed they were all asking the same questions."),
+    ("I hope this newsletter brings you information, but most of all a little slice of peace. "
+     "October can be a busy month as we kick off the holiday season, so make sure you take care of yourself."),
+]
+NOTE = " ".join(NOTE_PARAS)  # plain-text export
 
 ABOUT = ("A village for families like ours in Murfreesboro and surrounding areas: free guides, a local "
          "Resource Directory, sensory-friendly events, and a parent community. Built around autism and open "
@@ -273,7 +286,8 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
-<!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 content/structure shorten. -->
+<!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
+<!-- Note from Taylor: the first line ("Welcome to the Our Special Village family!") is written to a new subscriber. Once returning readers outnumber new ones, swap that first line and keep the rest. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -313,10 +327,16 @@ def build_html(base):
         f'mso-line-height-rule:exactly;color:{INK};font-weight:700;letter-spacing:-0.3px;">October in the Village</h1>'))
 
     o.append(sp(22))
-    note = p(NOTE, 16, 25, BODY, 400)
-    note += p("With love,", 16, 25, BODY, 400, margin="14px 0 6px 0")
-    note += (f'<img src="{art("signature-taylor.png")}" width="140" height="55" alt="Taylor" '
-             f'style="display:block;width:140px;height:auto;border:0;outline:none;text-decoration:none;font-family:{FONT};font-size:18px;color:{ACCENT};">')
+    # Her heartfelt note (exact prior copy) + smaller Sacramento signature, left-aligned under "With love,"
+    note = ""
+    for i, para in enumerate(NOTE_PARAS):
+        note += p(para, 16, 25, BODY, 400, margin=("0" if i == 0 else "12px 0 0 0"))
+    note += p("With love,", 16, 25, BODY, 400, margin="16px 0 2px 0")
+    note += (
+        f'<img src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
+        f'style="display:block;width:96px;max-width:96px;height:auto;margin:0;padding:0;border:0;outline:none;'
+        f'text-decoration:none;font-family:Georgia, Times New Roman, serif;font-size:22px;font-style:italic;color:{ACCENT};">'
+    )
     o.append(padrow(note))
 
     o.append(sp(40))
@@ -339,13 +359,13 @@ def build_html(base):
     featured_copy = (p("Featured", 13, 18, ACCENT, 700, margin="14px 0 4px 0")
                      + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 18, 25, INK, 700)
                      + p("Thu Oct 15 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required", 16, 24, BODY, 400, margin="4px 0 0 0")
-                     + p(sensory("after-hours museum with smaller crowds and reduced stimulation, at your own pace.", a(MONSTERS_URL, "Reserve your spot")), 16, 24, BODY, 400, margin="4px 0 0 0"))
+                     + p(a(MONSTERS_URL, "Reserve your spot"), 16, 24, BODY, 400, margin="4px 0 0 0"))
     o.append(padrow(card(featured_art + featured_copy, pad="12px 20px 18px 20px")))
 
     o.append(sp(20))
     ev_rows = []
     for i, e in enumerate(SECONDARY_EVENTS):
-        content = item(e["title"], [e["meta"], sensory(e["sensory"], a(*e["link"]))])
+        content = item(e["title"], [e["meta"] + " &nbsp;" + a(*e["link"])])
         ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1)))
     o.append(padrow(card(rows_table(ev_rows))))
     o.append(sp(16))
@@ -406,29 +426,35 @@ def build_html(base):
         radius=12)
     o.append(padrow(vh_art, pad="0 0 0 0"))
     o.append(sp(12))
+    # Extended Village Hall from prior iteration (Topic and guest + pricing), still under IEP art
     vh = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
-          '<tr><td align="left" style="padding:22px 24px 22px 24px;">'
-          + p("Village Hall &middot; Sat Oct 10 &middot; 9:30&ndash;11:00 AM Central", 13, 18, GOLD, 700, margin="0 0 6px 0")
-          + p("The IEP process with Mercedes Lawson of A.C.C.E.S.S.", 18, 25, CREAM, 700, margin="0 0 8px 0")
-          + p("Online &middot; Pay what you can, including nothing. Lesson recorded; Q&amp;A is not. Meeting link emailed to registrants.", 15, 22, SAND, 400, margin="0 0 16px 0")
+          '<tr><td align="left" style="padding:26px 26px 26px 26px;">'
+          + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 6px 0")
+          + p("9:30 to 11:00 AM Central &middot; Online &middot; Pay what you can, including nothing", 16, 24, SAND, 400, margin="0 0 18px 0")
+          + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
+          + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 20, 27, CREAM, 700, margin="0 0 12px 0")
+          + p("A 40-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 16, 24, SAND, 400, margin="0 0 20px 0")
           + button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK).replace('class="os-btn"', 'class="os-btn os-btn-gold"')
+          + p("$0 always welcome &middot; $10 helps &middot; $20 suggested &middot; $35 sponsors another seat. The meeting link is emailed to registrants.", 14, 22, SAND, 400, margin="16px 0 0 0")
           + '</td></tr></table>')
     o.append(padrow(vh))
 
     o.append(sp(40))
-    o.append(section_head("ongoing", "Ongoing this month"))
+    o.append(section_head("ongoing", "Every week"))
     o.append(sp(16))
     weekly = rows_table([
-        f'<tr><td class="os-rule" style="padding:10px 0 14px 0;border-bottom:1px solid {RULE};">'
-        + p("Thursdays &middot; 7:00&ndash;8:00 PM Central", 16, 22, INK, 700)
-        + p("Our Special Village parent group &middot; Online &middot; Free &middot; Any diagnosis or none yet", 15, 21, BODY, 400, margin="4px 0 10px 0")
+        f'<tr><td class="os-rule" style="padding:12px 0 16px 0;border-bottom:1px solid {RULE};">'
+        + p("Thursdays &middot; 7:00&ndash;8:00 PM Central", 16, 23, INK, 700)
+        + p("Our Special Village online parent group &middot; Free &middot; Online", 15, 22, BODY, 400, margin="4px 0 0 0")
+        + p("Meeting weekly since September, so join any Thursday. Any diagnosis or none yet; cameras optional; not recorded.", 15, 22, BODY, 400, margin="4px 0 12px 0")
         + button(f"{SITE}/group", "Save my seat", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
         + '</td></tr>',
-        '<tr><td class="os-rule" style="padding:12px 0 8px 0;">'
-        + p("Wednesdays &middot; 5:00 PM", 16, 22, INK, 700)
-        + p(f"We Rock the Spectrum Murfreesboro, led by Cari Parr &middot; 820 N Thompson Ln &middot; {tel('(615) 962-8627', '+16159628627')}", 15, 21, BODY, 400, margin="4px 0 0 0")
+        '<tr><td class="os-rule" style="padding:14px 0 8px 0;">'
+        + p("Wednesdays &middot; 5:00 PM", 16, 23, INK, 700)
+        + p("We Rock the Spectrum Murfreesboro group, led by Cari Parr &middot; 820 N Thompson Ln, Murfreesboro", 15, 22, BODY, 400, margin="4px 0 0 0")
+        + p(f"Call {tel('(615) 962-8627', '+16159628627')} for current details.", 15, 22, BODY, 400, margin="4px 0 0 0")
         + '</td></tr>'])
-    o.append(padrow(card(weekly, pad="10px 18px 12px 18px")))
+    o.append(padrow(card(weekly, pad="12px 18px 14px 18px")))
 
     o.append(sp(40))
     about_copy = ((f'<h2 class="os-ink" style="margin:0;font-family:{FONT};font-size:17px;line-height:23px;'
@@ -436,21 +462,16 @@ def build_html(base):
                   + p(ABOUT, 14, 21, BODY, 400, margin="8px 0 0 0")
                   + p(a(f"{SITE}/about", "About the Village") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/editorial-policy", "How we check information"), 14, 21, BODY, 400, margin="10px 0 0 0"))
     photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="160" class="os-photocell" bgcolor="{BLUSH}" '
-             f'style="width:160px;border-collapse:separate;background-color:{BLUSH};border-radius:12px;">'
+             f'style="width:160px;border-collapse:separate;background-color:{BLUSH};border-radius:12px;margin:0 auto;">'
              f'<tr><td class="os-photocell" align="center" style="width:160px;vertical-align:middle;border-radius:12px;">'
              f'<img class="os-photo" src="{art("about-family-bowling-small.jpg")}" width="160" height="160" alt="Taylor, her husband, and their daughter at a bowling alley." '
-             f'style="display:block;width:160px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;font-family:{FONT};font-size:13px;line-height:18px;color:{BODY};"></td></tr></table>')
+             f'style="display:block;width:160px;max-width:100%;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none;border-radius:12px;font-family:{FONT};font-size:13px;line-height:18px;color:{BODY};"></td></tr></table>')
+    # Stacked + centered photo (T299 feedback), then About copy
     about = (
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr><td align="left" style="padding:0;">'
-        '<!--[if mso]><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560"><tr><td width="160" valign="top"><![endif]-->'
-        f'<table role="presentation" class="os-col os-col-photo" align="left" cellpadding="0" cellspacing="0" border="0" width="160" style="width:160px;max-width:160px;border-collapse:collapse;">'
-        f'<tr><td style="padding:0;">{photo}</td></tr></table>'
-        '<!--[if mso]></td><td width="16"></td><td width="384" valign="top"><![endif]-->'
-        f'<table role="presentation" class="os-col" align="left" cellpadding="0" cellspacing="0" border="0" width="384" style="width:384px;max-width:384px;border-collapse:collapse;">'
-        f'<tr><td style="padding:0 0 0 16px;">{about_copy}</td></tr></table>'
-        '<!--[if mso]></td></tr></table><![endif]-->'
-        '</td></tr></table>'
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;clear:both;"><tr><td style="font-size:0;line-height:0;height:0;">&nbsp;</td></tr></table>'
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">'
+        f'<tr><td align="center" style="padding:0 0 14px 0;">{photo}</td></tr>'
+        f'<tr><td align="left" style="padding:0;">{about_copy}</td></tr>'
+        '</table>'
     )
     o.append(padrow(card(about, pad="16px 18px 16px 18px")))
 
@@ -485,8 +506,13 @@ def build_text():
     w("")
     w("OCTOBER IN THE VILLAGE")
     w("")
-    w(NOTE)
-    w("")
+    for para in NOTE_PARAS:
+        # strip entities for plain text
+        plain = (para.replace("&rsquo;", "'").replace("&middot;", "·")
+                     .replace("&ndash;", "-").replace("&amp;", "&")
+                     .replace("&ldquo;", '"').replace("&rdquo;", '"'))
+        w(plain)
+        w("")
     w("With love,")
     w("Taylor")
     w("")
@@ -498,8 +524,8 @@ def build_text():
     w("  RCS: https://www.rcschools.net/o/rcs/page/rcs-academic-calendars")
     w("  MCS: https://www.cityschools.net/calendar")
     w("")
-    w("Mon Oct 5 · Voter registration deadline for the Nov 3 election")
-    w("  Register or update at GoVoteTN.gov by Oct 5. Early voting Oct 14 to 29. Disability mail-ballot requests by Sat Oct 24.")
+    w("Mon Oct 5 · Voter registration deadline: Mon Oct 5")
+    w("  For the Nov 3 election. Register or update at GoVoteTN.gov by Mon Oct 5. Early voting Oct 14 to 29. Disability mail-ballot requests by Sat Oct 24.")
     w("  https://govotetn.gov/")
     w("")
     w("Sun Nov 1 · Clocks fall back one hour")
@@ -515,7 +541,6 @@ def build_text():
     w("")
     w("All Access Night: Monsters in the Museum · Discovery Center  [Featured]")
     w("  Thu Oct 15 · 6:00-8:00 PM · Murfreesboro · Free, registration required")
-    w("  Sensory: after-hours museum with smaller crowds and reduced stimulation, at your own pace.")
     w(f"  Reserve your spot: {MONSTERS_URL}")
     w("")
     import html as _html
@@ -523,7 +548,6 @@ def build_text():
     for e in SECONDARY_EVENTS:
         w(strip(e["title"]))
         w(f"  {strip(e['meta'])}")
-        w(f"  Sensory: {strip(e['sensory'])}")
         w(f"  {e['link'][1]}: {e['link'][0]}")
         w("")
     w(f"View the full October events calendar: {EVENTS_CAL_URL}")
@@ -554,18 +578,21 @@ def build_text():
     w("TDOE dispute options: https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html")
     w("Parent-to-parent guidance, not legal advice.")
     w("")
-    w("Village Hall · Sat Oct 10 · 9:30-11:00 AM Central")
-    w("The IEP process with Mercedes Lawson of A.C.C.E.S.S.")
-    w("Online · Pay what you can, including nothing. Meeting link emailed to registrants.")
+    w("Village Hall · Saturday, October 10, 2026")
+    w("9:30 to 11:00 AM Central · Online · Pay what you can, including nothing")
+    w("Topic and guest: The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.")
+    w("A 40-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
+    w("$0 always welcome · $10 helps · $20 suggested · $35 sponsors another seat.")
     w(f"Register for Village Hall: {SITE}/village-hall")
     w("")
     w("----------------------------------------")
-    w("ONGOING THIS MONTH")
+    w("EVERY WEEK")
     w("")
-    w("Thursdays · 7:00-8:00 PM Central · Our Special Village parent group · Online · Free")
+    w("Thursdays · 7:00-8:00 PM Central · Our Special Village online parent group · Free · Online")
+    w("  Meeting weekly since September, so join any Thursday. Any diagnosis or none yet; cameras optional; not recorded.")
     w(f"  Save my seat: {SITE}/group")
     w("")
-    w("Wednesdays · 5:00 PM · We Rock the Spectrum Murfreesboro, led by Cari Parr · 820 N Thompson Ln")
+    w("Wednesdays · 5:00 PM · We Rock the Spectrum Murfreesboro group, led by Cari Parr · 820 N Thompson Ln, Murfreesboro")
     w("  Call (615) 962-8627 for current details.")
     w("")
     w("----------------------------------------")
@@ -617,7 +644,7 @@ a{{color:{ACCENT};font-weight:700;}}
 <p class="meta">Dates confirmed Sept 14, 2026. Teen, college, Medicare, benefits, and undated items live here so the email can stay short.</p>
 <h2>School and community</h2>
 <div class="item"><strong>Fall break, Oct 5&ndash;9 · RCS and MCS</strong>Both districts closed. RCS conferences Tue Oct 20; MCS conferences Tue Nov 3 (no school). <a href="https://www.rcschools.net/o/rcs/page/rcs-academic-calendars">RCS</a> · <a href="https://www.cityschools.net/calendar">MCS</a></div>
-<div class="item"><strong>Voter registration · Mon Oct 5</strong>For the Nov 3 election. Early voting Oct 14&ndash;29; disability mail-ballot requests by Sat Oct 24. <a href="https://govotetn.gov/">GoVoteTN</a></div>
+<div class="item"><strong>Voter registration deadline: Mon Oct 5</strong>For the Nov 3 election. Early voting Oct 14&ndash;29; disability mail-ballot requests by Sat Oct 24. <a href="https://govotetn.gov/">GoVoteTN</a></div>
 <div class="item"><strong>Clocks fall back · Sun Nov 1</strong>DST ends 2:00 AM. Shift bedtime gradually if sleep is fragile. <a href="https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst">NIST</a></div>
 <h2>Insurance and health</h2>
 <div class="item"><strong>Medicare open enrollment · Oct 15&ndash;Dec 7</strong>Compare or switch drug and Advantage plans for 2027. TN SHIP: 1-877-801-0044. <a href="https://www.medicare.gov/health-drug-plans/open-enrollment">Medicare.gov</a></div>
@@ -672,14 +699,25 @@ def main():
     assert "Three things to know this month" in html
     assert "See all deadlines" in html
     assert "View the full October events calendar" in html
-    assert "Ongoing this month" in html
+    assert "Every week" in html
+    assert "Ongoing this month" not in html
     assert html.count("Register for Village Hall") == 1
     assert "In this issue" not in html
+    assert "Welcome to the Our Special Village family!" in html
+    assert "October gets full fast" not in html
+    assert "Sensory:" not in html
+    assert "Voter registration deadline: Mon Oct 5" in html
+    assert "Topic and guest" in html
+    assert "$35 sponsors another seat" in html
+    assert "Meeting weekly since September" in html
+    assert 'width="96"' in html and "signature-taylor.png" in html
+    assert 'align="center"' in html and "about-family-bowling-small.jpg" in html
     text = re.sub(r"<style.*?</style>", " ", html, flags=re.S | re.I)
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"&\w+;", " ", text)
     words = len(text.split())
-    assert 750 <= words <= 1000, f"word count {words} outside 750-1000"
+    # Feedback restores her note + extended VH/support; keep art/shorten wins elsewhere.
+    assert 900 <= words <= 1400, f"word count {words} outside 900-1400"
     print(f"wrote {out}: html {len(html.encode('utf-8'))} bytes, txt {len(txt.encode('utf-8'))} bytes, words≈{words}")
 
 
