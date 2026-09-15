@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T299 Hickok feedback pass).
+"""Build the October 2026 Our Special Village newsletter (T355 Hickok intro/support).
 
 Writes newsletter-october-subscriber-preview.html, an identical index.html,
 newsletter-october-2026.txt, and deadlines-october-2026.html (full deadline list).
 
-Keeps shorten/art wins; restores her October note, extended Village Hall + support
-group, drops Sensory lines, centers family photo, clarifies voter deadline date.
-FEEDBACK-2: deadlines page date squares; Village Hall never uses interpunct dots.
-T349: Mercedes bio/photo, 45 min, price boxes, Oct 1 group launch.
-T353: one-line deadline date headers; equal pay boxes; inclusive welcome copy.
+T355: replace intro with "October in Our Special Village" copy (body font, not
+full italic); keep signature PNG; tighter spacing; optional circular Taylor photo;
+compact "In this issue"; highlight alone-callout; section heading Connect with
+Other Local Parents; two equal badge cards; remove T353 inclusive lines; parent
+supervision note on We Rock; Cari Parr retained (live OSV support-groups/events).
 
 Edit this file and run it. Do not hand-edit the generated HTML.
 
@@ -163,6 +163,44 @@ def button(href, label, fill, text_color, align="left"):
             f'<span style="color:{text_color};">{label}</span></a></td></tr></table>')
 
 
+def badge(label):
+    """Compact ONLINE / IN PERSON / FREE / WEEKLY pill."""
+    return (
+        f'<td style="padding:0 6px 8px 0;vertical-align:middle;">'
+        f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" bgcolor="{BLUSH}" '
+        f'style="border-collapse:separate;background-color:{BLUSH};border-radius:999px;">'
+        f'<tr><td align="center" style="padding:4px 10px;">'
+        f'<span style="font-family:{FONT};font-size:11px;line-height:14px;color:{INK};'
+        f'font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;">{label}</span>'
+        f'</td></tr></table></td>'
+    )
+
+
+def badges_row(labels):
+    cells = "".join(badge(lab) for lab in labels)
+    return (
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" '
+        f'style="border-collapse:collapse;margin:0 0 10px 0;"><tr>{cells}</tr></table>'
+    )
+
+
+def group_card(badges, name, when, where, cost, body_paras, btn_href, btn_label):
+    """Equal support-group card: badges, name, day/time, location, cost, blurb, one button."""
+    body = "".join(p(t, 15, 22, BODY, 400, margin="8px 0 0 0") for t in body_paras)
+    inner = (
+        badges_row(badges)
+        + p(name, 17, 23, INK, 700, margin="0")
+        + p(when, 15, 22, BODY, 400, margin="6px 0 0 0")
+        + p(where, 15, 22, BODY, 400, margin="2px 0 0 0")
+        + p(cost, 15, 22, BODY, 400, margin="2px 0 0 0")
+        + body
+        + '<div style="margin:14px 0 0 0;">'
+        + button(btn_href, btn_label, INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
+        + '</div>'
+    )
+    return card(inner, pad="16px 18px 16px 18px")
+
+
 def story_img(src, width, alt, radius=12, link=None, extra_style=""):
     img = (f'<img src="{src}" width="{width}" alt="{alt}" '
            f'style="display:block;width:100%;max-width:{width}px;height:auto;border:0;outline:none;'
@@ -278,28 +316,26 @@ TOP_DEADLINE_ROWS = [
     row(chip("Sun", "1", "Nov"), CLOCKS, last=True),
 ]
 
-# Her exact October note (T303 / prior iteration) — not the agent "October gets full fast…" paragraph.
+# T355: her "October in Our Special Village" intro (audience = parents/caregivers of ND children).
+# Em dashes from her draft become en dashes (newsletter ban).
 NOTE_PARAS = [
-    ("Welcome to the Our Special Village family! I am a speech language pathologist running a "
-     "private practice here in Murfreesboro. I&rsquo;m neurodivergent myself, married to my "
-     "neurodivergent husband, and we have an AuDHD daughter together."),
-    ("I built this site because I saw one too many families feel lost, isolated, and confused by "
-     "the system, and I noticed they were all asking the same questions."),
-    ("I hope this newsletter brings you information, but most of all a little slice of peace. "
-     "October can be a busy month as we kick off the holiday season, so make sure you take care of yourself."),
+    ("Welcome to Our Special Village! I&rsquo;m Dr. Taylor Hickok, a local speech-language "
+     "pathologist, parent of an AuDHD child, and founder of this community."),
+    ("I created Our Special Village after seeing how often families of neurodivergent children "
+     "were left trying to navigate services, schools, therapies, and community resources on "
+     "their own. Too many parents were asking the same questions without one clear place to "
+     "find answers."),
+    ("This month&rsquo;s newsletter brings together local events, practical resources, and "
+     "opportunities to connect with other families. I hope it saves you a little time&ndash;and "
+     "reminds you that you do not have to figure everything out alone."),
 ]
 NOTE = " ".join(NOTE_PARAS)  # plain-text export
+ALONE_PHRASE = "you do not have to figure everything out alone"
+IN_THIS_ISSUE = "Fall break &middot; Parent support &middot; Sensory-friendly events &middot; New resources"
 
 ABOUT = ("A village for families like ours in Murfreesboro and surrounding areas: free guides, a local "
          "Resource Directory, sensory-friendly events, and a parent community. Built around autism and open "
          "to every kind of difference and disability.")
-
-# T353 inclusive welcome — warm Village voice; no medical claims. Used on parent-group blurb.
-INCLUSIVE_WELCOME = (
-    "Parents of children of all abilities and diagnoses are welcome. "
-    "You belong whether your child struggles a little or a lot. "
-    "Neurodivergent parents, you are welcome too."
-)
 
 NUMBERS = [
     (b("988") + " &middot; Call or text any hour."),
@@ -326,6 +362,9 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;}
   .os-col-photo{padding:0 0 16px 0 !important;}
   .os-photo{width:100% !important;max-width:160px !important;height:auto !important;}
+  .os-intro-photo{width:72px !important;max-width:72px !important;height:72px !important;border-radius:50% !important;}
+  .os-intro-col{display:block !important;width:100% !important;max-width:100% !important;}
+  .os-intro-photocell{padding:0 0 12px 0 !important;text-align:left !important;}
   body,table,td,p,a,span{overflow-wrap:anywhere !important;word-break:break-word !important;}
   .os-chip,.os-chip p,table[width="62"] p,td[width="62"] p{white-space:nowrap !important;overflow-wrap:normal !important;word-break:normal !important;}
   .os-paybox,.os-paybox p{overflow-wrap:normal !important;word-break:normal !important;}
@@ -350,7 +389,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- Note from Taylor: the first line ("Welcome to the Our Special Village family!") is written to a new subscriber. Once returning readers outnumber new ones, swap that first line and keep the rest. -->
+<!-- T355: Hickok intro + Connect with Other Local Parents support cards. Audience = parents/caregivers of neurodivergent children. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -387,22 +426,44 @@ def build_html(base):
     o.append(sp(18))
     o.append(padrow(
         f'<h1 class="os-h1 os-ink" style="margin:0;font-family:{FONT};font-size:30px;line-height:36px;'
-        f'mso-line-height-rule:exactly;color:{INK};font-weight:700;letter-spacing:-0.3px;">October in the Village</h1>'))
+        f'mso-line-height-rule:exactly;color:{INK};font-weight:700;letter-spacing:-0.3px;">October in Our Special Village</h1>'))
 
-    o.append(sp(22))
-    # Her heartfelt note (exact prior copy) + smaller Sacramento signature, left-aligned under "With love,"
-    note = ""
+    o.append(sp(14))
+    # T355 intro: regular body font (not italic), tighter spacing, circular photo, alone highlight, issue line
+    alone_hi = (
+        f'<span style="background-color:{BLUSH};color:{INK};padding:1px 4px;border-radius:4px;">'
+        f'{ALONE_PHRASE}</span>'
+    )
+    note_paras_html = []
     for i, para in enumerate(NOTE_PARAS):
-        note += p(para, 16, 25, BODY, 400, margin=("0" if i == 0 else "12px 0 0 0"))
-    note += p("With love,", 16, 25, BODY, 400, margin="16px 0 2px 0")
-    note += (
+        html_para = para.replace(ALONE_PHRASE, alone_hi) if ALONE_PHRASE in para else para
+        note_paras_html.append(p(html_para, 16, 24, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0")))
+    note_copy = "".join(note_paras_html)
+    note_copy += p("With love,", 16, 24, BODY, 400, margin="12px 0 2px 0")
+    note_copy += (
         f'<img src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
         f'style="display:block;width:96px;max-width:96px;height:auto;margin:0;padding:0;border:0;outline:none;'
         f'text-decoration:none;font-family:Georgia, Times New Roman, serif;font-size:22px;font-style:italic;color:{ACCENT};">'
     )
-    o.append(padrow(note))
+    photo = (
+        f'<img class="os-intro-photo" src="{art("taylor-hickok-160.jpg")}" width="72" height="72" '
+        f'alt="Dr. Taylor Hickok, founder of Our Special Village." '
+        f'style="display:block;width:72px;max-width:72px;height:72px;margin:0;padding:0;border:0;outline:none;'
+        f'text-decoration:none;border-radius:50%;object-fit:cover;">'
+    )
+    intro = (
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        'style="width:100%;border-collapse:collapse;"><tr>'
+        f'<td class="os-intro-col" align="left" valign="top" style="vertical-align:top;padding:0 14px 0 0;">{note_copy}</td>'
+        f'<td class="os-intro-col os-intro-photocell" width="72" align="right" valign="top" '
+        f'style="width:72px;vertical-align:top;padding:4px 0 0 0;">{photo}</td>'
+        '</tr></table>'
+        + p(f'<b style="color:{ACCENT};font-weight:700;">In this issue</b> &nbsp;{IN_THIS_ISSUE}',
+            13, 20, MUTED, 400, margin="14px 0 0 0")
+    )
+    o.append(padrow(intro))
 
-    o.append(sp(40))
+    o.append(sp(28))
     o.append(section_head("deadlines", "Three things to know this month"))
     o.append(sp(16))
     o.append(padrow(card(rows_table(TOP_DEADLINE_ROWS))))
@@ -518,22 +579,43 @@ def build_html(base):
     o.append(padrow(vh))
 
     o.append(sp(40))
-    o.append(section_head("ongoing", "Every week"))
+    o.append(section_head("ongoing", "Connect with Other Local Parents"))
     o.append(sp(16))
-    weekly = rows_table([
-        f'<tr><td class="os-rule" style="padding:12px 0 16px 0;border-bottom:1px solid {RULE};">'
-        + p("Thursdays &middot; 7:00&ndash;8:00 PM Central", 16, 23, INK, 700)
-        + p("Our Special Village online parent group &middot; Free &middot; Online", 15, 22, BODY, 400, margin="4px 0 0 0")
-        + p("Launching Thursday, Oct 1 &ndash; join any Thursday. " + INCLUSIVE_WELCOME
-            + " Cameras optional; not recorded.", 15, 22, BODY, 400, margin="4px 0 12px 0")
-        + button(f"{SITE}/group", "Save my seat", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
-        + '</td></tr>',
-        '<tr><td class="os-rule" style="padding:14px 0 8px 0;">'
-        + p("Wednesdays &middot; 5:00 PM", 16, 23, INK, 700)
-        + p("We Rock the Spectrum Murfreesboro group, led by Cari Parr &middot; 820 N Thompson Ln, Murfreesboro", 15, 22, BODY, 400, margin="4px 0 0 0")
-        + p(f"Call {tel('(615) 962-8627', '+16159628627')} for current details.", 15, 22, BODY, 400, margin="4px 0 0 0")
-        + '</td></tr>'])
-    o.append(padrow(card(weekly, pad="12px 18px 14px 18px")))
+    online_card = group_card(
+        ["ONLINE", "FREE", "WEEKLY"],
+        "Our Special Village Online Parent Group",
+        "Thursdays &middot; 7:00&ndash;8:00 PM Central",
+        "Online",
+        "Free",
+        [
+            "Connect with other parents and caregivers of neurodivergent and disabled children "
+            "in a welcoming, judgment-free space. A formal diagnosis is not required.",
+            "Join us beginning Thursday, October 1 &ndash; or drop in on any Thursday that works for your family.",
+            "Cameras are optional, and meetings are never recorded.",
+        ],
+        f"{SITE}/group",
+        "Join the Online Group",
+    )
+    werock_card = group_card(
+        ["IN PERSON", "FREE", "WEEKLY"],
+        "We Rock the Spectrum Parent Group",
+        "Wednesdays &middot; 5:00 PM",
+        "We Rock the Spectrum Murfreesboro &middot; 820 N. Thompson Lane, Murfreesboro",
+        "Parent group: Free",
+        [
+            "Led by Cari Parr. This in-person group gives parents and caregivers an opportunity "
+            "to connect while children play in the gym.",
+            "Parents stay with and supervise their children during gym play (this is not included childcare). "
+            "Discounted gym admission is available for children.",
+            f"Questions? Call {tel('(615) 962-8627', '+16159628627')} or email "
+            f"{a('mailto:info@werockthespectrummurfreesboro.com', 'info@werockthespectrummurfreesboro.com', nowrap=False)}.",
+        ],
+        "mailto:info@werockthespectrummurfreesboro.com",
+        "Contact We Rock the Spectrum",
+    )
+    o.append(padrow(online_card))
+    o.append(sp(16))
+    o.append(padrow(werock_card))
 
     o.append(sp(40))
     about_copy = ((f'<h2 class="os-ink" style="margin:0;font-family:{FONT};font-size:17px;line-height:23px;'
@@ -583,7 +665,7 @@ def build_text():
     w("OUR SPECIAL VILLAGE · October 2026")
     w("View this email in your browser: {$url}")
     w("")
-    w("OCTOBER IN THE VILLAGE")
+    w("OCTOBER IN OUR SPECIAL VILLAGE")
     w("")
     for para in NOTE_PARAS:
         # strip entities for plain text
@@ -594,6 +676,8 @@ def build_text():
         w("")
     w("With love,")
     w("Taylor")
+    w("")
+    w("In this issue: Fall break · Parent support · Sensory-friendly events · New resources")
     w("")
     w("----------------------------------------")
     w("THREE THINGS TO KNOW THIS MONTH")
@@ -668,14 +752,22 @@ def build_text():
     w(f"Register for Village Hall: {SITE}/village-hall")
     w("")
     w("----------------------------------------")
-    w("EVERY WEEK")
+    w("CONNECT WITH OTHER LOCAL PARENTS")
     w("")
-    w("Thursdays · 7:00-8:00 PM Central · Our Special Village online parent group · Free · Online")
-    w("  Launching Thursday, Oct 1 - join any Thursday. Parents of children of all abilities and diagnoses are welcome. You belong whether your child struggles a little or a lot. Neurodivergent parents, you are welcome too. Cameras optional; not recorded.")
-    w(f"  Save my seat: {SITE}/group")
+    w("Our Special Village Online Parent Group · ONLINE · FREE · WEEKLY")
+    w("  Thursdays · 7:00-8:00 PM Central · Online · Free")
+    w("  Connect with other parents and caregivers of neurodivergent and disabled children in a welcoming, judgment-free space. A formal diagnosis is not required.")
+    w("  Join us beginning Thursday, October 1 - or drop in on any Thursday that works for your family.")
+    w("  Cameras are optional, and meetings are never recorded.")
+    w(f"  Join the Online Group: {SITE}/group")
     w("")
-    w("Wednesdays · 5:00 PM · We Rock the Spectrum Murfreesboro group, led by Cari Parr · 820 N Thompson Ln, Murfreesboro")
-    w("  Call (615) 962-8627 for current details.")
+    w("We Rock the Spectrum Parent Group · IN PERSON · FREE · WEEKLY")
+    w("  Wednesdays · 5:00 PM · We Rock the Spectrum Murfreesboro · 820 N. Thompson Lane, Murfreesboro")
+    w("  Parent group: Free · Led by Cari Parr")
+    w("  This in-person group gives parents and caregivers an opportunity to connect while children play in the gym.")
+    w("  Parents stay with and supervise their children during gym play (this is not included childcare). Discounted gym admission is available for children.")
+    w("  Questions? Call (615) 962-8627 or email info@werockthespectrummurfreesboro.com.")
+    w("  Contact We Rock the Spectrum: mailto:info@werockthespectrummurfreesboro.com")
     w("")
     w("----------------------------------------")
     w("ABOUT OUR SPECIAL VILLAGE")
@@ -875,11 +967,16 @@ def main():
     assert "Three things to know this month" in html
     assert "See all deadlines" in html
     assert "View the full October events calendar" in html
-    assert "Every week" in html
+    assert "Connect with Other Local Parents" in html
+    assert "Support groups in Murfreesboro" not in html
+    assert "Every week" not in html
     assert "Ongoing this month" not in html
     assert html.count("Register for Village Hall") == 1
-    assert "In this issue" not in html
-    assert "Welcome to the Our Special Village family!" in html
+    assert "In this issue" in html
+    assert "Fall break &middot; Parent support &middot; Sensory-friendly events &middot; New resources" in html
+    assert "Welcome to Our Special Village!" in html
+    assert "Welcome to the Our Special Village family!" not in html
+    assert "October in Our Special Village" in html
     assert "October gets full fast" not in html
     assert "Sensory:" not in html
     assert "Voter registration deadline: Mon&nbsp;Oct&nbsp;5" in html
@@ -893,19 +990,30 @@ def main():
     assert "$0 always welcome &middot;" not in html
     assert "45-minute lesson" in html
     assert "mercedes-lawson-160.jpg" in html
-    assert INCLUSIVE_WELCOME.split(".")[0] in html
+    assert "taylor-hickok-160.jpg" in html
+    assert "A formal diagnosis is not required" in html
+    assert "Neurodivergent parents, you are welcome too" not in html
+    assert "whether your child struggles a little or a lot" not in html
+    assert "I&rsquo;m neurodivergent myself" not in html
+    assert "Join the Online Group" in html
+    assert "Contact We Rock the Spectrum" in html
+    assert "Led by Cari Parr" in html
+    assert "Parents stay with and supervise their children" in html
+    assert "not included childcare" in html
     assert 'class="chip"' in deadlines
     assert "Sun" in deadlines and "Nov" in deadlines
-    assert "Launching Thursday, Oct 1" in html
-    assert "Neurodivergent parents, you are welcome too" in html
+    assert "Join us beginning Thursday, October 1" in html
     assert 'width="96"' in html and "signature-taylor.png" in html
     assert 'align="center"' in html and "about-family-bowling-small.jpg" in html
+    # Intro body must not be wholesale italic (signature PNG may keep italic fallback font).
+    intro_slice = html.split("October in Our Special Village", 1)[1].split("Three things to know this month", 1)[0]
+    assert "font-style:italic" not in intro_slice.replace("signature-taylor.png", "").split("With love")[0]
     text = re.sub(r"<style.*?</style>", " ", html, flags=re.S | re.I)
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"&\w+;", " ", text)
     words = len(text.split())
-    # Feedback restores her note + extended VH/support; keep art/shorten wins elsewhere.
-    assert 900 <= words <= 1400, f"word count {words} outside 900-1400"
+    # T355 adds intro + equal support cards; keep readable length.
+    assert 900 <= words <= 1550, f"word count {words} outside 900-1550"
     print(f"wrote {out}: html {len(html.encode('utf-8'))} bytes, txt {len(txt.encode('utf-8'))} bytes, words≈{words}")
 
 

@@ -147,3 +147,12 @@ MailerLite: `{$url}` (view in browser / hosted archive) and `{$unsubscribe}` (on
 - Bottom header → **Support groups in Murfreesboro**; two separate cards (OSV online + We Rock in person).
 - We Rock: in person; free for parents; children gym play at discounted rate; email `info@werockthespectrummurfreesboro.com` verified from gym contact page (phone already known).
 - OSV group copy kept in full; split into short paragraphs for readability.
+
+## T355 (2026-09-15)
+
+- Intro replaced with Hickok "October in Our Special Village" copy; body Figtree (not italic); signature PNG kept; circular photo from live OSV about asset `taylor-hickok.webp` → `art/taylor-hickok-160.jpg`.
+- Audience lock: parents/caregivers of neurodivergent children; removed T353 "Neurodivergent parents, you are welcome too" and "struggles a little or a lot."
+- Support heading → **Connect with Other Local Parents**; equal ONLINE / IN PERSON cards with FREE + WEEKLY badges.
+- Cari Parr: still named on live OSV support-groups + events (Wed WRTS series); included "Led by Cari Parr." Rem pre-check noted she is absent from WRTS staff roster (external facilitator) — not treated as contradictory.
+- Parent supervision: WRTS open-play policy requires parent/guardian accompaniment; no clear public "childcare included" for the Wed parent group. Card states parents stay with/supervise children (not included childcare).
+- Webhook truncated mid "SUPPORT-GROUP DESIGN CHANGES / Make the group na…"; shipped from issue verbatim — design tail not required to complete done-when.
