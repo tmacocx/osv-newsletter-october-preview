@@ -7,6 +7,8 @@ newsletter-october-2026.txt, and deadlines-october-2026.html (full deadline list
 Keeps shorten/art wins; restores her October note, extended Village Hall + support
 group, drops Sensory lines, centers family photo, clarifies voter deadline date.
 FEEDBACK-2: deadlines page date squares; Village Hall never uses interpunct dots.
+T349: Mercedes bio/photo, 45 min, price boxes, Oct 1 group launch.
+T353: one-line deadline date headers; equal pay boxes; inclusive welcome copy.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
 
@@ -113,18 +115,23 @@ def row(chip_html, content_html, last=False, featured=False):
 
 
 def chip(top, big=None, bottom=None, year=False):
+    """Date square. Bottom range labels stay on one line (nowrap; shorten 'to …')."""
+    nowrap = "text-align:center;white-space:nowrap;word-break:normal;overflow-wrap:normal;"
     shell_open = (f'<table role="presentation" class="os-chip" cellpadding="0" cellspacing="0" border="0" width="62" '
                   f'bgcolor="{BLUSH}" style="width:62px;border-collapse:separate;background-color:{BLUSH};border-radius:10px;">'
                   '<tr><td align="center" style="padding:{pad};">')
     shell_close = '</td></tr></table>'
     if big is None:
-        inner = (p(top, 13, 17, INK, 700, extra="text-align:center;") +
-                 p(bottom, 13, 17, INK, 700, extra="text-align:center;"))
+        inner = (p(top, 13, 17, INK, 700, extra=nowrap) +
+                 p(bottom, 13, 17, INK, 700, extra=nowrap))
         return shell_open.format(pad="17px 3px 17px 3px") + inner + shell_close
-    bottom_size = 12 if not bottom.startswith("to ") else 11
-    inner = (p(top, 12, 14, ACCENT, 700, extra="text-align:center;") +
-             p(big, 22, 26, INK, 700, margin="1px 0 0 0", extra="text-align:center;") +
-             p(bottom, bottom_size, 14, BODY, 700, extra="text-align:center;"))
+    # "to Dec 7" / "to Jan 15" wrapped in 62px chips — keep one line via en dash + nbsp
+    if isinstance(bottom, str) and bottom.startswith("to "):
+        bottom = "&ndash;" + bottom[3:].replace(" ", "&nbsp;")
+    bottom_size = 11 if "&ndash;" in (bottom or "") or "&nbsp;" in (bottom or "") else 12
+    inner = (p(top, 12, 14, ACCENT, 700, extra=nowrap) +
+             p(big, 22, 26, INK, 700, margin="1px 0 0 0", extra=nowrap) +
+             p(bottom, bottom_size, 14, BODY, 700, extra=nowrap))
     return shell_open.format(pad="7px 3px 7px 3px") + inner + shell_close
 
 
@@ -136,7 +143,9 @@ def item(title, lines, featured=False, label=None, first=True):
     else:
         tmargin = "0" if first else "14px 0 0 0"
     tsize, tlh = (18, 25) if featured else (16, 23)
-    out += p(title, tsize, tlh, INK, 700, margin=tmargin)
+    # Keep date headers readable: no mid-number breaks from mobile word-break CSS
+    title_extra = "overflow-wrap:normal;word-break:normal;"
+    out += p(title, tsize, tlh, INK, 700, margin=tmargin, extra=title_extra)
     bsize, blh = (16, 24) if featured else (15, 22)
     for ln in lines:
         out += p(ln, bsize, blh, BODY, 400, margin="4px 0 0 0")
@@ -172,6 +181,50 @@ def step(n, text):
             f'style="width:26px;border-collapse:separate;background-color:{INK};border-radius:13px;"><tr>'
             f'<td align="center" style="padding:0;height:26px;">{p(str(n), 13, 26, WHITE, 700, extra="text-align:center;", cls="os-step")}</td></tr></table></td>'
             f'<td style="vertical-align:top;">{p(text, 16, 24, BODY, 400)}</td></tr></table></td></tr>')
+
+
+
+def price_boxes():
+    """Equal-size VH pay-what-you-can boxes ($0/$10/$20/$35)."""
+    boxes = [
+        ("$0", "Always<br>welcome"),
+        ("$10", "Helps"),
+        ("$20", "Suggested"),
+        ("$35", "Sponsors<br>another seat"),
+    ]
+    cells = []
+    n = len(boxes)
+    for i, (amt, label) in enumerate(boxes):
+        if i == 0:
+            pad = "0 4px 0 0"
+        elif i == n - 1:
+            pad = "0 0 0 4px"
+        else:
+            pad = "0 4px 0 4px"
+        # Two-line label slot so short captions still match tall ones
+        if "<br>" not in label:
+            label_html = f"{label}<br>&nbsp;"
+        else:
+            label_html = label
+        inner = (
+            f'<table role="presentation" class="os-paybox" cellpadding="0" cellspacing="0" border="0" width="100%" '
+            f'bgcolor="#e4e9f2" height="78" style="width:100%;height:78px;border-collapse:separate;background-color:#e4e9f2;border-radius:12px;">'
+            f'<tr><td class="os-paybox" align="center" valign="middle" height="78" style="padding:10px 4px;height:78px;vertical-align:middle;">'
+            + p(amt, 20, 24, INK, 700, extra="text-align:center;")
+            + p(label_html, 11, 14, BODY, 400, margin="4px 0 0 0", extra="text-align:center;")
+            + '</td></tr></table>'
+        )
+        cells.append(
+            f'<td class="os-stack" width="25%" valign="top" height="78" '
+            f'style="width:25%;padding:{pad};vertical-align:top;height:78px;">{inner}</td>'
+        )
+    return (
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        'style="width:100%;border-collapse:separate;margin:16px 0 0 0;"><tr>'
+        + "".join(cells)
+        + '</tr></table>'
+        + p("The meeting link is emailed to registrants.", 13, 20, SAND, 400, margin="4px 0 0 0")
+    )
 
 
 def sensory(text, link_html):
@@ -212,7 +265,7 @@ FALL_BREAK = item(
      + a("https://www.rcschools.net/o/rcs/page/rcs-academic-calendars", "RCS") + " &nbsp;&middot;&nbsp; "
      + a("https://www.cityschools.net/calendar", "MCS")], featured=True)
 VOTER = item(
-    "Voter registration deadline: Mon Oct 5",
+    "Voter registration deadline: Mon&nbsp;Oct&nbsp;5",
     ["For the Nov 3 election. Register or update your address at GoVoteTN.gov by Mon Oct 5. Early voting Oct 14 to 29. Voters with a disability can request a mail ballot by Sat Oct 24. &nbsp;"
      + a("https://govotetn.gov/", "GoVoteTN")], featured=True, first=False)
 CLOCKS = item(
@@ -241,6 +294,13 @@ ABOUT = ("A village for families like ours in Murfreesboro and surrounding areas
          "Resource Directory, sensory-friendly events, and a parent community. Built around autism and open "
          "to every kind of difference and disability.")
 
+# T353 inclusive welcome — warm Village voice; no medical claims. Used on parent-group blurb.
+INCLUSIVE_WELCOME = (
+    "Parents of children of all abilities and diagnoses are welcome. "
+    "You belong whether your child struggles a little or a lot. "
+    "Neurodivergent parents, you are welcome too."
+)
+
 NUMBERS = [
     (b("988") + " &middot; Call or text any hour."),
     (b("STEP TN") + " (IEP help): " + tel("800-280-7837", "+18002807837")
@@ -267,6 +327,8 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-col-photo{padding:0 0 16px 0 !important;}
   .os-photo{width:100% !important;max-width:160px !important;height:auto !important;}
   body,table,td,p,a,span{overflow-wrap:anywhere !important;word-break:break-word !important;}
+  .os-chip,.os-chip p,table[width="62"] p,td[width="62"] p{white-space:nowrap !important;overflow-wrap:normal !important;word-break:normal !important;}
+  .os-paybox,.os-paybox p{overflow-wrap:normal !important;word-break:normal !important;}
   img{max-width:100% !important;height:auto !important;}
   table[width="62"],td[width="62"]{width:62px !important;max-width:62px !important;}
   table[width="26"],td[width="30"]{width:26px !important;max-width:30px !important;}
@@ -428,15 +490,30 @@ def build_html(base):
     o.append(padrow(vh_art, pad="0 0 0 0"))
     o.append(sp(12))
     # Extended Village Hall from prior iteration (Topic and guest + pricing), still under IEP art
+    mercedes = (
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;"><tr>'
+        f'<td class="os-stack" width="96" valign="top" style="width:96px;padding:0 14px 0 0;vertical-align:top;">'
+        f'<img src="{art("mercedes-lawson-160.jpg")}" width="96" height="138" '
+        f'alt="Mercedes Lawson, M.S. Ed., founder of A.C.C.E.S.S." '
+        f'style="display:block;width:96px;max-width:96px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
+        f'</td><td class="os-stack" valign="top" style="padding:0;vertical-align:top;">'
+        + p("Mercedes Lawson, M.S. Ed.", 13, 18, GOLD, 700, margin="0 0 4px 0")
+        + p("Founder of A.C.C.E.S.S. in Greater Nashville. She grew up with a sibling with disabilities, "
+           "taught special education for nine years helping 250+ students, and has a child with Autism.",
+           14, 21, SAND, 400)
+        + '</td></tr></table>'
+    )
     vh = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
           '<tr><td align="left" style="padding:26px 26px 26px 26px;">'
           + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 6px 0")
           + p("9:30 to 11:00 AM Central, Online<br>Pay what you can, including nothing", 16, 24, SAND, 400, margin="0 0 18px 0")
           + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
           + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 20, 27, CREAM, 700, margin="0 0 12px 0")
-          + p("A 40-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 16, 24, SAND, 400, margin="0 0 20px 0")
+          + mercedes
+          + p("A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 16, 24, SAND, 400, margin="0 0 20px 0")
           + button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK).replace('class="os-btn"', 'class="os-btn os-btn-gold"')
-          + p("$0 always welcome, $10 helps, $20 suggested, $35 sponsors another seat. The meeting link is emailed to registrants.", 14, 22, SAND, 400, margin="16px 0 0 0")
+          + price_boxes()
           + '</td></tr></table>')
     o.append(padrow(vh))
 
@@ -447,7 +524,8 @@ def build_html(base):
         f'<tr><td class="os-rule" style="padding:12px 0 16px 0;border-bottom:1px solid {RULE};">'
         + p("Thursdays &middot; 7:00&ndash;8:00 PM Central", 16, 23, INK, 700)
         + p("Our Special Village online parent group &middot; Free &middot; Online", 15, 22, BODY, 400, margin="4px 0 0 0")
-        + p("Meeting weekly since September, so join any Thursday. Any diagnosis or none yet; cameras optional; not recorded.", 15, 22, BODY, 400, margin="4px 0 12px 0")
+        + p("Launching Thursday, Oct 1 &ndash; join any Thursday. " + INCLUSIVE_WELCOME
+            + " Cameras optional; not recorded.", 15, 22, BODY, 400, margin="4px 0 12px 0")
         + button(f"{SITE}/group", "Save my seat", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
         + '</td></tr>',
         '<tr><td class="os-rule" style="padding:14px 0 8px 0;">'
@@ -583,15 +661,17 @@ def build_text():
     w("9:30 to 11:00 AM Central, Online")
     w("Pay what you can, including nothing")
     w("Topic and guest: The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.")
-    w("A 40-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
-    w("$0 always welcome, $10 helps, $20 suggested, $35 sponsors another seat.")
+    w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has a child with Autism.")
+    w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
+    w("Pay what you can (equal boxes): $0 Always welcome / $10 Helps / $20 Suggested / $35 Sponsors another seat")
+    w("The meeting link is emailed to registrants.")
     w(f"Register for Village Hall: {SITE}/village-hall")
     w("")
     w("----------------------------------------")
     w("EVERY WEEK")
     w("")
     w("Thursdays · 7:00-8:00 PM Central · Our Special Village online parent group · Free · Online")
-    w("  Meeting weekly since September, so join any Thursday. Any diagnosis or none yet; cameras optional; not recorded.")
+    w("  Launching Thursday, Oct 1 - join any Thursday. Parents of children of all abilities and diagnoses are welcome. You belong whether your child struggles a little or a lot. Neurodivergent parents, you are welcome too. Cameras optional; not recorded.")
     w(f"  Save my seat: {SITE}/group")
     w("")
     w("Wednesdays · 5:00 PM · We Rock the Spectrum Murfreesboro group, led by Cari Parr · 820 N Thompson Ln, Murfreesboro")
@@ -626,7 +706,9 @@ def build_text():
 
 
 def deadline_chip(dow, day, moy):
-    """Newsletter-style date square (left chip)."""
+    """Newsletter-style date square (left chip). Range bottoms stay one line."""
+    if isinstance(moy, str) and moy.startswith("to "):
+        moy = "&ndash;" + moy[3:].replace(" ", "&nbsp;")
     return (
         f'<div class="chip" aria-hidden="true">'
         f'<div class="dow">{dow}</div>'
@@ -647,30 +729,30 @@ def build_deadlines_page():
     items_school = "".join([
         deadline_item(
             "Mon", "5", "Oct",
-            "Fall break, Oct 5&ndash;9: RCS and MCS",
+            "Fall break, Oct&nbsp;5&ndash;9: RCS and MCS",
             'Both districts closed. RCS conferences Tue Oct 20; MCS conferences Tue Nov 3 (no school). '
             '<a href="https://www.rcschools.net/o/rcs/page/rcs-academic-calendars">RCS</a>, '
             '<a href="https://www.cityschools.net/calendar">MCS</a>'),
         deadline_item(
             "Mon", "5", "Oct",
-            "Voter registration deadline: Mon Oct 5",
+            "Voter registration deadline: Mon&nbsp;Oct&nbsp;5",
             'For the Nov 3 election. Early voting Oct 14&ndash;29; disability mail-ballot requests by Sat Oct 24. '
             '<a href="https://govotetn.gov/">GoVoteTN</a>'),
         deadline_item(
             "Sun", "1", "Nov",
-            "Clocks fall back: Sun Nov 1",
+            "Clocks fall back: Sun&nbsp;Nov&nbsp;1",
             'DST ends 2:00 AM. Shift bedtime gradually if sleep is fragile. '
             '<a href="https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst">NIST</a>'),
     ])
     items_health = "".join([
         deadline_item(
             "Oct", "15", "to Dec 7",
-            "Medicare open enrollment: Oct 15&ndash;Dec 7",
+            "Medicare open enrollment: Oct&nbsp;15&ndash;Dec&nbsp;7",
             'Compare or switch drug and Advantage plans for 2027. TN SHIP: 1-877-801-0044. '
             '<a href="https://www.medicare.gov/health-drug-plans/open-enrollment">Medicare.gov</a>'),
         deadline_item(
             "Nov", "1", "to Jan 15",
-            "HealthCare.gov: Nov 1&ndash;Jan 15",
+            "HealthCare.gov: Nov&nbsp;1&ndash;Jan&nbsp;15",
             'Enroll by Dec 15 for Jan 1 coverage. Kids may qualify for TennCare or CoverKids any time. '
             '<a href="https://www.healthcare.gov/quick-guide/dates-and-deadlines/">Dates</a>'),
         deadline_item(
@@ -681,33 +763,33 @@ def build_deadlines_page():
     items_money = "".join([
         deadline_item(
             "Wed", "14", "Oct",
-            "SSI / Social Security COLA announced: Wed Oct 14",
+            "SSI / Social Security COLA announced: Wed&nbsp;Oct&nbsp;14",
             'Expected with the September inflation report; new amounts start in January. '
             '<a href="https://www.ssa.gov/cola/">SSA COLA</a>'),
     ])
     items_teens = "".join([
         deadline_item(
             "Thu", "1", "Oct",
-            "FAFSA for 2027&ndash;28 opens: Thu Oct 1",
+            "FAFSA for 2027&ndash;28 opens: Thu&nbsp;Oct&nbsp;1",
             'Free. TN Promise students must file by April 1, 2027. '
             '<a href="https://studentaid.gov/h/apply-for-aid/fafsa">StudentAid.gov</a>'),
         deadline_item(
             "Thu", "1", "Oct",
-            "Education Freedom Scholarship office hours: Thu Oct 1, 1&ndash;2 PM CT",
+            "Education Freedom Scholarship office hours: Thu&nbsp;Oct&nbsp;1, 1&ndash;2&nbsp;PM&nbsp;CT",
             '2027&ndash;28 application dates not posted yet. '
             '<a href="https://www.tn.gov/education/efs.html">EFS</a>'),
         deadline_item(
             "Mon", "2", "Nov",
-            "Tennessee Promise deadline: Mon Nov 2",
+            "Tennessee Promise deadline: Mon&nbsp;Nov&nbsp;2",
             'Class of 2027. <a href="https://www.collegefortn.org/tnpromise/">CollegeforTN</a>'),
         deadline_item(
             "Fri", "6", "Nov",
-            "ACT accommodations for Dec 12: Fri Nov 6",
+            "ACT accommodations for Dec&nbsp;12: Fri&nbsp;Nov&nbsp;6",
             'Through your school testing coordinator. '
             '<a href="https://www.act.org/content/act/en/products-and-services/the-act/registration/accommodations.html">ACT accommodations</a>'),
         deadline_item(
             "Mon", "16", "Feb",
-            "Individualized Education Account: projected Feb 16, 2027",
+            "Individualized Education Account: projected Feb&nbsp;16,&nbsp;2027",
             'Needs an active IEP and a prior year in a Tennessee public school. '
             '<a href="https://www.tn.gov/education/iea.html">IEA</a>'),
     ])
@@ -731,11 +813,12 @@ h2{{color:{INK};font-size:18px;margin:28px 0 10px;}}
 .meta{{color:{MUTED};font-size:14px;margin:0 0 24px;}}
 .item{{display:flex;gap:14px;align-items:flex-start;background:{WHITE};border:1px solid {HAIR};border-radius:12px;padding:14px 16px;margin:0 0 10px;}}
 .chip{{flex:0 0 62px;width:62px;background:{BLUSH};border-radius:10px;text-align:center;padding:7px 3px;box-sizing:border-box;}}
+.chip .dow,.chip .dom,.chip .moy{{white-space:nowrap;overflow-wrap:normal;word-break:normal;}}
 .chip .dow{{color:{ACCENT};font-size:12px;line-height:14px;font-weight:700;}}
 .chip .dom{{color:{INK};font-size:22px;line-height:26px;font-weight:700;margin:1px 0 0;}}
 .chip .moy{{color:{BODY};font-size:11px;line-height:14px;font-weight:700;}}
 .body{{flex:1;min-width:0;}}
-.body strong{{color:{INK};display:block;margin-bottom:4px;font-size:16px;}}
+.body strong{{color:{INK};display:block;margin-bottom:4px;font-size:16px;overflow-wrap:normal;word-break:normal;}}
 a{{color:{ACCENT};font-weight:700;}}
 .back{{margin:0 0 20px;font-size:14px;}}
 </style></head><body><main>
@@ -799,17 +882,22 @@ def main():
     assert "Welcome to the Our Special Village family!" in html
     assert "October gets full fast" not in html
     assert "Sensory:" not in html
-    assert "Voter registration deadline: Mon Oct 5" in html
+    assert "Voter registration deadline: Mon&nbsp;Oct&nbsp;5" in html
     assert "Topic and guest" in html
-    assert "$35 sponsors another seat" in html
+    assert "Sponsors<br>another seat" in html or "Sponsors another seat" in html
     # FEEDBACK-2: Village Hall navy card must never use interpunct dots
     assert "9:30 to 11:00 AM Central, Online" in html
     assert "9:30 to 11:00 AM Central &middot;" not in html
-    assert "$0 always welcome, $10 helps" in html
+    assert "Always<br>welcome" in html and "Helps" in html and "Suggested" in html
+    assert "os-paybox" in html
     assert "$0 always welcome &middot;" not in html
+    assert "45-minute lesson" in html
+    assert "mercedes-lawson-160.jpg" in html
+    assert INCLUSIVE_WELCOME.split(".")[0] in html
     assert 'class="chip"' in deadlines
     assert "Sun" in deadlines and "Nov" in deadlines
-    assert "Meeting weekly since September" in html
+    assert "Launching Thursday, Oct 1" in html
+    assert "Neurodivergent parents, you are welcome too" in html
     assert 'width="96"' in html and "signature-taylor.png" in html
     assert 'align="center"' in html and "about-family-bowling-small.jpg" in html
     text = re.sub(r"<style.*?</style>", " ", html, flags=re.S | re.I)
