@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T355 Hickok intro/support).
+"""Build the October 2026 Our Special Village newsletter (T365 desktop browser layout).
 
-Writes newsletter-october-subscriber-preview.html, an identical index.html,
-newsletter-october-2026.txt, and deadlines-october-2026.html (full deadline list).
+Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
+tags), index.html (hosted browser preview: wider desktop layout + real link
+destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
-T355: replace intro with "October in Our Special Village" copy (body font, not
-full italic); keep signature PNG; tighter spacing; optional circular Taylor photo;
-compact "In this issue"; highlight alone-callout; section heading Connect with
-Other Local Parents; two equal badge cards; remove T353 inclusive lines; parent
-supervision note on We Rock; Cari Parr retained (live OSV support-groups/events).
+T365: browser/desktop composition only - keep email 600px stacked layout. Wider
+wrap (~880px), selective desktop columns (library, Village Hall, parent cards),
+clickable In this issue chips, Village Hall moved up, tighter intro, T364-aligned
+support cards, sentence-case Connect heading, readable tiny text, browser URLs.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
 
@@ -20,6 +20,9 @@ import re
 
 PAGES = "https://tmacocx.github.io/osv-newsletter-october-preview/"
 SITE = "https://ourspecialvillagetn.com"
+BROWSER_VIEW_URL = PAGES
+BROWSER_UNSUB_URL = f"{SITE}/newsletter"
+WRTS_URL = "https://werockthespectrummurfreesboro.com/"
 
 CREAM = "#f7f1e2"
 WHITE = "#ffffff"
@@ -184,21 +187,102 @@ def badges_row(labels):
     )
 
 
-def group_card(badges, name, when, where, cost, body_paras, btn_href, btn_label):
-    """Equal support-group card: badges, name, day/time, location, cost, blurb, one button."""
-    body = "".join(p(t, 15, 22, BODY, 400, margin="8px 0 0 0") for t in body_paras)
+def meta_line(label):
+    """Single meta row for support cards (email-safe; no art/icons)."""
+    return p(label, 15, 22, BODY, 400, margin="4px 0 0 0")
+
+
+def good_to_know(items):
+    """T364 mockup checklist block."""
+    rows = []
+    for t in items:
+        rows.append(
+            '<tr><td valign="top" style="padding:0 8px 6px 0;width:16px;">'
+            f'<span style="font-family:{FONT};font-size:15px;line-height:22px;color:{ACCENT};font-weight:700;">&#10003;</span>'
+            '</td><td valign="top" style="padding:0 0 6px 0;">'
+            + p(t, 15, 22, BODY, 400)
+            + '</td></tr>'
+        )
+    return (
+        p("Good to know", 15, 22, INK, 700, margin="14px 0 8px 0")
+        + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        'style="width:100%;border-collapse:collapse;">'
+        + "".join(rows)
+        + '</table>'
+    )
+
+
+def group_card(badges, name, meta_lines, blurb, good_items, btn_href, btn_label):
+    """T364-aligned support-group card: badges, meta, blurb, Good to know, button."""
+    metas = "".join(meta_line(m) for m in meta_lines)
     inner = (
         badges_row(badges)
         + p(name, 17, 23, INK, 700, margin="0")
-        + p(when, 15, 22, BODY, 400, margin="6px 0 0 0")
-        + p(where, 15, 22, BODY, 400, margin="2px 0 0 0")
-        + p(cost, 15, 22, BODY, 400, margin="2px 0 0 0")
-        + body
-        + '<div style="margin:14px 0 0 0;">'
+        + metas
+        + p(blurb, 15, 22, BODY, 400, margin="10px 0 0 0")
+        + good_to_know(good_items)
+        + '<div style="margin:16px 0 0 0;">'
         + button(btn_href, btn_label, INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
         + '</div>'
     )
     return card(inner, pad="16px 18px 16px 18px")
+
+
+def browser_cols(*pieces, gap=16):
+    """Stacked by default (email + mobile); side-by-side only on wide browser screens.
+
+    Single DOM (no MSO duplicate) so email word-count and CTAs stay once. Outlook
+    ignores flex and keeps the stacked block layout matching the 600px email.
+    """
+    items = []
+    for i, piece in enumerate(pieces):
+        margin = "0" if i == len(pieces) - 1 else f"0 0 {gap}px 0"
+        items.append(
+            f'<div class="os-browser-col" style="display:block;width:100%;margin:{margin};'
+            f'vertical-align:top;box-sizing:border-box;">{piece}</div>'
+        )
+    return (
+        f'<div class="os-browser-cols" style="display:block;width:100%;">{"".join(items)}</div>'
+    )
+
+
+def issue_chip(href, label):
+    """Clickable In this issue chip/card."""
+    return (
+        f'<a href="{href}" style="display:block;text-decoration:none;border:0;outline:none;">'
+        f'<table role="presentation" class="os-issue-chip" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        f'bgcolor="{WHITE}" style="width:100%;border-collapse:separate;background-color:{WHITE};'
+        f'border:1px solid {HAIR};border-radius:12px;box-shadow:0 1px 2px rgba(27,35,64,0.05);">'
+        f'<tr><td align="center" style="padding:12px 10px;">'
+        f'<span style="font-family:{FONT};font-size:14px;line-height:18px;color:{INK};font-weight:700;'
+        f'text-align:center;">{label}</span>'
+        f'</td></tr></table></a>'
+    )
+
+
+def issue_chips_block():
+    chips = [
+        ("#deadlines", "Fall break"),
+        ("#ongoing", "Parent support"),
+        ("#events", "Sensory-friendly events"),
+        ("#library", "New resources"),
+    ]
+    # 2x2 table — stacks cleanly; desktop CSS can keep as grid via browser_cols of rows
+    cells = []
+    for i, (href, label) in enumerate(chips):
+        pad = "0 6px 10px 0" if i % 2 == 0 else "0 0 10px 6px"
+        if i >= 2:
+            pad = "0 6px 0 0" if i % 2 == 0 else "0 0 0 6px"
+        cells.append(
+            f'<td class="os-issue-cell" width="50%" valign="top" style="width:50%;padding:{pad};">'
+            f'{issue_chip(href, label)}</td>'
+        )
+    return (
+        p(f'<b style="color:{ACCENT};font-weight:700;">In this issue</b>', 13, 20, MUTED, 400, margin="0 0 10px 0", cls="os-tiny")
+        + '<table role="presentation" class="os-issue-grid" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        'style="width:100%;border-collapse:collapse;">'
+        f'<tr>{cells[0]}{cells[1]}</tr><tr>{cells[2]}{cells[3]}</tr></table>'
+    )
 
 
 def story_img(src, width, alt, radius=12, link=None, extra_style=""):
@@ -351,6 +435,23 @@ def head():
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
 u + #os-body a{color:ACCENT;text-decoration:underline;}
+/* T365: browser/desktop only - email clients keep inline max-width:600px */
+@media only screen and (min-width:700px){
+  .os-wrap{max-width:880px !important;width:100% !important;}
+  .os-hero{max-width:880px !important;}
+  .os-browser-cols{display:flex !important;flex-direction:row !important;gap:16px !important;align-items:stretch !important;width:100% !important;}
+  .os-browser-col{flex:1 1 0 !important;width:auto !important;max-width:none !important;margin:0 !important;}
+  .os-intro-photo{width:120px !important;max-width:120px !important;height:120px !important;}
+  .os-intro-photocell{width:120px !important;}
+  .os-vh-portrait{width:120px !important;max-width:120px !important;}
+  .os-tiny,.os-tiny a,.os-footer p{font-size:14px !important;line-height:21px !important;}
+  .os-confirm{font-size:14px !important;line-height:21px !important;}
+  .os-desk-hide{display:none !important;max-height:0 !important;overflow:hidden !important;mso-hide:all;}
+  .os-desk-show{display:block !important;}
+}
+@media only screen and (max-width:699px){
+  .os-desk-show{display:none !important;max-height:0 !important;overflow:hidden !important;}
+}
 @media only screen and (max-width:620px){
   html,body{width:100% !important;max-width:100% !important;overflow-x:hidden !important;-webkit-text-size-adjust:100% !important;}
   .os-wrap,.os-wrap table{width:100% !important;max-width:100% !important;}
@@ -362,9 +463,12 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;}
   .os-col-photo{padding:0 0 16px 0 !important;}
   .os-photo{width:100% !important;max-width:160px !important;height:auto !important;}
-  .os-intro-photo{width:72px !important;max-width:72px !important;height:72px !important;border-radius:50% !important;}
+  .os-intro-photo{width:96px !important;max-width:96px !important;height:96px !important;border-radius:50% !important;}
   .os-intro-col{display:block !important;width:100% !important;max-width:100% !important;}
   .os-intro-photocell{padding:0 0 12px 0 !important;text-align:left !important;}
+  .os-browser-cols{display:block !important;}
+  .os-browser-col{display:block !important;width:100% !important;margin:0 0 16px 0 !important;}
+  .os-issue-cell{display:block !important;width:100% !important;max-width:100% !important;padding:0 0 10px 0 !important;}
   body,table,td,p,a,span{overflow-wrap:anywhere !important;word-break:break-word !important;}
   .os-chip,.os-chip p,table[width="62"] p,td[width="62"] p{white-space:nowrap !important;overflow-wrap:normal !important;word-break:normal !important;}
   .os-paybox,.os-paybox p{overflow-wrap:normal !important;word-break:normal !important;}
@@ -389,7 +493,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T355: Hickok intro + Connect with Other Local Parents support cards. Audience = parents/caregivers of neurodivergent children. -->
+<!-- T365: browser/desktop layout (email 600px unchanged). T355 intro + T364-aligned support cards. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -401,7 +505,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 </head>'''
 
 
-def build_html(base):
+def build_html(base, browser=False):
     art = lambda f: f"{base}art/{f}"
     o = []
     o.append(head())
@@ -411,8 +515,10 @@ def build_html(base):
              '<tr><td align="center" style="padding:20px 12px 40px 12px;">'
              '<table role="presentation" class="os-wrap" cellpadding="0" cellspacing="0" border="0" width="600" style="width:100%;max-width:600px;border-collapse:collapse;">')
 
-    vib = ('<a class="os-muted" href="{$url}" style="color:' + MUTED + ';text-decoration:underline;">View in browser</a>')
-    o.append(padrow(p(vib, 12, 17, MUTED, 400, extra="text-align:center;"), pad="0 34px 12px 34px"))
+    view_href = BROWSER_VIEW_URL if browser else "{$url}"
+    unsub_href = BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
+    vib = ('<a class="os-muted os-tiny" href="' + view_href + '" style="color:' + MUTED + ';text-decoration:underline;">View in browser</a>')
+    o.append(padrow(p(vib, 13, 18, MUTED, 400, extra="text-align:center;", cls="os-tiny"), pad="0 34px 12px 34px"))
 
     o.append(padrow(
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
@@ -421,7 +527,7 @@ def build_html(base):
         '</tr></table>', pad="0 34px 14px 34px"))
 
     o.append('<tr><td align="left" style="padding:0;">'
-             f'<img src="{art("newsletter-fall.jpg")}" width="600" alt="Illustration of the village in autumn: homes, a gazebo, shops, and neighbors walking the path." '
+             f'<img class="os-hero" src="{art("newsletter-fall.jpg")}" width="600" alt="Illustration of the village in autumn: homes, a gazebo, shops, and neighbors walking the path." '
              'style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;border-radius:16px;"></td></tr>')
     o.append(sp(18))
     o.append(padrow(
@@ -429,15 +535,20 @@ def build_html(base):
         f'mso-line-height-rule:exactly;color:{INK};font-weight:700;letter-spacing:-0.3px;">October in Our Special Village</h1>'))
 
     o.append(sp(14))
-    # T355 intro: regular body font (not italic), tighter spacing, circular photo, alone highlight, issue line
+    # T365 intro: shorter welcome beside larger portrait + issue chips (desktop two-column)
     alone_hi = (
         f'<span style="background-color:{BLUSH};color:{INK};padding:1px 4px;border-radius:4px;">'
         f'{ALONE_PHRASE}</span>'
     )
+    # Keep full copy on mobile/email; desktop CSS can hide the middle para to tighten first screen
     note_paras_html = []
     for i, para in enumerate(NOTE_PARAS):
         html_para = para.replace(ALONE_PHRASE, alone_hi) if ALONE_PHRASE in para else para
-        note_paras_html.append(p(html_para, 16, 24, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0")))
+        # Browser preview only: hide middle para on wide desktop to tighten first screen.
+        cls = "os-desk-hide" if (browser and i == 1) else ""
+        note_paras_html.append(
+            p(html_para, 16, 24, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0"), cls=cls)
+        )
     note_copy = "".join(note_paras_html)
     note_copy += p("With love,", 16, 24, BODY, 400, margin="12px 0 2px 0")
     note_copy += (
@@ -446,21 +557,24 @@ def build_html(base):
         f'text-decoration:none;font-family:Georgia, Times New Roman, serif;font-size:22px;font-style:italic;color:{ACCENT};">'
     )
     photo = (
-        f'<img class="os-intro-photo" src="{art("taylor-hickok-160.jpg")}" width="72" height="72" '
+        f'<img class="os-intro-photo" src="{art("taylor-hickok-160.jpg")}" width="96" height="96" '
         f'alt="Dr. Taylor Hickok, founder of Our Special Village." '
-        f'style="display:block;width:72px;max-width:72px;height:72px;margin:0;padding:0;border:0;outline:none;'
+        f'style="display:block;width:96px;max-width:96px;height:96px;margin:0;padding:0;border:0;outline:none;'
         f'text-decoration:none;border-radius:50%;object-fit:cover;">'
     )
-    intro = (
+    photo_block = (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;"><tr>'
-        f'<td class="os-intro-col" align="left" valign="top" style="vertical-align:top;padding:0 14px 0 0;">{note_copy}</td>'
-        f'<td class="os-intro-col os-intro-photocell" width="72" align="right" valign="top" '
-        f'style="width:72px;vertical-align:top;padding:4px 0 0 0;">{photo}</td>'
-        '</tr></table>'
-        + p(f'<b style="color:{ACCENT};font-weight:700;">In this issue</b> &nbsp;{IN_THIS_ISSUE}',
-            13, 20, MUTED, 400, margin="14px 0 0 0")
+        'style="width:100%;border-collapse:collapse;">'
+        f'<tr><td class="os-intro-photocell" align="center" style="padding:0 0 8px 0;">{photo}</td></tr>'
+        f'<tr><td align="center" style="padding:0;">'
+        + p("Dr. Taylor Hickok", 15, 20, INK, 700, extra="text-align:center;")
+        + p("Founder &middot; SLP &middot; AuDHD parent", 13, 18, MUTED, 400, margin="2px 0 0 0",
+            extra="text-align:center;", cls="os-tiny")
+        + '</td></tr></table>'
     )
+    # Desktop: welcome | photo+chips. Email/mobile: stacked via browser_cols default.
+    right_col = photo_block + '<div style="margin:14px 0 0 0;">' + issue_chips_block() + '</div>'
+    intro = browser_cols(note_copy, right_col, gap=20)
     o.append(padrow(intro))
 
     o.append(sp(28))
@@ -470,8 +584,54 @@ def build_html(base):
     o.append(sp(14))
     o.append(padrow(
         button(DEADLINES_URL, "See all deadlines", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
-        + p("Dates confirmed Sept 14. If something changed, reply and we will fix it.", 13, 20, MUTED, 400, margin="12px 0 0 0")))
+        + p("Dates confirmed Sept 14. If something changed, reply and we will fix it.", 13, 20, MUTED, 400, margin="12px 0 0 0", cls="os-confirm")))
 
+
+    # --- Village Hall (T365: raise after Three things; "The next deep dive") ---
+    o.append(sp(40))
+    o.append(padrow(
+        anchor("village-hall")
+        + rule()
+        + p("The next deep dive", 13, 18, ACCENT, 700, margin="14px 0 0 0")
+        + (f'<h2 class="os-h2 os-ink" style="margin:6px 0 0 0;font-family:{FONT};font-size:21px;'
+           f'line-height:27px;mso-line-height-rule:exactly;color:{INK};font-weight:700;">Village Hall</h2>')
+        + p("One topic. One guest expert. Your questions.", 16, 24, BODY, 400, margin="8px 0 0 0")
+    ))
+    o.append(sp(16))
+    vh_art = story_img(
+        art("village-hall-iep.jpg"), 600,
+        "Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting",
+        radius=12)
+    mercedes = (
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;"><tr>'
+        f'<td class="os-stack" width="120" valign="top" style="width:120px;padding:0 14px 0 0;vertical-align:top;">'
+        f'<img class="os-vh-portrait" src="{art("mercedes-lawson-160.jpg")}" width="120" height="172" '
+        f'alt="Mercedes Lawson, M.S. Ed., founder of A.C.C.E.S.S." '
+        f'style="display:block;width:120px;max-width:120px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
+        f'</td><td class="os-stack" valign="middle" style="padding:0;vertical-align:middle;">'
+        + p("Mercedes Lawson, M.S. Ed.", 16, 22, GOLD, 700, margin="0 0 4px 0")
+        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 14, 20, SAND, 700, margin="0 0 6px 0")
+        + p("She grew up with a sibling with disabilities, taught special education for nine years "
+           "helping 250+ students, and has a child with Autism.",
+           14, 21, SAND, 400)
+        + '</td></tr></table>'
+    )
+    vh_panel = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
+          '<tr><td align="left" style="padding:22px 22px 22px 22px;">'
+          + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 6px 0")
+          + p("9:30 to 11:00 AM Central, Online<br>Pay what you can, including nothing", 16, 24, SAND, 400, margin="0 0 16px 0")
+          + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
+          + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 18, 25, CREAM, 700, margin="0 0 12px 0")
+          + mercedes
+          + p("A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 15, 22, SAND, 400, margin="0 0 18px 0")
+          + button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK).replace('class="os-btn"', 'class="os-btn os-btn-gold"')
+          + price_boxes()
+          + '</td></tr></table>')
+    # Desktop: artwork | navy panel. Email/mobile: stacked (unchanged order).
+    o.append(padrow(browser_cols(vh_art, vh_panel, gap=16), pad="0 34px"))
+
+    # --- The month ahead ---
     o.append(sp(40))
     o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro."))
     o.append(sp(16))
@@ -495,6 +655,7 @@ def build_html(base):
     o.append(sp(16))
     o.append(padrow(button(EVENTS_CAL_URL, "View the full October events calendar", INK, CREAM, align="center").replace('class="os-btn"', 'class="os-btn os-btn-navy"')))
 
+    # --- Library (desktop two-up) ---
     o.append(sp(40))
     o.append(section_head("library", "New in the library"))
     o.append(sp(16))
@@ -506,12 +667,10 @@ def build_html(base):
         f'style="display:block;width:100%;max-width:490px;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 12px 0;">'
     )
     therapy = (therapy_img
-               + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 4px 0")
+               + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 4px 0", cls="os-tiny")
                + p("Therapy styles: play, structure, and compliance", 17, 24, INK, 700)
                + p("Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like.", 15, 22, BODY, 400, margin="6px 0 0 0")
                + p(a(f"{SITE}/resources/therapy-styles", "Read the guide"), 15, 22, BODY, 400, margin="10px 0 0 0"))
-    o.append(padrow(card(therapy, pad="12px 20px 16px 20px")))
-    o.append(sp(16))
     grief_img = (
         f'<img src="{art("guide-grief-landscape.jpg")}" '
         f'srcset="{art("guide-grief-landscape-280.jpg")} 280w, {art("guide-grief-landscape.jpg")} 490w" '
@@ -520,12 +679,17 @@ def build_html(base):
         f'style="display:block;width:100%;max-width:490px;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 12px 0;">'
     )
     grief = (grief_img
-             + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 4px 0")
+             + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 4px 0", cls="os-tiny")
              + p("Grief and disability: the loss nobody sends a card for", 17, 24, INK, 700)
              + p("This kind of grief rarely has an occasion attached. It shows up at a birthday, a missed milestone, or in the parking lot after an evaluation.", 15, 22, BODY, 400, margin="6px 0 0 0")
              + p(a(f"{SITE}/resources/grieving-the-life-you-imagined", "Read the grief guide"), 15, 22, BODY, 400, margin="10px 0 0 0"))
-    o.append(padrow(card(grief, pad="12px 20px 16px 20px")))
+    o.append(padrow(browser_cols(
+        card(therapy, pad="12px 16px 16px 16px"),
+        card(grief, pad="12px 16px 16px 16px"),
+        gap=16,
+    )))
 
+    # --- One question ---
     o.append(sp(40))
     o.append(section_head("question", "One question, answered",
                           "One real question from a local parent, answered plainly. " + a(f"{SITE}/contact", "Send us yours")))
@@ -540,58 +704,28 @@ def build_html(base):
           + p("An IEP is legally binding. The school has to deliver what is written in it.", 16, 24, BODY, 400, margin="12px 0 12px 0")
           + steps
           + p(a(f"{SITE}/resources/iep-504", "IEP &amp; 504 guide") + " &nbsp;&middot;&nbsp; " + a("https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html", "TDOE dispute options"), 15, 22, BODY, 400, margin="4px 0 0 0")
-          + p("Parent-to-parent guidance, not legal advice.", 13, 20, MUTED, 400, margin="10px 0 0 0"))
+          + p("Parent-to-parent guidance, not legal advice.", 13, 20, MUTED, 400, margin="10px 0 0 0", cls="os-tiny"))
     o.append(padrow(card(qa, pad="16px 20px 16px 20px")))
 
-    o.append(sp(16))
-    vh_art = story_img(
-        art("village-hall-iep.jpg"), 600,
-        "Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting",
-        radius=12)
-    o.append(padrow(vh_art, pad="0 0 0 0"))
-    o.append(sp(12))
-    # Extended Village Hall from prior iteration (Topic and guest + pricing), still under IEP art
-    mercedes = (
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;"><tr>'
-        f'<td class="os-stack" width="96" valign="top" style="width:96px;padding:0 14px 0 0;vertical-align:top;">'
-        f'<img src="{art("mercedes-lawson-160.jpg")}" width="96" height="138" '
-        f'alt="Mercedes Lawson, M.S. Ed., founder of A.C.C.E.S.S." '
-        f'style="display:block;width:96px;max-width:96px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
-        f'</td><td class="os-stack" valign="top" style="padding:0;vertical-align:top;">'
-        + p("Mercedes Lawson, M.S. Ed.", 13, 18, GOLD, 700, margin="0 0 4px 0")
-        + p("Founder of A.C.C.E.S.S. in Greater Nashville. She grew up with a sibling with disabilities, "
-           "taught special education for nine years helping 250+ students, and has a child with Autism.",
-           14, 21, SAND, 400)
-        + '</td></tr></table>'
-    )
-    vh = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
-          '<tr><td align="left" style="padding:26px 26px 26px 26px;">'
-          + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 6px 0")
-          + p("9:30 to 11:00 AM Central, Online<br>Pay what you can, including nothing", 16, 24, SAND, 400, margin="0 0 18px 0")
-          + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
-          + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 20, 27, CREAM, 700, margin="0 0 12px 0")
-          + mercedes
-          + p("A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 16, 24, SAND, 400, margin="0 0 20px 0")
-          + button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK).replace('class="os-btn"', 'class="os-btn os-btn-gold"')
-          + price_boxes()
-          + '</td></tr></table>')
-    o.append(padrow(vh))
-
+    # --- Connect / support (T364 mockup + T365 desktop columns) ---
     o.append(sp(40))
-    o.append(section_head("ongoing", "Connect with Other Local Parents"))
+    o.append(section_head("ongoing", "Connect with other local parents"))
     o.append(sp(16))
     online_card = group_card(
         ["ONLINE", "FREE", "WEEKLY"],
         "Our Special Village Online Parent Group",
-        "Thursdays &middot; 7:00&ndash;8:00 PM Central",
-        "Online",
-        "Free",
         [
-            "Connect with other parents and caregivers of neurodivergent and disabled children "
-            "in a welcoming, judgment-free space. A formal diagnosis is not required.",
-            "Join us beginning Thursday, October 1 &ndash; or drop in on any Thursday that works for your family.",
-            "Cameras are optional, and meetings are never recorded.",
+            "Thursdays",
+            "7:00&ndash;8:00 PM Central",
+            "Online",
+        ],
+        "Connect with parents and caregivers of neurodivergent and disabled children "
+        "in a welcoming, judgment-free space.",
+        [
+            "No formal diagnosis required",
+            "Drop in any Thursday beginning October 1",
+            "Cameras are optional",
+            "Meetings are never recorded",
         ],
         f"{SITE}/group",
         "Join the Online Group",
@@ -599,23 +733,22 @@ def build_html(base):
     werock_card = group_card(
         ["IN PERSON", "FREE", "WEEKLY"],
         "We Rock the Spectrum Parent Group",
-        "Wednesdays &middot; 5:00 PM",
-        "We Rock the Spectrum Murfreesboro &middot; 820 N. Thompson Lane, Murfreesboro",
-        "Parent group: Free",
         [
-            "Led by Cari Parr. This in-person group gives parents and caregivers an opportunity "
-            "to connect while children play in the gym.",
-            "Parents stay with and supervise their children during gym play (this is not included childcare). "
-            "Discounted gym admission is available for children.",
-            f"Questions? Call {tel('(615) 962-8627', '+16159628627')} or email "
-            f"{a('mailto:info@werockthespectrummurfreesboro.com', 'info@werockthespectrummurfreesboro.com', nowrap=False)}.",
+            "Wednesdays at 5:00 PM",
+            "We Rock the Spectrum Murfreesboro",
+            "820 N. Thompson Lane, Murfreesboro",
         ],
-        "mailto:info@werockthespectrummurfreesboro.com",
-        "Contact We Rock the Spectrum",
+        "Connect with other parents and caregivers while children enjoy gym play.",
+        [
+            "Led by Cari Parr",
+            "Parents remain with their children",
+            "Childcare is not provided",
+            "Discounted gym admission is available",
+        ],
+        WRTS_URL,
+        "Plan Your Visit",
     )
-    o.append(padrow(online_card))
-    o.append(sp(16))
-    o.append(padrow(werock_card))
+    o.append(padrow(browser_cols(online_card, werock_card, gap=16)))
 
     o.append(sp(40))
     about_copy = ((f'<h2 class="os-ink" style="margin:0;font-family:{FONT};font-size:17px;line-height:23px;'
@@ -651,9 +784,9 @@ def build_html(base):
     footer = (p("Our Special Village &middot; Murfreesboro and surrounding areas, Tennessee", 14, 21, INK, 700, margin="0 0 6px 0")
               + p("Local businesses and practices help keep the Village free and ad-free. " + a(f"{SITE}/sponsors", "Sponsorship options", nowrap=False) + ".", 13, 20, BODY, 400, margin="0 0 12px 0")
               + p("You are receiving this because you joined the newsletter list at ourspecialvillagetn.com.<br>"
-                  + a("{$unsubscribe}", "Unsubscribe in one click", nowrap=False) + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/privacy", "Privacy") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/contact", "Contact"), 12, 20, BODY, 400, margin="0 0 10px 0")
-              + p("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC<br>1810 Ward Dr, Suite 101, Murfreesboro, TN 37129", 12, 18, BODY, 400))
-    o.append(padrow(footer))
+                  + a(unsub_href, "Unsubscribe in one click", nowrap=False) + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/privacy", "Privacy") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/contact", "Contact"), 13, 20, BODY, 400, margin="0 0 10px 0", cls="os-tiny")
+              + p("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC<br>1810 Ward Dr, Suite 101, Murfreesboro, TN 37129", 13, 19, BODY, 400, cls="os-tiny"))
+    o.append(padrow('<div class="os-footer">' + footer + '</div>'))
 
     o.append('</table></td></tr></table></body></html>')
     return "\n".join(o) + "\n"
@@ -699,6 +832,19 @@ def build_text():
     w("Dates confirmed Sept 14. If something changed, reply and we will fix it.")
     w("")
     w("----------------------------------------")
+    w("THE NEXT DEEP DIVE · VILLAGE HALL")
+    w("")
+    w("Village Hall: Saturday, October 10, 2026")
+    w("9:30 to 11:00 AM Central, Online")
+    w("Pay what you can, including nothing")
+    w("Topic and guest: The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.")
+    w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has a child with Autism.")
+    w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
+    w("Pay what you can (equal boxes): $0 Always welcome / $10 Helps / $20 Suggested / $35 Sponsors another seat")
+    w("The meeting link is emailed to registrants.")
+    w(f"Register for Village Hall: {SITE}/village-hall")
+    w("")
+    w("----------------------------------------")
     w("THE MONTH AHEAD")
     w("Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.")
     w("")
@@ -741,33 +887,20 @@ def build_text():
     w("TDOE dispute options: https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html")
     w("Parent-to-parent guidance, not legal advice.")
     w("")
-    w("Village Hall: Saturday, October 10, 2026")
-    w("9:30 to 11:00 AM Central, Online")
-    w("Pay what you can, including nothing")
-    w("Topic and guest: The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.")
-    w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has a child with Autism.")
-    w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
-    w("Pay what you can (equal boxes): $0 Always welcome / $10 Helps / $20 Suggested / $35 Sponsors another seat")
-    w("The meeting link is emailed to registrants.")
-    w(f"Register for Village Hall: {SITE}/village-hall")
-    w("")
     w("----------------------------------------")
     w("CONNECT WITH OTHER LOCAL PARENTS")
     w("")
     w("Our Special Village Online Parent Group · ONLINE · FREE · WEEKLY")
-    w("  Thursdays · 7:00-8:00 PM Central · Online · Free")
-    w("  Connect with other parents and caregivers of neurodivergent and disabled children in a welcoming, judgment-free space. A formal diagnosis is not required.")
-    w("  Join us beginning Thursday, October 1 - or drop in on any Thursday that works for your family.")
-    w("  Cameras are optional, and meetings are never recorded.")
+    w("  Thursdays · 7:00-8:00 PM Central · Online")
+    w("  Connect with parents and caregivers of neurodivergent and disabled children in a welcoming, judgment-free space.")
+    w("  Good to know: No formal diagnosis required; Drop in any Thursday beginning October 1; Cameras are optional; Meetings are never recorded.")
     w(f"  Join the Online Group: {SITE}/group")
     w("")
     w("We Rock the Spectrum Parent Group · IN PERSON · FREE · WEEKLY")
-    w("  Wednesdays · 5:00 PM · We Rock the Spectrum Murfreesboro · 820 N. Thompson Lane, Murfreesboro")
-    w("  Parent group: Free · Led by Cari Parr")
-    w("  This in-person group gives parents and caregivers an opportunity to connect while children play in the gym.")
-    w("  Parents stay with and supervise their children during gym play (this is not included childcare). Discounted gym admission is available for children.")
-    w("  Questions? Call (615) 962-8627 or email info@werockthespectrummurfreesboro.com.")
-    w("  Contact We Rock the Spectrum: mailto:info@werockthespectrummurfreesboro.com")
+    w("  Wednesdays at 5:00 PM · We Rock the Spectrum Murfreesboro · 820 N. Thompson Lane, Murfreesboro")
+    w("  Connect with other parents and caregivers while children enjoy gym play.")
+    w("  Good to know: Led by Cari Parr; Parents remain with their children; Childcare is not provided; Discounted gym admission is available.")
+    w(f"  Plan Your Visit: {WRTS_URL}")
     w("")
     w("----------------------------------------")
     w("ABOUT OUR SPECIAL VILLAGE")
@@ -938,21 +1071,31 @@ def main():
     ap.add_argument("--base", default=PAGES, help="URL prefix for art/ (default: GitHub Pages)")
     ap.add_argument("--out", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
     args = ap.parse_args()
-    html = build_html(args.base)
+    html_email = build_html(args.base, browser=False)
+    html_browser = build_html(args.base, browser=True)
     txt = build_text()
     deadlines = build_deadlines_page()
     out = os.path.abspath(args.out)
     os.makedirs(out, exist_ok=True)
-    for name in ("newsletter-october-subscriber-preview.html", "index.html"):
-        with open(os.path.join(out, name), "w", encoding="utf-8") as f:
-            f.write(html)
+    with open(os.path.join(out, "newsletter-october-subscriber-preview.html"), "w", encoding="utf-8") as f:
+        f.write(html_email)
+    with open(os.path.join(out, "index.html"), "w", encoding="utf-8") as f:
+        f.write(html_browser)
     with open(os.path.join(out, "newsletter-october-2026.txt"), "w", encoding="utf-8") as f:
         f.write(txt)
     with open(os.path.join(out, "deadlines-october-2026.html"), "w", encoding="utf-8") as f:
         f.write(deadlines)
-    for s in (html, txt):
+    html = html_email  # assertions target MailerLite/email HTML
+    for s in (html_email, txt):
         assert "—" not in s and "&mdash;" not in s, "em dash found"
         assert "{$url}" in s and "{$unsubscribe}" in s
+    # Merge tags may remain in HTML comments; live hrefs must be real destinations.
+    assert f'href="{BROWSER_VIEW_URL}"' in html_browser
+    assert f'href="{BROWSER_UNSUB_URL}"' in html_browser
+    assert 'href="{$url}"' not in html_browser
+    assert 'href="{$unsubscribe}"' not in html_browser
+    for s in (html_email, html_browser, txt):
+        assert "—" not in s and "&mdash;" not in s, "em dash found"
         assert "Village Picks" not in s
         assert "Microsoft Teams" not in s
         assert "art/icons/" not in s
@@ -967,13 +1110,20 @@ def main():
     assert "Three things to know this month" in html
     assert "See all deadlines" in html
     assert "View the full October events calendar" in html
-    assert "Connect with Other Local Parents" in html
+    assert "Connect with other local parents" in html
+    assert "Connect with Other Local Parents" not in html
     assert "Support groups in Murfreesboro" not in html
     assert "Every week" not in html
     assert "Ongoing this month" not in html
     assert html.count("Register for Village Hall") == 1
     assert "In this issue" in html
-    assert "Fall break &middot; Parent support &middot; Sensory-friendly events &middot; New resources" in html
+    assert "os-issue-chip" in html
+    assert "#deadlines" in html and "#ongoing" in html and "#events" in html and "#library" in html
+    assert "Fall break" in html and "Parent support" in html
+    assert "Sensory-friendly events" in html and "New resources" in html
+    assert "The next deep dive" in html
+    assert "os-browser-cols" in html
+    assert "max-width:880px" in html
     assert "Welcome to Our Special Village!" in html
     assert "Welcome to the Our Special Village family!" not in html
     assert "October in Our Special Village" in html
@@ -991,20 +1141,25 @@ def main():
     assert "45-minute lesson" in html
     assert "mercedes-lawson-160.jpg" in html
     assert "taylor-hickok-160.jpg" in html
-    assert "A formal diagnosis is not required" in html
+    assert "No formal diagnosis required" in html
     assert "Neurodivergent parents, you are welcome too" not in html
     assert "whether your child struggles a little or a lot" not in html
     assert "I&rsquo;m neurodivergent myself" not in html
     assert "Join the Online Group" in html
-    assert "Contact We Rock the Spectrum" in html
+    assert "Plan Your Visit" in html
+    assert "Contact We Rock the Spectrum" not in html
     assert "Led by Cari Parr" in html
-    assert "Parents stay with and supervise their children" in html
-    assert "not included childcare" in html
+    assert "Parents remain with their children" in html
+    assert "Childcare is not provided" in html
+    assert "Good to know" in html
     assert 'class="chip"' in deadlines
     assert "Sun" in deadlines and "Nov" in deadlines
-    assert "Join us beginning Thursday, October 1" in html
+    assert "Drop in any Thursday beginning October 1" in html
     assert 'width="96"' in html and "signature-taylor.png" in html
     assert 'align="center"' in html and "about-family-bowling-small.jpg" in html
+    # Village Hall appears before The month ahead
+    assert html.find("The next deep dive") < html.find("The month ahead")
+    assert html.find("id=\"village-hall\"") < html.find("id=\"events\"")
     # Intro body must not be wholesale italic (signature PNG may keep italic fallback font).
     intro_slice = html.split("October in Our Special Village", 1)[1].split("Three things to know this month", 1)[0]
     assert "font-style:italic" not in intro_slice.replace("signature-taylor.png", "").split("With love")[0]
@@ -1012,9 +1167,9 @@ def main():
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"&\w+;", " ", text)
     words = len(text.split())
-    # T355 adds intro + equal support cards; keep readable length.
-    assert 900 <= words <= 1550, f"word count {words} outside 900-1550"
-    print(f"wrote {out}: html {len(html.encode('utf-8'))} bytes, txt {len(txt.encode('utf-8'))} bytes, words≈{words}")
+    # T365 shortens support copy; allow slightly leaner range.
+    assert 850 <= words <= 1550, f"word count {words} outside 850-1550"
+    print(f"wrote {out}: email {len(html_email.encode('utf-8'))}B, browser {len(html_browser.encode('utf-8'))}B, txt {len(txt.encode('utf-8'))}B, words≈{words}")
 
 
 if __name__ == "__main__":

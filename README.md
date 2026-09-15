@@ -4,7 +4,8 @@ Customer preview for Taylor Hickok. Not production MailerLite send.
 
 - Preview (GitHub Pages): https://tmacocx.github.io/osv-newsletter-october-preview/
 - Full deadlines companion: https://tmacocx.github.io/osv-newsletter-october-preview/deadlines-october-2026.html
-- `index.html` and `newsletter-october-subscriber-preview.html` are identical copies of the email.
+- `index.html` is the **browser/desktop preview** (wider layout, real view/unsubscribe links).
+- `newsletter-october-subscriber-preview.html` is the **MailerLite/email** HTML (600px + `{$url}` / `{$unsubscribe}`).
 - `newsletter-october-2026.txt` is the plain-text alternative for the MailerLite send.
 - `tools/build-october-2026.py` generates both HTML files, the `.txt`, and `deadlines-october-2026.html`. Edit that, then re-run it.
 - `research-notes-october-2026.md` - sources and checklist mapping.
@@ -17,5 +18,6 @@ Material shorten (keep Vincent/T323 art): short welcome, no TOC, “Three things
 
 - **Subject:** `October: sensory-friendly events + deadlines` (44 chars)
 - **Preheader:** Fall break / three things / Discovery / guides / IEP (see build script)
-- **View in browser** → `{$url}`, **Unsubscribe** → `{$unsubscribe}` (dead on Pages by design)
+- **Email:** View in browser → `{$url}`, Unsubscribe → `{$unsubscribe}`.
+- **Browser preview (`index.html`):** real destinations (Pages URL + `/newsletter`).
 - Attach `newsletter-october-2026.txt` as the plain-text part.
