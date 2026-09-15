@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T365 desktop + T364 mockup polish).
+"""Build the October 2026 Our Special Village newsletter (T372 hierarchy/mobile).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
-T365: browser/desktop composition only - keep email 600px stacked layout. Wider
-wrap (~880px), selective desktop columns (library, Village Hall, parent cards),
-clickable In this issue chips, Village Hall moved up, tighter intro, T364-aligned
-support cards, sentence-case Connect heading, readable tiny text, browser URLs.
+T372: visual hierarchy, spacing system, card density, mobile readability. Keeps
+T367 desktop align (photo-left intro, VH stacked, equal-height pairs) and T365
+email 600px stacked path. We Rock audience tag; In this issue full-width under
+intro; compact Village Hall; sentence-case Connect heading.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
 
@@ -72,6 +72,11 @@ def sp(h):
     return f'<tr><td style="font-size:0;line-height:0;height:{h}px;mso-line-height-rule:exactly;">&nbsp;</td></tr>'
 
 
+def major_sp():
+    """48px desktop / 36px mobile before major sections (.os-sec)."""
+    return ('<tr><td class="os-sec" style="font-size:0;line-height:48px;height:48px;mso-line-height-rule:exactly;">&nbsp;</td></tr>')
+
+
 def padrow(inner, pad="0 34px"):
     return f'<tr><td class="os-pad" align="left" style="padding:{pad};">{inner}</td></tr>'
 
@@ -88,19 +93,20 @@ def rule():
 
 
 def section_head(id_, title, intro=None):
+    """Consistent major-section chrome: rule + 12px + h2 + 6–8px intro."""
     out = anchor(id_) + rule()
-    out += (f'<h2 class="os-h2 os-ink" style="margin:14px 0 0 0;font-family:{FONT};font-size:21px;'
+    out += (f'<h2 class="os-h2 os-ink" style="margin:12px 0 0 0;font-family:{FONT};font-size:21px;'
             f'line-height:27px;mso-line-height-rule:exactly;color:{INK};font-weight:700;">{title}</h2>')
     if intro:
-        out += p(intro, 16, 24, BODY, 400, margin="8px 0 0 0")
+        out += p(intro, 16, 24, BODY, 400, margin="6px 0 0 0")
     return padrow(out)
 
 
-def card(inner, pad="8px 20px 8px 20px"):
+def card(inner, pad="16px 20px 16px 20px"):
     return (f'<table role="presentation" class="os-card" cellpadding="0" cellspacing="0" border="0" width="100%" '
             f'bgcolor="{WHITE}" style="width:100%;border-collapse:separate;background-color:{WHITE};'
             f'border:1px solid {HAIR};border-radius:16px;box-shadow:0 1px 3px rgba(27,35,64,0.06);">'
-            f'<tr><td class="os-cardpad" align="left" style="padding:{pad};">{inner}</td></tr></table>')
+            f'<tr class="os-card-body"><td class="os-cardpad" align="left" style="padding:{pad};">{inner}</td></tr></table>')
 
 
 def rows_table(rows_html):
@@ -108,12 +114,17 @@ def rows_table(rows_html):
             'style="width:100%;border-collapse:collapse;">' + "".join(rows_html) + '</table>')
 
 
-def row(chip_html, content_html, last=False, featured=False):
-    pad = "16px 0 18px 0" if featured else "11px 0 12px 0"
+def row(chip_html, content_html, last=False, featured=False, tight=False):
+    if featured:
+        pad = "14px 0 14px 0"
+    elif tight:
+        pad = "14px 0 14px 0"
+    else:
+        pad = "14px 0 14px 0"
     border = "" if last else f"border-bottom:1px solid {RULE};"
     return (f'<tr><td class="os-rule" style="padding:{pad};{border}">'
             '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">'
-            f'<tr><td width="62" style="width:62px;vertical-align:top;padding:2px 14px 0 0;">{chip_html}</td>'
+            f'<tr><td width="62" style="width:62px;vertical-align:top;padding:0 12px 0 0;">{chip_html}</td>'
             f'<td style="vertical-align:top;">{content_html}</td></tr></table></td></tr>')
 
 
@@ -166,15 +177,16 @@ def button(href, label, fill, text_color, align="left"):
             f'<span style="color:{text_color};">{label}</span></a></td></tr></table>')
 
 
-def badge(label):
+def badge(label, nowrap=True):
     """Compact ONLINE / IN PERSON / FREE / WEEKLY pill."""
+    ws = "white-space:nowrap;" if nowrap else "white-space:normal;"
     return (
-        f'<td style="padding:0 6px 8px 0;vertical-align:middle;">'
+        f'<td style="padding:0 6px 6px 0;vertical-align:middle;">'
         f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" bgcolor="{BLUSH}" '
         f'style="border-collapse:separate;background-color:{BLUSH};border-radius:999px;">'
         f'<tr><td align="center" style="padding:4px 10px;">'
         f'<span style="font-family:{FONT};font-size:11px;line-height:14px;color:{INK};'
-        f'font-weight:700;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;">{label}</span>'
+        f'font-weight:700;letter-spacing:0.6px;text-transform:uppercase;{ws}">{label}</span>'
         f'</td></tr></table></td>'
     )
 
@@ -183,8 +195,32 @@ def badges_row(labels):
     cells = "".join(badge(lab) for lab in labels)
     return (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" '
-        f'style="border-collapse:collapse;margin:0 0 10px 0;"><tr>{cells}</tr></table>'
+        f'style="border-collapse:collapse;margin:0 0 8px 0;"><tr>{cells}</tr></table>'
     )
+
+
+def audience_tag(label):
+    """Prominent full-width audience tag (own row; We Rock)."""
+    return (
+        '<table role="presentation" class="os-audience" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        f'bgcolor="{BLUSH}" style="width:100%;border-collapse:separate;background-color:{BLUSH};'
+        f'border-radius:10px;margin:0 0 8px 0;">'
+        f'<tr><td align="left" style="padding:8px 12px;">'
+        f'<span style="font-family:{FONT};font-size:12px;line-height:16px;color:{INK};'
+        f'font-weight:700;letter-spacing:0.7px;text-transform:uppercase;">{label}</span>'
+        f'</td></tr></table>'
+    )
+
+
+def secondary_tags_text(parts):
+    """Smaller secondary tag row: IN PERSON · WEEKLY."""
+    joined = " &middot; ".join(
+        f'<span style="font-family:{FONT};font-size:11px;line-height:14px;color:{MUTED};'
+        f'font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">{p}</span>'
+        for p in parts
+    )
+    return f'<p class="os-muted" style="margin:0 0 8px 0;font-family:{FONT};font-size:11px;line-height:14px;color:{MUTED};">{joined}</p>'
+
 
 
 def meta_row(icon_name, label, first=False):
@@ -217,9 +253,9 @@ def good_to_know(items):
         )
     return (
         f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        f'style="width:100%;border-collapse:collapse;margin:14px 0 0 0;border-top:1px solid {RULE};">'
-        f'<tr><td style="padding:14px 0 0 0;">'
-        + p("Good to know", 15, 22, INK, 700, margin="0 0 8px 0")
+        f'style="width:100%;border-collapse:collapse;margin:12px 0 0 0;border-top:1px solid {RULE};">'
+        f'<tr><td style="padding:12px 0 0 0;">'
+        + p("Good to know", 15, 22, INK, 700, margin="0 0 6px 0")
         + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:collapse;">'
         + "".join(rows)
@@ -240,22 +276,32 @@ def group_cta(href, label):
     )
 
 
-def group_card(badges, name, meta_pairs, blurb, good_items, btn_href, btn_label):
-    """T364 support-group card: badges, title, icon meta, blurb, Good to know, full-width CTA."""
+def group_card(badges, name, meta_pairs, blurb, good_items, btn_href, btn_label,
+              audience=None, secondary=None, cost_note=None):
+    """Support-group card: optional audience tag, badges/secondary, title, meta, blurb, GTK, CTA."""
     metas = "".join(
         meta_row(icon, label, first=(i == 0)) for i, (icon, label) in enumerate(meta_pairs)
     )
+    head = ""
+    if audience:
+        head += audience_tag(audience)
+    if secondary:
+        head += secondary_tags_text(secondary)
+    elif badges:
+        head += badges_row(badges)
+    if cost_note:
+        head += p(cost_note, 13, 18, ACCENT, 700, margin="0 0 8px 0", cls="os-tiny")
     inner = (
-        badges_row(badges)
+        head
         + p(name, 17, 23, INK, 700, margin="0")
         + metas
-        + p(blurb, 15, 22, BODY, 400, margin="10px 0 0 0")
+        + p(blurb, 15, 22, BODY, 400, margin="8px 0 0 0")
         + good_to_know(good_items)
-        + '<div style="margin:16px 0 0 0;">'
+        + '<div class="os-card-cta" style="margin:14px 0 0 0;">'
         + group_cta(btn_href, btn_label)
         + '</div>'
     )
-    return card(inner, pad="18px 18px 18px 18px")
+    return card(inner, pad="16px 16px 16px 16px")
 
 
 
@@ -298,18 +344,19 @@ def issue_chips_block():
         ("#events", "Sensory-friendly events"),
         ("#library", "New resources"),
     ]
-    # 2x2 table — stacks cleanly; desktop CSS can keep as grid via browser_cols of rows
+    # 2x2 when width permits; .os-issue-cell stacks at very narrow with 8px gap
     cells = []
     for i, (href, label) in enumerate(chips):
-        pad = "0 6px 10px 0" if i % 2 == 0 else "0 0 10px 6px"
-        if i >= 2:
+        if i < 2:
+            pad = "0 6px 8px 0" if i % 2 == 0 else "0 0 8px 6px"
+        else:
             pad = "0 6px 0 0" if i % 2 == 0 else "0 0 0 6px"
         cells.append(
             f'<td class="os-issue-cell" width="50%" valign="top" style="width:50%;padding:{pad};">'
             f'{issue_chip(href, label)}</td>'
         )
     return (
-        p(f'<b style="color:{ACCENT};font-weight:700;">In this issue</b>', 13, 20, MUTED, 400, margin="0 0 10px 0", cls="os-tiny")
+        p(f'<b style="color:{ACCENT};font-weight:700;">In this issue</b>', 13, 18, MUTED, 400, margin="0 0 8px 0", cls="os-tiny")
         + '<table role="presentation" class="os-issue-grid" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:collapse;">'
         f'<tr>{cells[0]}{cells[1]}</tr><tr>{cells[2]}{cells[3]}</tr></table>'
@@ -326,10 +373,11 @@ def story_img(src, width, alt, radius=12, link=None, extra_style=""):
     return img
 
 
-def step(n, text):
-    return ('<tr><td style="padding:0 0 12px 0;">'
+def step(n, text, last=False):
+    pad = "0" if last else "0 0 12px 0"
+    return (f'<tr><td style="padding:{pad};">'
             '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-            '<td width="30" style="width:30px;vertical-align:top;padding:2px 10px 0 0;">'
+            '<td width="30" style="width:30px;vertical-align:top;padding:0 10px 0 0;">'
             f'<table role="presentation" class="os-stepbg" cellpadding="0" cellspacing="0" border="0" width="26" bgcolor="{INK}" '
             f'style="width:26px;border-collapse:separate;background-color:{INK};border-radius:13px;"><tr>'
             f'<td align="center" style="padding:0;height:26px;">{p(str(n), 13, 26, WHITE, 700, extra="text-align:center;", cls="os-step")}</td></tr></table></td>'
@@ -338,7 +386,7 @@ def step(n, text):
 
 
 def price_boxes():
-    """Equal-size VH pay-what-you-can boxes ($0/$10/$20/$35)."""
+    """Compact VH pay boxes; desktop 4-up, mobile 2x2 via .os-paycell CSS."""
     boxes = [
         ("$0", "Always<br>welcome"),
         ("$10", "Helps"),
@@ -349,34 +397,33 @@ def price_boxes():
     n = len(boxes)
     for i, (amt, label) in enumerate(boxes):
         if i == 0:
-            pad = "0 4px 0 0"
+            pad = "0 3px 0 0"
         elif i == n - 1:
-            pad = "0 0 0 4px"
+            pad = "0 0 0 3px"
         else:
-            pad = "0 4px 0 4px"
-        # Two-line label slot so short captions still match tall ones
+            pad = "0 3px 0 3px"
         if "<br>" not in label:
             label_html = f"{label}<br>&nbsp;"
         else:
             label_html = label
         inner = (
             f'<table role="presentation" class="os-paybox" cellpadding="0" cellspacing="0" border="0" width="100%" '
-            f'bgcolor="#e4e9f2" height="78" style="width:100%;height:78px;border-collapse:separate;background-color:#e4e9f2;border-radius:12px;">'
-            f'<tr><td class="os-paybox" align="center" valign="middle" height="78" style="padding:10px 4px;height:78px;vertical-align:middle;">'
-            + p(amt, 20, 24, INK, 700, extra="text-align:center;")
-            + p(label_html, 11, 14, BODY, 400, margin="4px 0 0 0", extra="text-align:center;")
+            f'bgcolor="#e4e9f2" style="width:100%;min-height:52px;border-collapse:separate;background-color:#e4e9f2;border-radius:10px;">'
+            f'<tr><td class="os-paybox" align="center" valign="middle" style="padding:8px 4px;min-height:44px;vertical-align:middle;">'
+            + p(amt, 18, 22, INK, 700, extra="text-align:center;")
+            + p(label_html, 11, 14, BODY, 400, margin="2px 0 0 0", extra="text-align:center;")
             + '</td></tr></table>'
         )
         cells.append(
-            f'<td class="os-stack" width="25%" valign="top" height="78" '
-            f'style="width:25%;padding:{pad};vertical-align:top;height:78px;">{inner}</td>'
+            f'<td class="os-paycell os-stack" width="25%" valign="top" '
+            f'style="width:25%;padding:{pad};vertical-align:top;">{inner}</td>'
         )
     return (
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:separate;margin:16px 0 0 0;"><tr>'
+        '<table role="presentation" class="os-paygrid" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        'style="width:100%;border-collapse:separate;margin:12px 0 0 0;"><tr>'
         + "".join(cells)
         + '</tr></table>'
-        + p("The meeting link is emailed to registrants.", 13, 20, SAND, 400, margin="4px 0 0 0")
+        + p("The meeting link is emailed to registrants.", 13, 18, SAND, 400, margin="6px 0 0 0")
     )
 
 
@@ -420,14 +467,23 @@ FALL_BREAK = item(
 VOTER = item(
     "Voter registration deadline: Mon&nbsp;Oct&nbsp;5",
     ["For the Nov 3 election. Register or update your address at GoVoteTN.gov by Mon Oct 5. Early voting Oct 14 to 29. Voters with a disability can request a mail ballot by Sat Oct 24. &nbsp;"
-     + a("https://govotetn.gov/", "GoVoteTN")], featured=True, first=False)
+     + a("https://govotetn.gov/", "GoVoteTN")], featured=True, first=True)
 CLOCKS = item(
     "Clocks fall back one hour on Sun Nov 1",
     ["Daylight saving time ends at 2:00 AM. If sleep is fragile at your house, shift bedtime 10 to 15 minutes a night the week before. &nbsp;"
      + a("https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst", "How DST works")])
 
+def deadlines_oct5_block():
+    """Fall break + voter under one date tile, separated by 14px + hairline."""
+    return (
+        FALL_BREAK
+        + f'<div style="margin:14px 0 14px 0;border-top:1px solid {RULE};font-size:0;line-height:0;height:1px;">&nbsp;</div>'
+        + VOTER.replace('margin="14px 0 0 0"', 'margin="0"').replace("14px 0 4px 0", "0")
+    )
+
+
 TOP_DEADLINE_ROWS = [
-    row(chip("Mon", "5", "Oct"), FALL_BREAK + VOTER, featured=True),
+    row(chip("Mon", "5", "Oct"), deadlines_oct5_block(), featured=True),
     row(chip("Sun", "1", "Nov"), CLOCKS, last=True),
 ]
 
@@ -466,48 +522,83 @@ def head():
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
 u + #os-body a{color:ACCENT;text-decoration:underline;}
-/* T365: browser/desktop only - email clients keep inline max-width:600px */
+/* T372 spacing system + T367 desktop align; email clients keep inline max-width:600px */
+.os-sec{height:48px !important;line-height:48px !important;font-size:0 !important;}
 @media only screen and (min-width:700px){
   .os-wrap{max-width:880px !important;width:100% !important;}
   .os-hero{max-width:880px !important;}
   .os-browser-cols{display:flex !important;flex-direction:row !important;gap:16px !important;align-items:stretch !important;width:100% !important;}
-  .os-browser-col{flex:1 1 0 !important;width:auto !important;max-width:none !important;margin:0 !important;}
-  .os-intro-photo{width:120px !important;max-width:120px !important;height:120px !important;}
-  .os-intro-photocell{width:120px !important;}
-  .os-vh-portrait{width:120px !important;max-width:120px !important;}
+  .os-browser-col{flex:1 1 0 !important;width:auto !important;max-width:none !important;margin:0 !important;display:flex !important;flex-direction:column !important;}
+  .os-browser-col > table.os-card{flex:1 1 auto !important;height:100% !important;}
+  .os-browser-col > table.os-card > tbody{height:100% !important;}
+  .os-browser-col > table.os-card > tbody > tr.os-card-body{height:100% !important;}
+  .os-browser-col > table.os-card td.os-cardpad{height:100% !important;vertical-align:top !important;display:flex !important;flex-direction:column !important;box-sizing:border-box !important;}
+  .os-card-cta{margin-top:auto !important;}
+  .os-intro-cols{align-items:flex-start !important;gap:18px !important;}
+  .os-intro-photo-col{flex:0 0 176px !important;max-width:176px !important;width:176px !important;display:block !important;}
+  .os-intro-text-col{flex:1 1 auto !important;min-width:0 !important;}
+  .os-intro-photo{width:176px !important;max-width:176px !important;height:176px !important;}
+  .os-intro-photocell{width:176px !important;}
+  .os-vh-stack{display:block !important;width:100% !important;}
+  .os-vh-stack > .os-browser-col{display:block !important;width:100% !important;max-width:100% !important;flex:none !important;margin:0 0 10px 0 !important;}
+  .os-vh-stack > .os-browser-col:last-child{margin-bottom:0 !important;}
+  .os-vh-stack img{max-width:100% !important;width:100% !important;}
+  .os-card-art{max-width:100% !important;width:100% !important;}
+  .os-about-row{display:flex !important;flex-direction:row !important;gap:18px !important;align-items:center !important;width:100% !important;}
+  .os-about-photo{flex:0 0 160px !important;width:160px !important;max-width:160px !important;margin:0 !important;}
+  .os-about-text{flex:1 1 auto !important;min-width:0 !important;}
+  .os-vh-portrait{width:96px !important;max-width:96px !important;}
   .os-tiny,.os-tiny a,.os-footer p{font-size:14px !important;line-height:21px !important;}
   .os-confirm{font-size:14px !important;line-height:21px !important;}
   .os-desk-hide{display:none !important;max-height:0 !important;overflow:hidden !important;mso-hide:all;}
   .os-desk-show{display:block !important;}
+  .os-paygrid{table-layout:fixed !important;}
 }
 @media only screen and (max-width:699px){
   .os-desk-show{display:none !important;max-height:0 !important;overflow:hidden !important;}
+  .os-sec{height:36px !important;line-height:36px !important;}
 }
 @media only screen and (max-width:620px){
   html,body{width:100% !important;max-width:100% !important;overflow-x:hidden !important;-webkit-text-size-adjust:100% !important;}
   .os-wrap,.os-wrap table{width:100% !important;max-width:100% !important;}
   table[width="600"]{width:100% !important;max-width:100% !important;}
   .os-pad{padding-left:20px !important;padding-right:20px !important;}
-  .os-cardpad{padding-left:16px !important;padding-right:16px !important;}
+  .os-cardpad{padding:16px !important;}
   .os-h1{font-size:27px !important;line-height:33px !important;}
   .os-h2{font-size:20px !important;line-height:26px !important;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;}
-  .os-col-photo{padding:0 0 16px 0 !important;}
+  .os-col-photo{padding:0 0 12px 0 !important;}
   .os-photo{width:100% !important;max-width:160px !important;height:auto !important;}
-  .os-intro-photo{width:96px !important;max-width:96px !important;height:96px !important;border-radius:50% !important;}
+  .os-intro-photo{width:104px !important;max-width:104px !important;height:104px !important;border-radius:50% !important;}
   .os-intro-col{display:block !important;width:100% !important;max-width:100% !important;}
-  .os-intro-photocell{padding:0 0 12px 0 !important;text-align:left !important;}
+  .os-intro-photocell{padding:0 0 6px 0 !important;text-align:left !important;}
+  .os-intro-photo-col{margin:0 0 10px 0 !important;}
   .os-browser-cols{display:block !important;}
   .os-browser-col{display:block !important;width:100% !important;margin:0 0 16px 0 !important;}
-  .os-issue-cell{display:block !important;width:100% !important;max-width:100% !important;padding:0 0 10px 0 !important;}
+  .os-about-photo{margin:0 0 12px 0 !important;}
+  .os-about-photo .os-photo,.os-about-photo img{margin:0 !important;}
+  .os-about-row{display:block !important;}
+  /* Keep 2-col chips when possible; only stack at very narrow */
+  .os-issue-cell{width:50% !important;max-width:50% !important;box-sizing:border-box !important;}
   body,table,td,p,a,span{overflow-wrap:anywhere !important;word-break:break-word !important;}
   .os-chip,.os-chip p,table[width="62"] p,td[width="62"] p{white-space:nowrap !important;overflow-wrap:normal !important;word-break:normal !important;}
   .os-paybox,.os-paybox p{overflow-wrap:normal !important;word-break:normal !important;}
+  .os-audience span{white-space:normal !important;overflow-wrap:normal !important;word-break:normal !important;}
   img{max-width:100% !important;height:auto !important;}
   table[width="62"],td[width="62"]{width:62px !important;max-width:62px !important;}
   table[width="26"],td[width="30"]{width:26px !important;max-width:30px !important;}
   table[width="40"]{width:40px !important;max-width:40px !important;}
   table[width="160"]{width:160px !important;max-width:160px !important;}
+  /* Village Hall pay boxes: 2x2 */
+  .os-paygrid{width:100% !important;}
+  .os-paygrid tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;}
+  .os-paycell{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 4px 8px 0 !important;height:auto !important;}
+  .os-paycell:nth-child(even){padding:0 0 8px 4px !important;}
+  .os-paybox{min-height:44px !important;height:auto !important;}
+  .os-vh-portrait{width:88px !important;max-width:88px !important;}
+}
+@media only screen and (max-width:359px){
+  .os-issue-cell{display:block !important;width:100% !important;max-width:100% !important;padding:0 0 8px 0 !important;}
 }
 """.replace("ACCENT", ACCENT)
     dark = f"""
@@ -524,7 +615,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T365: browser/desktop layout (email 600px unchanged). T355 intro + T364-aligned support cards. -->
+<!-- T372: hierarchy/mobile + T367 desktop align (email 600px unchanged). -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -560,32 +651,29 @@ def build_html(base, browser=False):
     o.append('<tr><td align="left" style="padding:0;">'
              f'<img class="os-hero" src="{art("newsletter-fall.jpg")}" width="600" alt="Illustration of the village in autumn: homes, a gazebo, shops, and neighbors walking the path." '
              'style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;border-radius:16px;"></td></tr>')
-    o.append(sp(18))
-    o.append(padrow(
-        f'<h1 class="os-h1 os-ink" style="margin:0;font-family:{FONT};font-size:30px;line-height:36px;'
-        f'mso-line-height-rule:exactly;color:{INK};font-weight:700;letter-spacing:-0.3px;">October in Our Special Village</h1>'))
-
-    o.append(sp(14))
-    # T365 intro: shorter welcome beside larger portrait + issue chips (desktop two-column)
+    o.append(sp(16))
+    # T372/T367 intro: photo left + welcome right; In this issue full-width under the row
     alone_hi = (
         f'<span style="background-color:{BLUSH};color:{INK};padding:1px 4px;border-radius:4px;">'
         f'{ALONE_PHRASE}</span>'
     )
-    # Keep full copy on mobile/email; desktop CSS can hide the middle para to tighten first screen
     note_paras_html = []
     for i, para in enumerate(NOTE_PARAS):
         html_para = para.replace(ALONE_PHRASE, alone_hi) if ALONE_PHRASE in para else para
-        # Browser preview only: hide middle para on wide desktop to tighten first screen.
         cls = "os-desk-hide" if (browser and i == 1) else ""
         note_paras_html.append(
             p(html_para, 16, 24, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0"), cls=cls)
         )
-    note_copy = "".join(note_paras_html)
-    note_copy += p("With love,", 16, 24, BODY, 400, margin="12px 0 2px 0")
-    note_copy += (
-        f'<img src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
-        f'style="display:block;width:96px;max-width:96px;height:auto;margin:0;padding:0;border:0;outline:none;'
-        f'text-decoration:none;font-family:Georgia, Times New Roman, serif;font-size:22px;font-style:italic;color:{ACCENT};">'
+    note_copy = (
+        f'<h1 class="os-h1 os-ink" style="margin:0 0 10px 0;font-family:{FONT};font-size:30px;line-height:36px;'
+        f'mso-line-height-rule:exactly;color:{INK};font-weight:700;letter-spacing:-0.3px;">October in Our Special Village</h1>'
+        + "".join(note_paras_html)
+        + p("With love,", 16, 24, BODY, 400, margin="10px 0 2px 0")
+        + (
+            f'<img src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
+            f'style="display:block;width:96px;max-width:96px;height:auto;margin:0;padding:0;border:0;outline:none;'
+            f'text-decoration:none;font-family:Georgia, Times New Roman, serif;font-size:22px;font-style:italic;color:{ACCENT};">'
+        )
     )
     photo = (
         f'<img class="os-intro-photo" src="{art("taylor-hickok-160.jpg")}" width="96" height="96" '
@@ -596,152 +684,172 @@ def build_html(base, browser=False):
     photo_block = (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:collapse;">'
-        f'<tr><td class="os-intro-photocell" align="center" style="padding:0 0 8px 0;">{photo}</td></tr>'
-        f'<tr><td align="center" style="padding:0;">'
-        + p("Dr. Taylor Hickok", 15, 20, INK, 700, extra="text-align:center;")
+        f'<tr><td class="os-intro-photocell" align="left" style="padding:0 0 6px 0;">{photo}</td></tr>'
+        f'<tr><td align="left" style="padding:0;">'
+        + p("Dr. Taylor Hickok", 15, 20, INK, 700, extra="text-align:left;")
         + p("Founder &middot; SLP &middot; AuDHD parent", 13, 18, MUTED, 400, margin="2px 0 0 0",
-            extra="text-align:center;", cls="os-tiny")
+            extra="text-align:left;", cls="os-tiny")
         + '</td></tr></table>'
     )
-    # Desktop: welcome | photo+chips. Email/mobile: stacked via browser_cols default.
-    right_col = photo_block + '<div style="margin:14px 0 0 0;">' + issue_chips_block() + '</div>'
-    intro = browser_cols(note_copy, right_col, gap=20)
-    o.append(padrow(intro))
-
-    o.append(sp(28))
-    o.append(section_head("deadlines", "Three things to know this month"))
-    o.append(sp(16))
-    o.append(padrow(card(rows_table(TOP_DEADLINE_ROWS))))
+    # Wrap cols with intro-specific classes (T367 photo-left)
+    photo_col = (
+        f'<div class="os-browser-col os-intro-photo-col" style="display:block;width:100%;margin:0 0 12px 0;'
+        f'vertical-align:top;box-sizing:border-box;">{photo_block}</div>'
+    )
+    text_col = (
+        f'<div class="os-browser-col os-intro-text-col" style="display:block;width:100%;margin:0;'
+        f'vertical-align:top;box-sizing:border-box;">{note_copy}</div>'
+    )
+    intro_row = (
+        f'<div class="os-browser-cols os-intro-cols" style="display:block;width:100%;">'
+        f'{photo_col}{text_col}</div>'
+    )
+    o.append(padrow(intro_row))
     o.append(sp(14))
+    o.append(padrow('<div style="margin:0;">' + issue_chips_block() + '</div>'))
+
+    o.append(major_sp())
+    o.append(section_head("deadlines", "Three things to know this month"))
+    o.append(sp(12))
+    o.append(padrow(card(rows_table(TOP_DEADLINE_ROWS), pad="8px 20px 8px 20px")))
+    o.append(sp(12))
     o.append(padrow(
         button(DEADLINES_URL, "See all deadlines", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
-        + p("Dates confirmed Sept 14. If something changed, reply and we will fix it.", 13, 20, MUTED, 400, margin="12px 0 0 0", cls="os-confirm")))
+        + p("Dates confirmed Sept 14. If something changed, reply and we will fix it.", 13, 20, MUTED, 400, margin="10px 0 0 0", cls="os-confirm")))
 
 
-    # --- Village Hall (T365: raise after Three things; "The next deep dive") ---
-    o.append(sp(40))
+    # --- Village Hall (T372 compact; T367 stacked full-width) ---
+    o.append(major_sp())
     o.append(padrow(
         anchor("village-hall")
         + rule()
-        + p("The next deep dive", 13, 18, ACCENT, 700, margin="14px 0 0 0")
+        + p("The next deep dive", 13, 18, ACCENT, 700, margin="12px 0 0 0")
         + (f'<h2 class="os-h2 os-ink" style="margin:6px 0 0 0;font-family:{FONT};font-size:21px;'
            f'line-height:27px;mso-line-height-rule:exactly;color:{INK};font-weight:700;">Village Hall</h2>')
-        + p("One topic. One guest expert. Your questions.", 16, 24, BODY, 400, margin="8px 0 0 0")
+        + p("One topic. One guest expert. Your questions.", 16, 24, BODY, 400, margin="6px 0 0 0")
     ))
-    o.append(sp(16))
-    vh_art = story_img(
-        art("village-hall-iep.jpg"), 600,
-        "Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting",
-        radius=12)
+    o.append(sp(12))
+    vh_art = (
+        f'<img class="os-card-art" src="{art("village-hall-iep-compact.jpg")}" width="600" '
+        f'alt="Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting" '
+        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;">'
+    )
     mercedes = (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;"><tr>'
-        f'<td class="os-stack" width="120" valign="top" style="width:120px;padding:0 14px 0 0;vertical-align:top;">'
-        f'<img class="os-vh-portrait" src="{art("mercedes-lawson-160.jpg")}" width="120" height="172" '
+        'style="width:100%;border-collapse:collapse;margin:0 0 12px 0;"><tr>'
+        f'<td class="os-stack" width="88" valign="top" style="width:88px;padding:0 12px 0 0;vertical-align:top;">'
+        f'<img class="os-vh-portrait" src="{art("mercedes-lawson-160.jpg")}" width="88" height="126" '
         f'alt="Mercedes Lawson, M.S. Ed., founder of A.C.C.E.S.S." '
-        f'style="display:block;width:120px;max-width:120px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
+        f'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
         f'</td><td class="os-stack" valign="middle" style="padding:0;vertical-align:middle;">'
-        + p("Mercedes Lawson, M.S. Ed.", 16, 22, GOLD, 700, margin="0 0 4px 0")
-        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 14, 20, SAND, 700, margin="0 0 6px 0")
+        + p("Mercedes Lawson, M.S. Ed.", 15, 20, GOLD, 700, margin="0 0 2px 0")
+        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 13, 18, SAND, 700, margin="0 0 4px 0")
         + p("She grew up with a sibling with disabilities, taught special education for nine years "
            "helping 250+ students, and has a child with Autism.",
-           14, 21, SAND, 400)
+           13, 19, SAND, 400)
         + '</td></tr></table>'
     )
     vh_panel = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
-          '<tr><td align="left" style="padding:22px 22px 22px 22px;">'
-          + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 6px 0")
-          + p("9:30 to 11:00 AM Central, Online<br>Pay what you can, including nothing", 16, 24, SAND, 400, margin="0 0 16px 0")
-          + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
-          + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 18, 25, CREAM, 700, margin="0 0 12px 0")
+          '<tr><td align="left" style="padding:16px 18px 16px 18px;">'
+          + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 4px 0")
+          + p("9:30 to 11:00 AM Central, Online<br>Pay what you can, including nothing", 15, 22, SAND, 400, margin="0 0 12px 0")
+          + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 4px 0")
+          + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 17, 24, CREAM, 700, margin="0 0 10px 0")
           + mercedes
-          + p("A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 15, 22, SAND, 400, margin="0 0 18px 0")
+          + p("A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 14, 21, SAND, 400, margin="0 0 14px 0")
           + button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK).replace('class="os-btn"', 'class="os-btn os-btn-gold"')
           + price_boxes()
           + '</td></tr></table>')
-    # Desktop: artwork | navy panel. Email/mobile: stacked (unchanged order).
-    o.append(padrow(browser_cols(vh_art, vh_panel, gap=16), pad="0 34px"))
+    # T367: stacked full-width (not side-by-side) so VH stays featured but compact
+    vh_stack = (
+        f'<div class="os-vh-stack" style="display:block;width:100%;">'
+        f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 10px 0;vertical-align:top;box-sizing:border-box;">{vh_art}</div>'
+        f'<div class="os-browser-col" style="display:block;width:100%;margin:0;vertical-align:top;box-sizing:border-box;">{vh_panel}</div>'
+        f'</div>'
+    )
+    o.append(padrow(vh_stack, pad="0 34px"))
 
     # --- The month ahead ---
-    o.append(sp(40))
+    o.append(major_sp())
     o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro."))
-    o.append(sp(16))
+    o.append(sp(12))
 
-    featured_art = story_img(
-        art("featured-monsters-museum.jpg"), 560,
-        "Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones",
-        radius=12, link=MONSTERS_URL)
-    featured_copy = (p("Featured", 13, 18, ACCENT, 700, margin="14px 0 4px 0")
+    featured_art = (
+        f'<a href="{MONSTERS_URL}" style="display:block;text-decoration:none;border:0;outline:none;">'
+        f'<img class="os-card-art" src="{art("featured-monsters-museum-compact.jpg")}" width="600" '
+        f'alt="Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones" '
+        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;"></a>'
+    )
+    featured_copy = (p("Featured", 13, 18, ACCENT, 700, margin="12px 0 4px 0")
                      + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 18, 25, INK, 700)
                      + p("Thu Oct 15 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required", 16, 24, BODY, 400, margin="4px 0 0 0")
-                     + p(a(MONSTERS_URL, "Reserve your spot"), 16, 24, BODY, 400, margin="4px 0 0 0"))
-    o.append(padrow(card(featured_art + featured_copy, pad="12px 20px 18px 20px")))
+                     + p(a(MONSTERS_URL, "Reserve your spot"), 16, 24, BODY, 400, margin="6px 0 0 0"))
+    o.append(padrow(card(featured_art + featured_copy, pad="12px 20px 16px 20px")))
 
-    o.append(sp(20))
+    o.append(sp(16))
     ev_rows = []
     for i, e in enumerate(SECONDARY_EVENTS):
-        content = item(e["title"], [e["meta"] + " &nbsp;" + a(*e["link"])])
-        ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1)))
-    o.append(padrow(card(rows_table(ev_rows))))
-    o.append(sp(16))
+        content = item(e["title"], [e["meta"], a(*e["link"])])
+        ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
+    o.append(padrow(card(rows_table(ev_rows), pad="6px 20px 6px 20px")))
+    o.append(sp(20))
     o.append(padrow(button(EVENTS_CAL_URL, "View the full October events calendar", INK, CREAM, align="center").replace('class="os-btn"', 'class="os-btn os-btn-navy"')))
 
     # --- Library (desktop two-up) ---
-    o.append(sp(40))
+    o.append(major_sp())
     o.append(section_head("library", "New in the library"))
-    o.append(sp(16))
+    o.append(sp(12))
     therapy_img = (
-        f'<img src="{art("guide-therapy-styles-landscape.jpg")}" '
-        f'srcset="{art("guide-therapy-styles-landscape-280.jpg")} 280w, {art("guide-therapy-styles-landscape.jpg")} 490w" '
-        f'sizes="(max-width:620px) 280px, 490px" width="490" height="260" '
+        f'<img class="os-card-art" src="{art("guide-therapy-styles-landscape-compact.jpg")}" '
+        f'width="490" height="228" '
         f'alt="Adult and child sharing a calm sensory play tray in a warm playroom" '
-        f'style="display:block;width:100%;max-width:490px;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 12px 0;">'
+        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 10px 0;">'
     )
     therapy = (therapy_img
                + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 4px 0", cls="os-tiny")
                + p("Therapy styles: play, structure, and compliance", 17, 24, INK, 700)
                + p("Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like.", 15, 22, BODY, 400, margin="6px 0 0 0")
-               + p(a(f"{SITE}/resources/therapy-styles", "Read the guide"), 15, 22, BODY, 400, margin="10px 0 0 0"))
+               + p(a(f"{SITE}/resources/therapy-styles", "Read the guide"), 15, 22, BODY, 400, margin="8px 0 0 0", cls="os-card-cta"))
     grief_img = (
-        f'<img src="{art("guide-grief-landscape.jpg")}" '
-        f'srcset="{art("guide-grief-landscape-280.jpg")} 280w, {art("guide-grief-landscape.jpg")} 490w" '
-        f'sizes="(max-width:620px) 280px, 490px" width="490" height="260" '
+        f'<img class="os-card-art" src="{art("guide-grief-landscape-compact.jpg")}" '
+        f'width="490" height="228" '
         f'alt="Parent on a porch in autumn while a child plays nearby in leaves - quiet and hopeful" '
-        f'style="display:block;width:100%;max-width:490px;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 12px 0;">'
+        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 10px 0;">'
     )
     grief = (grief_img
              + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 4px 0", cls="os-tiny")
              + p("Grief and disability: the loss nobody sends a card for", 17, 24, INK, 700)
              + p("This kind of grief rarely has an occasion attached. It shows up at a birthday, a missed milestone, or in the parking lot after an evaluation.", 15, 22, BODY, 400, margin="6px 0 0 0")
-             + p(a(f"{SITE}/resources/grieving-the-life-you-imagined", "Read the grief guide"), 15, 22, BODY, 400, margin="10px 0 0 0"))
+             + p(a(f"{SITE}/resources/grieving-the-life-you-imagined", "Read the grief guide"), 15, 22, BODY, 400, margin="8px 0 0 0", cls="os-card-cta"))
     o.append(padrow(browser_cols(
-        card(therapy, pad="12px 16px 16px 16px"),
-        card(grief, pad="12px 16px 16px 16px"),
+        card(therapy, pad="16px 16px 16px 16px"),
+        card(grief, pad="16px 16px 16px 16px"),
         gap=16,
     )))
 
     # --- One question ---
-    o.append(sp(40))
+    o.append(major_sp())
     o.append(section_head("question", "One question, answered",
                           "One real question from a local parent, answered plainly. " + a(f"{SITE}/contact", "Send us yours")))
-    o.append(sp(16))
+    o.append(sp(12))
     steps = rows_table([
         step(1, f'{b("Put it in writing.")} Email the case manager and copy the principal: name what is missing, quote the IEP, ask for a fix by a date, and request service logs.'),
         step(2, f'{b("Ask for an IEP team meeting.")} Request one in writing any time. If things stall, copy the district special education director. Bring notes and a friend.'),
-        step(3, f'{b("Use free state help.")} File a TDOE administrative complaint (no lawyer, decision in 60 days), or call STEP TN at {tel("800-280-7837", "+18002807837")}.'),
+        step(3, f'{b("Use free state help.")} File a TDOE administrative complaint (no lawyer, decision in 60 days), or call STEP TN at {tel("800-280-7837", "+18002807837")}.', last=True),
     ])
     qa = (p("October&rsquo;s question", 13, 18, ACCENT, 700, margin="0 0 6px 0")
           + p("&ldquo;What do I do if my child&rsquo;s IEP isn&rsquo;t being followed?&rdquo;", 18, 25, INK, 700)
-          + p("An IEP is legally binding. The school has to deliver what is written in it.", 16, 24, BODY, 400, margin="12px 0 12px 0")
+          + p("An IEP is legally binding. The school has to deliver what is written in it.", 16, 24, BODY, 400, margin="10px 0 12px 0")
           + steps
-          + p(a(f"{SITE}/resources/iep-504", "IEP &amp; 504 guide") + " &nbsp;&middot;&nbsp; " + a("https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html", "TDOE dispute options"), 15, 22, BODY, 400, margin="4px 0 0 0")
-          + p("Parent-to-parent guidance, not legal advice.", 13, 20, MUTED, 400, margin="10px 0 0 0", cls="os-tiny"))
+          + f'<div style="margin:14px 0 0 0;border-top:1px solid {RULE};font-size:0;line-height:0;height:1px;">&nbsp;</div>'
+          + p(a(f"{SITE}/resources/iep-504", "IEP &amp; 504 guide") + " &nbsp;&middot;&nbsp; " + a("https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html", "TDOE dispute options"), 15, 22, BODY, 400, margin="12px 0 0 0")
+          + p("Parent-to-parent guidance, not legal advice.", 13, 20, MUTED, 400, margin="8px 0 0 0", cls="os-tiny"))
     o.append(padrow(card(qa, pad="16px 20px 16px 20px")))
 
-    # --- Connect / support (T364 mockup + T365 desktop columns) ---
-    o.append(sp(40))
-    o.append(section_head("ongoing", "Connect with Other Local Parents"))
-    o.append(sp(16))
+    # --- Connect / support (T372 We Rock audience + sentence-case heading) ---
+    o.append(major_sp())
+    o.append(section_head("ongoing", "Connect with other local parents"))
+    o.append(sp(12))
     online_card = group_card(
         ["ONLINE", "FREE", "WEEKLY"],
         "Our Special Village Online Parent Group",
@@ -762,55 +870,63 @@ def build_html(base, browser=False):
         "Join the Online Group",
     )
     werock_card = group_card(
-        ["IN PERSON", "FREE", "WEEKLY"],
-        "We Rock the Spectrum Parent Group",
+        [],
+        "We Rock the Spectrum Parent &amp; Caregiver Group",
         [
             ("calendar", "Wednesdays at 5:00 PM"),
             ("pin", "We Rock the Spectrum Murfreesboro"),
         ],
-        "Connect with other parents and caregivers while children enjoy gym play.",
+        "Connect with other parents and caregivers of kids with special needs while children enjoy supervised-by-parent gym play.",
         [
             "Led by Cari Parr",
             "Parents remain with their children",
             "Childcare is not provided",
-            "Discounted gym admission is available",
+            "Gym play admission is separate and available at a discounted group rate",
         ],
         WRTS_URL,
         "Plan Your Visit",
+        audience="FOR PARENTS OF KIDS WITH SPECIAL NEEDS",
+        secondary=["IN PERSON", "WEEKLY"],
+        cost_note="FREE PARENT GROUP",
     )
-    o.append(padrow(browser_cols(online_card, werock_card, gap=16)))
+    o.append(padrow(
+        '<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
+        + f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 16px 0;vertical-align:top;box-sizing:border-box;">{online_card}</div>'
+        + f'<div class="os-browser-col" style="display:block;width:100%;margin:0;vertical-align:top;box-sizing:border-box;">{werock_card}</div>'
+        + '</div>'
+    ))
 
-    o.append(sp(40))
+    o.append(major_sp())
     about_copy = ((f'<h2 class="os-ink" style="margin:0;font-family:{FONT};font-size:17px;line-height:23px;'
                    f'mso-line-height-rule:exactly;color:{INK};font-weight:700;">About Our Special Village</h2>')
-                  + p(ABOUT, 14, 21, BODY, 400, margin="8px 0 0 0")
-                  + p(a(f"{SITE}/about", "About the Village") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/editorial-policy", "How we check information"), 14, 21, BODY, 400, margin="10px 0 0 0"))
+                  + p(ABOUT, 14, 21, BODY, 400, margin="6px 0 0 0")
+                  + p(a(f"{SITE}/about", "About the Village") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/editorial-policy", "How we check information"), 14, 21, BODY, 400, margin="8px 0 0 0"))
     photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="160" class="os-photocell" bgcolor="{BLUSH}" '
-             f'style="width:160px;border-collapse:separate;background-color:{BLUSH};border-radius:12px;margin:0 auto;">'
-             f'<tr><td class="os-photocell" align="center" style="width:160px;vertical-align:middle;border-radius:12px;">'
+             f'style="width:160px;border-collapse:separate;background-color:{BLUSH};border-radius:12px;">'
+             f'<tr><td class="os-photocell" align="left" style="width:160px;vertical-align:middle;border-radius:12px;">'
              f'<img class="os-photo" src="{art("about-family-bowling-small.jpg")}" width="160" height="160" alt="Taylor, her husband, and their daughter at a bowling alley." '
-             f'style="display:block;width:160px;max-width:100%;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none;border-radius:12px;font-family:{FONT};font-size:13px;line-height:18px;color:{BODY};"></td></tr></table>')
-    # Stacked + centered photo (T299 feedback), then About copy
+             f'style="display:block;width:160px;max-width:100%;height:auto;margin:0;border:0;outline:none;text-decoration:none;border-radius:12px;font-family:{FONT};font-size:13px;line-height:18px;color:{BODY};"></td></tr></table>')
+    # T367 desktop: photo + text row; mobile stacks
     about = (
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">'
-        f'<tr><td align="center" style="padding:0 0 14px 0;">{photo}</td></tr>'
-        f'<tr><td align="left" style="padding:0;">{about_copy}</td></tr>'
-        '</table>'
+        f'<div class="os-about-row" style="display:block;width:100%;">'
+        f'<div class="os-about-photo" style="display:block;width:160px;max-width:160px;margin:0 0 12px 0;">{photo}</div>'
+        f'<div class="os-about-text" style="display:block;width:100%;">{about_copy}</div>'
+        f'</div>'
     )
-    o.append(padrow(card(about, pad="16px 18px 16px 18px")))
+    o.append(padrow(card(about, pad="14px 16px 14px 16px")))
 
-    o.append(sp(16))
+    o.append(sp(12))
     nums = p("Numbers worth keeping", 14, 20, ACCENT, 700, margin="0 0 4px 0") + "".join(
         p(t, 14, 20, BODY, 400, margin="4px 0 0 0") for t in NUMBERS)
-    o.append(padrow(card(nums, pad="12px 18px 14px 18px")))
+    o.append(padrow(card(nums, pad="12px 16px 12px 16px")))
 
-    o.append(sp(22))
+    o.append(sp(16))
     o.append(padrow(p("Know a family who could use this? Forward it along. Anyone can join at "
                       + a(f"{SITE}/newsletter", "ourspecialvillagetn.com/newsletter", nowrap=False) + ".", 14, 21, BODY, 400, extra="text-align:center;")))
 
-    o.append(sp(28))
+    o.append(sp(20))
     o.append(f'<tr><td class="os-pad" style="padding:0 34px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr><td class="os-rule" style="border-top:1px solid {HAIR};font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table></td></tr>')
-    o.append(sp(18))
+    o.append(sp(14))
     footer = (p("Our Special Village &middot; Murfreesboro and surrounding areas, Tennessee", 14, 21, INK, 700, margin="0 0 6px 0")
               + p("Local businesses and practices help keep the Village free and ad-free. " + a(f"{SITE}/sponsors", "Sponsorship options", nowrap=False) + ".", 13, 20, BODY, 400, margin="0 0 12px 0")
               + p("You are receiving this because you joined the newsletter list at ourspecialvillagetn.com.<br>"
@@ -926,10 +1042,11 @@ def build_text():
     w("  Good to know: No formal diagnosis required; Drop in any Thursday beginning October 1; Cameras are optional; Meetings are never recorded.")
     w(f"  Join the Online Group: {SITE}/group")
     w("")
-    w("We Rock the Spectrum Parent Group · IN PERSON · FREE · WEEKLY")
+    w("We Rock the Spectrum Parent & Caregiver Group")
+    w("  FOR PARENTS OF KIDS WITH SPECIAL NEEDS · IN PERSON · WEEKLY · FREE PARENT GROUP")
     w("  Wednesdays at 5:00 PM · We Rock the Spectrum Murfreesboro")
-    w("  Connect with other parents and caregivers while children enjoy gym play.")
-    w("  Good to know: Led by Cari Parr; Parents remain with their children; Childcare is not provided; Discounted gym admission is available.")
+    w("  Connect with other parents and caregivers of kids with special needs while children enjoy supervised-by-parent gym play.")
+    w("  Good to know: Led by Cari Parr; Parents remain with their children; Childcare is not provided; Gym play admission is separate and available at a discounted group rate.")
     w(f"  Plan Your Visit: {WRTS_URL}")
     w("")
     w("----------------------------------------")
@@ -1137,15 +1254,15 @@ def main():
     assert "art/icons/pin.png" in html_browser
     assert 'alt="Taylor"' in html
     assert "about-family-bowling-small.jpg" in html
-    assert "featured-monsters-museum.jpg" in html
-    assert "guide-therapy-styles-landscape.jpg" in html
-    assert "guide-grief-landscape.jpg" in html
-    assert "village-hall-iep.jpg" in html
+    assert "featured-monsters-museum-compact.jpg" in html
+    assert "guide-therapy-styles-landscape-compact.jpg" in html
+    assert "guide-grief-landscape-compact.jpg" in html
+    assert "village-hall-iep-compact.jpg" in html
     assert "Three things to know this month" in html
     assert "See all deadlines" in html
     assert "View the full October events calendar" in html
-    assert "Connect with Other Local Parents" in html
-    assert "Connect with other local parents" not in html
+    assert "Connect with other local parents" in html
+    assert "Connect with Other Local Parents" not in html
     assert "Support groups in Murfreesboro" not in html
     assert "Every week" not in html
     assert "Ongoing this month" not in html
@@ -1187,6 +1304,16 @@ def main():
     assert "Parents remain with their children" in html
     assert "Childcare is not provided" in html
     assert "Good to know" in html
+    # T372 We Rock audience / cost clarity
+    assert "FOR PARENTS OF KIDS WITH SPECIAL NEEDS" in html
+    assert "We Rock the Spectrum Parent &amp; Caregiver Group" in html
+    assert "supervised-by-parent gym play" in html
+    assert "FREE PARENT GROUP" in html
+    assert "Gym play admission is separate and available at a discounted group rate" in html
+    assert "Discounted gym admission is available" not in html
+    assert "village-hall-iep-compact.jpg" in html
+    assert "os-sec" in html
+    assert "os-audience" in html
     assert 'class="chip"' in deadlines
     assert "Sun" in deadlines and "Nov" in deadlines
     assert "Drop in any Thursday beginning October 1" in html
