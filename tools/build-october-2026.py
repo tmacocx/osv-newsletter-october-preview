@@ -326,7 +326,7 @@ NOTE_PARAS = [
      "their own. Too many parents were asking the same questions without one clear place to "
      "find answers."),
     ("This month&rsquo;s newsletter brings together local events, practical resources, and "
-     "opportunities to connect with other families. I hope it saves you a little time&ndash;and "
+     "opportunities to connect with other families. I hope it saves you a little time &ndash; and "
      "reminds you that you do not have to figure everything out alone."),
 ]
 NOTE = " ".join(NOTE_PARAS)  # plain-text export
