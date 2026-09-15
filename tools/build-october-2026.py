@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T365 desktop browser layout).
+"""Build the October 2026 Our Special Village newsletter (T365 desktop + T364 mockup polish).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
@@ -187,34 +187,64 @@ def badges_row(labels):
     )
 
 
-def meta_line(label):
-    """Single meta row for support cards (email-safe; no art/icons)."""
-    return p(label, 15, 22, BODY, 400, margin="4px 0 0 0")
+def meta_row(icon_name, label, first=False):
+    """Icon + label meta row (T364 mockup)."""
+    top = "6px" if first else "2px"
+    src = f"{PAGES}art/icons/{icon_name}.png"
+    return (
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        f'style="width:100%;border-collapse:collapse;margin:{top} 0 0 0;"><tr>'
+        '<td width="22" valign="middle" style="width:22px;padding:0 8px 0 0;vertical-align:middle;">'
+        f'<img src="{src}" width="16" height="16" alt="" '
+        'style="display:block;width:16px;height:16px;border:0;outline:none;text-decoration:none;">'
+        '</td><td valign="middle" style="padding:0;vertical-align:middle;">'
+        + p(label, 15, 22, BODY, 400)
+        + '</td></tr></table>'
+    )
 
 
 def good_to_know(items):
-    """T364 mockup checklist block."""
+    """T364 mockup checklist under a hairline divider."""
     rows = []
     for t in items:
         rows.append(
-            '<tr><td valign="top" style="padding:0 8px 6px 0;width:16px;">'
-            f'<span style="font-family:{FONT};font-size:15px;line-height:22px;color:{ACCENT};font-weight:700;">&#10003;</span>'
+            '<tr><td valign="top" style="padding:0 8px 6px 0;width:18px;">'
+            f'<span style="font-family:{FONT};font-size:15px;line-height:22px;color:{ACCENT};'
+            'font-weight:700;">&#10003;</span>'
             '</td><td valign="top" style="padding:0 0 6px 0;">'
             + p(t, 15, 22, BODY, 400)
             + '</td></tr>'
         )
     return (
-        p("Good to know", 15, 22, INK, 700, margin="14px 0 8px 0")
+        f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        f'style="width:100%;border-collapse:collapse;margin:14px 0 0 0;border-top:1px solid {RULE};">'
+        f'<tr><td style="padding:14px 0 0 0;">'
+        + p("Good to know", 15, 22, INK, 700, margin="0 0 8px 0")
         + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:collapse;">'
         + "".join(rows)
-        + '</table>'
+        + '</table></td></tr></table>'
     )
 
 
-def group_card(badges, name, meta_lines, blurb, good_items, btn_href, btn_label):
-    """T364-aligned support-group card: badges, meta, blurb, Good to know, button."""
-    metas = "".join(meta_line(m) for m in meta_lines)
+def group_cta(href, label):
+    """Full-width navy CTA matching T364 mockup (rounded rect, not pill)."""
+    return (
+        f'<table role="presentation" class="os-btn os-btn-navy" cellpadding="0" cellspacing="0" '
+        f'border="0" width="100%" bgcolor="{INK}" '
+        f'style="width:100%;border-collapse:separate;background-color:{INK};border-radius:12px;">'
+        f'<tr><td align="center" style="padding:14px 18px;">'
+        f'<a href="{href}" style="display:block;font-family:{FONT};font-size:16px;line-height:20px;'
+        f'color:{CREAM};font-weight:700;text-decoration:none;text-align:center;">'
+        f'<span style="color:{CREAM};">{label}</span></a></td></tr></table>'
+    )
+
+
+def group_card(badges, name, meta_pairs, blurb, good_items, btn_href, btn_label):
+    """T364 support-group card: badges, title, icon meta, blurb, Good to know, full-width CTA."""
+    metas = "".join(
+        meta_row(icon, label, first=(i == 0)) for i, (icon, label) in enumerate(meta_pairs)
+    )
     inner = (
         badges_row(badges)
         + p(name, 17, 23, INK, 700, margin="0")
@@ -222,10 +252,11 @@ def group_card(badges, name, meta_lines, blurb, good_items, btn_href, btn_label)
         + p(blurb, 15, 22, BODY, 400, margin="10px 0 0 0")
         + good_to_know(good_items)
         + '<div style="margin:16px 0 0 0;">'
-        + button(btn_href, btn_label, INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
+        + group_cta(btn_href, btn_label)
         + '</div>'
     )
-    return card(inner, pad="16px 18px 16px 18px")
+    return card(inner, pad="18px 18px 18px 18px")
+
 
 
 def browser_cols(*pieces, gap=16):
@@ -709,15 +740,15 @@ def build_html(base, browser=False):
 
     # --- Connect / support (T364 mockup + T365 desktop columns) ---
     o.append(sp(40))
-    o.append(section_head("ongoing", "Connect with other local parents"))
+    o.append(section_head("ongoing", "Connect with Other Local Parents"))
     o.append(sp(16))
     online_card = group_card(
         ["ONLINE", "FREE", "WEEKLY"],
         "Our Special Village Online Parent Group",
         [
-            "Thursdays",
-            "7:00&ndash;8:00 PM Central",
-            "Online",
+            ("calendar", "Thursdays"),
+            ("clock", "7:00&ndash;8:00 PM Central"),
+            ("video", "Online"),
         ],
         "Connect with parents and caregivers of neurodivergent and disabled children "
         "in a welcoming, judgment-free space.",
@@ -734,9 +765,8 @@ def build_html(base, browser=False):
         ["IN PERSON", "FREE", "WEEKLY"],
         "We Rock the Spectrum Parent Group",
         [
-            "Wednesdays at 5:00 PM",
-            "We Rock the Spectrum Murfreesboro",
-            "820 N. Thompson Lane, Murfreesboro",
+            ("calendar", "Wednesdays at 5:00 PM"),
+            ("pin", "We Rock the Spectrum Murfreesboro"),
         ],
         "Connect with other parents and caregivers while children enjoy gym play.",
         [
@@ -897,7 +927,7 @@ def build_text():
     w(f"  Join the Online Group: {SITE}/group")
     w("")
     w("We Rock the Spectrum Parent Group · IN PERSON · FREE · WEEKLY")
-    w("  Wednesdays at 5:00 PM · We Rock the Spectrum Murfreesboro · 820 N. Thompson Lane, Murfreesboro")
+    w("  Wednesdays at 5:00 PM · We Rock the Spectrum Murfreesboro")
     w("  Connect with other parents and caregivers while children enjoy gym play.")
     w("  Good to know: Led by Cari Parr; Parents remain with their children; Childcare is not provided; Discounted gym admission is available.")
     w(f"  Plan Your Visit: {WRTS_URL}")
@@ -1098,9 +1128,13 @@ def main():
         assert "—" not in s and "&mdash;" not in s, "em dash found"
         assert "Village Picks" not in s
         assert "Microsoft Teams" not in s
-        assert "art/icons/" not in s
         assert "Wall of Hope" not in s
         assert "autumn-events-collage" not in s
+    assert "art/icons/" not in txt
+    assert "art/icons/calendar.png" in html_email
+    assert "art/icons/calendar.png" in html_browser
+    assert "art/icons/video.png" in html_browser
+    assert "art/icons/pin.png" in html_browser
     assert 'alt="Taylor"' in html
     assert "about-family-bowling-small.jpg" in html
     assert "featured-monsters-museum.jpg" in html
@@ -1110,8 +1144,8 @@ def main():
     assert "Three things to know this month" in html
     assert "See all deadlines" in html
     assert "View the full October events calendar" in html
-    assert "Connect with other local parents" in html
-    assert "Connect with Other Local Parents" not in html
+    assert "Connect with Other Local Parents" in html
+    assert "Connect with other local parents" not in html
     assert "Support groups in Murfreesboro" not in html
     assert "Every week" not in html
     assert "Ongoing this month" not in html
@@ -1147,6 +1181,7 @@ def main():
     assert "I&rsquo;m neurodivergent myself" not in html
     assert "Join the Online Group" in html
     assert "Plan Your Visit" in html
+    assert "border-radius:12px" in html  # T364 full-width support CTAs
     assert "Contact We Rock the Spectrum" not in html
     assert "Led by Cari Parr" in html
     assert "Parents remain with their children" in html
