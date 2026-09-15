@@ -6,6 +6,7 @@ newsletter-october-2026.txt, and deadlines-october-2026.html (full deadline list
 
 Keeps shorten/art wins; restores her October note, extended Village Hall + support
 group, drops Sensory lines, centers family photo, clarifies voter deadline date.
+FEEDBACK-2: deadlines page date squares; Village Hall never uses interpunct dots.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
 
@@ -430,12 +431,12 @@ def build_html(base):
     vh = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
           '<tr><td align="left" style="padding:26px 26px 26px 26px;">'
           + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 6px 0")
-          + p("9:30 to 11:00 AM Central &middot; Online &middot; Pay what you can, including nothing", 16, 24, SAND, 400, margin="0 0 18px 0")
+          + p("9:30 to 11:00 AM Central, Online<br>Pay what you can, including nothing", 16, 24, SAND, 400, margin="0 0 18px 0")
           + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
           + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 20, 27, CREAM, 700, margin="0 0 12px 0")
           + p("A 40-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 16, 24, SAND, 400, margin="0 0 20px 0")
           + button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK).replace('class="os-btn"', 'class="os-btn os-btn-gold"')
-          + p("$0 always welcome &middot; $10 helps &middot; $20 suggested &middot; $35 sponsors another seat. The meeting link is emailed to registrants.", 14, 22, SAND, 400, margin="16px 0 0 0")
+          + p("$0 always welcome, $10 helps, $20 suggested, $35 sponsors another seat. The meeting link is emailed to registrants.", 14, 22, SAND, 400, margin="16px 0 0 0")
           + '</td></tr></table>')
     o.append(padrow(vh))
 
@@ -578,11 +579,12 @@ def build_text():
     w("TDOE dispute options: https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html")
     w("Parent-to-parent guidance, not legal advice.")
     w("")
-    w("Village Hall · Saturday, October 10, 2026")
-    w("9:30 to 11:00 AM Central · Online · Pay what you can, including nothing")
+    w("Village Hall: Saturday, October 10, 2026")
+    w("9:30 to 11:00 AM Central, Online")
+    w("Pay what you can, including nothing")
     w("Topic and guest: The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.")
     w("A 40-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
-    w("$0 always welcome · $10 helps · $20 suggested · $35 sponsors another seat.")
+    w("$0 always welcome, $10 helps, $20 suggested, $35 sponsors another seat.")
     w(f"Register for Village Hall: {SITE}/village-hall")
     w("")
     w("----------------------------------------")
@@ -623,8 +625,101 @@ def build_text():
     return "\n".join(L) + "\n"
 
 
+def deadline_chip(dow, day, moy):
+    """Newsletter-style date square (left chip)."""
+    return (
+        f'<div class="chip" aria-hidden="true">'
+        f'<div class="dow">{dow}</div>'
+        f'<div class="dom">{day}</div>'
+        f'<div class="moy">{moy}</div>'
+        f'</div>'
+    )
+
+
+def deadline_item(dow, day, moy, title, body):
+    return (
+        f'<div class="item">{deadline_chip(dow, day, moy)}'
+        f'<div class="body"><strong>{title}</strong>{body}</div></div>'
+    )
+
+
 def build_deadlines_page():
-    return f'''<!DOCTYPE html>
+    items_school = "".join([
+        deadline_item(
+            "Mon", "5", "Oct",
+            "Fall break, Oct 5&ndash;9: RCS and MCS",
+            'Both districts closed. RCS conferences Tue Oct 20; MCS conferences Tue Nov 3 (no school). '
+            '<a href="https://www.rcschools.net/o/rcs/page/rcs-academic-calendars">RCS</a>, '
+            '<a href="https://www.cityschools.net/calendar">MCS</a>'),
+        deadline_item(
+            "Mon", "5", "Oct",
+            "Voter registration deadline: Mon Oct 5",
+            'For the Nov 3 election. Early voting Oct 14&ndash;29; disability mail-ballot requests by Sat Oct 24. '
+            '<a href="https://govotetn.gov/">GoVoteTN</a>'),
+        deadline_item(
+            "Sun", "1", "Nov",
+            "Clocks fall back: Sun Nov 1",
+            'DST ends 2:00 AM. Shift bedtime gradually if sleep is fragile. '
+            '<a href="https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst">NIST</a>'),
+    ])
+    items_health = "".join([
+        deadline_item(
+            "Oct", "15", "to Dec 7",
+            "Medicare open enrollment: Oct 15&ndash;Dec 7",
+            'Compare or switch drug and Advantage plans for 2027. TN SHIP: 1-877-801-0044. '
+            '<a href="https://www.medicare.gov/health-drug-plans/open-enrollment">Medicare.gov</a>'),
+        deadline_item(
+            "Nov", "1", "to Jan 15",
+            "HealthCare.gov: Nov 1&ndash;Jan 15",
+            'Enroll by Dec 15 for Jan 1 coverage. Kids may qualify for TennCare or CoverKids any time. '
+            '<a href="https://www.healthcare.gov/quick-guide/dates-and-deadlines/">Dates</a>'),
+        deadline_item(
+            "Any", "-", "time",
+            "Katie Beckett (TennCare)",
+            f'Apply any time; Part B has a waiting list. <a href="{SITE}/resources/katie-beckett">Katie Beckett guide</a>'),
+    ])
+    items_money = "".join([
+        deadline_item(
+            "Wed", "14", "Oct",
+            "SSI / Social Security COLA announced: Wed Oct 14",
+            'Expected with the September inflation report; new amounts start in January. '
+            '<a href="https://www.ssa.gov/cola/">SSA COLA</a>'),
+    ])
+    items_teens = "".join([
+        deadline_item(
+            "Thu", "1", "Oct",
+            "FAFSA for 2027&ndash;28 opens: Thu Oct 1",
+            'Free. TN Promise students must file by April 1, 2027. '
+            '<a href="https://studentaid.gov/h/apply-for-aid/fafsa">StudentAid.gov</a>'),
+        deadline_item(
+            "Thu", "1", "Oct",
+            "Education Freedom Scholarship office hours: Thu Oct 1, 1&ndash;2 PM CT",
+            '2027&ndash;28 application dates not posted yet. '
+            '<a href="https://www.tn.gov/education/efs.html">EFS</a>'),
+        deadline_item(
+            "Mon", "2", "Nov",
+            "Tennessee Promise deadline: Mon Nov 2",
+            'Class of 2027. <a href="https://www.collegefortn.org/tnpromise/">CollegeforTN</a>'),
+        deadline_item(
+            "Fri", "6", "Nov",
+            "ACT accommodations for Dec 12: Fri Nov 6",
+            'Through your school testing coordinator. '
+            '<a href="https://www.act.org/content/act/en/products-and-services/the-act/registration/accommodations.html">ACT accommodations</a>'),
+        deadline_item(
+            "Mon", "16", "Feb",
+            "Individualized Education Account: projected Feb 16, 2027",
+            'Needs an active IEP and a prior year in a Tennessee public school. '
+            '<a href="https://www.tn.gov/education/iea.html">IEA</a>'),
+    ])
+    items_undated = "".join([
+        deadline_item(
+            "Open", "-", "now",
+            "Salvation Army Angel Tree (Rutherford &amp; Cannon)",
+            'Family registration is full; spots may reopen. Adoptions open Nov 6. '
+            '<a href="https://www.salvationarmymurfreesboro.org/angeltree">Angel Tree</a>'),
+    ])
+
+    return f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>October 2026 deadlines · Our Special Village</title>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
@@ -634,8 +729,13 @@ main{{max-width:640px;margin:0 auto;}}
 h1{{color:{INK};font-size:28px;margin:0 0 8px;}}
 h2{{color:{INK};font-size:18px;margin:28px 0 10px;}}
 .meta{{color:{MUTED};font-size:14px;margin:0 0 24px;}}
-.item{{background:{WHITE};border:1px solid {HAIR};border-radius:12px;padding:14px 16px;margin:0 0 10px;}}
-.item strong{{color:{INK};display:block;margin-bottom:4px;}}
+.item{{display:flex;gap:14px;align-items:flex-start;background:{WHITE};border:1px solid {HAIR};border-radius:12px;padding:14px 16px;margin:0 0 10px;}}
+.chip{{flex:0 0 62px;width:62px;background:{BLUSH};border-radius:10px;text-align:center;padding:7px 3px;box-sizing:border-box;}}
+.chip .dow{{color:{ACCENT};font-size:12px;line-height:14px;font-weight:700;}}
+.chip .dom{{color:{INK};font-size:22px;line-height:26px;font-weight:700;margin:1px 0 0;}}
+.chip .moy{{color:{BODY};font-size:11px;line-height:14px;font-weight:700;}}
+.body{{flex:1;min-width:0;}}
+.body strong{{color:{INK};display:block;margin-bottom:4px;font-size:16px;}}
 a{{color:{ACCENT};font-weight:700;}}
 .back{{margin:0 0 20px;font-size:14px;}}
 </style></head><body><main>
@@ -643,26 +743,19 @@ a{{color:{ACCENT};font-weight:700;}}
 <h1>All October deadlines</h1>
 <p class="meta">Dates confirmed Sept 14, 2026. Teen, college, Medicare, benefits, and undated items live here so the email can stay short.</p>
 <h2>School and community</h2>
-<div class="item"><strong>Fall break, Oct 5&ndash;9 · RCS and MCS</strong>Both districts closed. RCS conferences Tue Oct 20; MCS conferences Tue Nov 3 (no school). <a href="https://www.rcschools.net/o/rcs/page/rcs-academic-calendars">RCS</a> · <a href="https://www.cityschools.net/calendar">MCS</a></div>
-<div class="item"><strong>Voter registration deadline: Mon Oct 5</strong>For the Nov 3 election. Early voting Oct 14&ndash;29; disability mail-ballot requests by Sat Oct 24. <a href="https://govotetn.gov/">GoVoteTN</a></div>
-<div class="item"><strong>Clocks fall back · Sun Nov 1</strong>DST ends 2:00 AM. Shift bedtime gradually if sleep is fragile. <a href="https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst">NIST</a></div>
+{items_school}
 <h2>Insurance and health</h2>
-<div class="item"><strong>Medicare open enrollment · Oct 15&ndash;Dec 7</strong>Compare or switch drug and Advantage plans for 2027. TN SHIP: 1-877-801-0044. <a href="https://www.medicare.gov/health-drug-plans/open-enrollment">Medicare.gov</a></div>
-<div class="item"><strong>HealthCare.gov · Nov 1&ndash;Jan 15</strong>Enroll by Dec 15 for Jan 1 coverage. Kids may qualify for TennCare or CoverKids any time. <a href="https://www.healthcare.gov/quick-guide/dates-and-deadlines/">Dates</a></div>
-<div class="item"><strong>Katie Beckett (TennCare)</strong>Apply any time; Part B has a waiting list. <a href="{SITE}/resources/katie-beckett">Katie Beckett guide</a></div>
+{items_health}
 <h2>Money and benefits</h2>
-<div class="item"><strong>SSI / Social Security COLA announced · Wed Oct 14</strong>Expected with the September inflation report; new amounts start in January. <a href="https://www.ssa.gov/cola/">SSA COLA</a></div>
+{items_money}
 <h2>Teens and college</h2>
-<div class="item"><strong>FAFSA for 2027&ndash;28 opens · Thu Oct 1</strong>Free. TN Promise students must file by April 1, 2027. <a href="https://studentaid.gov/h/apply-for-aid/fafsa">StudentAid.gov</a></div>
-<div class="item"><strong>Education Freedom Scholarship office hours · Thu Oct 1, 1&ndash;2 PM CT</strong>2027&ndash;28 application dates not posted yet. <a href="https://www.tn.gov/education/efs.html">EFS</a></div>
-<div class="item"><strong>Tennessee Promise deadline · Mon Nov 2</strong>Class of 2027. <a href="https://www.collegefortn.org/tnpromise/">CollegeforTN</a></div>
-<div class="item"><strong>ACT accommodations for Dec 12 · Fri Nov 6</strong>Through your school testing coordinator. <a href="https://www.act.org/content/act/en/products-and-services/the-act/registration/accommodations.html">ACT accommodations</a></div>
-<div class="item"><strong>Individualized Education Account · projected Feb 16, 2027</strong>Needs an active IEP and a prior year in a Tennessee public school. <a href="https://www.tn.gov/education/iea.html">IEA</a></div>
+{items_teens}
 <h2>Undated</h2>
-<div class="item"><strong>Salvation Army Angel Tree (Rutherford &amp; Cannon)</strong>Family registration is full; spots may reopen. Adoptions open Nov 6. <a href="https://www.salvationarmymurfreesboro.org/angeltree">Angel Tree</a></div>
+{items_undated}
 <p class="meta" style="margin-top:28px;">If something changed, reply to the newsletter. A person reads it.</p>
 </main></body></html>
-'''
+"""
+
 
 
 def main():
@@ -709,6 +802,13 @@ def main():
     assert "Voter registration deadline: Mon Oct 5" in html
     assert "Topic and guest" in html
     assert "$35 sponsors another seat" in html
+    # FEEDBACK-2: Village Hall navy card must never use interpunct dots
+    assert "9:30 to 11:00 AM Central, Online" in html
+    assert "9:30 to 11:00 AM Central &middot;" not in html
+    assert "$0 always welcome, $10 helps" in html
+    assert "$0 always welcome &middot;" not in html
+    assert 'class="chip"' in deadlines
+    assert "Sun" in deadlines and "Nov" in deadlines
     assert "Meeting weekly since September" in html
     assert 'width="96"' in html and "signature-taylor.png" in html
     assert 'align="center"' in html and "about-family-bowling-small.jpg" in html
