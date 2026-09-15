@@ -140,3 +140,10 @@ MailerLite: `{$url}` (view in browser / hosted archive) and `{$unsubscribe}` (on
 7. Re-check We Rock the Spectrum for Spooktacular time/cost; replace "Time and cost not posted yet" if published.
 8. Once returning readers outnumber new subscribers, swap the first line of the Taylor note and keep the rest.
 9. If Angel Tree registration reopens, give it a date chip in For every family.
+
+
+## T354 (2026-09-15)
+- Personal note: Georgia italic (email-safe); welcome line alone as “Welcome to our special village family”.
+- Bottom header → **Support groups in Murfreesboro**; two separate cards (OSV online + We Rock in person).
+- We Rock: in person; free for parents; children gym play at discounted rate; email `info@werockthespectrummurfreesboro.com` verified from gym contact page (phone already known).
+- OSV group copy kept in full; split into short paragraphs for readability.
