@@ -3,17 +3,19 @@
 Customer preview for Taylor Hickok. Not production MailerLite send.
 
 - Preview (GitHub Pages): https://tmacocx.github.io/osv-newsletter-october-preview/
+- Full deadlines companion: https://tmacocx.github.io/osv-newsletter-october-preview/deadlines-october-2026.html
 - `index.html` and `newsletter-october-subscriber-preview.html` are identical copies of the email.
 - `newsletter-october-2026.txt` is the plain-text alternative for the MailerLite send.
-- `tools/build-october-2026.py` generates both HTML files and the `.txt`. Edit that, then re-run it.
-- `research-notes-october-2026.md` - sources, T299 and T303 checklist mapping, and editor to-dos before send.
+- `tools/build-october-2026.py` generates both HTML files, the `.txt`, and `deadlines-october-2026.html`. Edit that, then re-run it.
+- `research-notes-october-2026.md` - sources and checklist mapping.
 
-## MailerLite settings (T303)
+## T299 content/structure shorten (second-round Hickok)
 
-- **Subject:** `October: sensory-friendly events + deadlines` (44 chars; the hero stays "October in the Village")
-- **Preheader:** `Two deadlines land Monday, October 5. Plus sensory-friendly fall outings with drive times, two new guides, and one IEP question answered.`
-- Two links use MailerLite link variables and only resolve inside MailerLite: **View in browser** → `{$url}`, **Unsubscribe in one click** → `{$unsubscribe}`. They 404 on the GitHub Pages preview by design. Confirm `{$url}` in a test send.
+Material shorten (keep Vincent/T323 art): short welcome, no TOC, “Three things to know this month” + See all deadlines, month-ahead heading before featured Discovery card, no autumn collage, ≤4 secondary events + full calendar button, landscape guide thumbs, no Wall of Hope, 3-step IEP + Village Hall navy CTA (no standalone VH section), Ongoing this month, condensed About. Target 750–1000 words.
+
+## MailerLite settings
+
+- **Subject:** `October: sensory-friendly events + deadlines` (44 chars)
+- **Preheader:** Fall break / three things / Discovery / guides / IEP (see build script)
+- **View in browser** → `{$url}`, **Unsubscribe** → `{$unsubscribe}` (dead on Pages by design)
 - Attach `newsletter-october-2026.txt` as the plain-text part.
-- "In this issue" uses in-email anchors (`#deadlines`, `#events`, `#library`, `#hope`, `#question`, `#village-hall`). They work in Apple Mail, Outlook, Yahoo, and Gmail on the web; the Gmail mobile apps ignore them.
-
-New art (`art/signature-taylor.png`, `art/about-family-bowling.jpg`) 404s on Pages until this branch is merged to `main`.
