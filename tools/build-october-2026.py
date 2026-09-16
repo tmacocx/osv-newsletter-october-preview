@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T385 VH Mercedes + 988).
+"""Build the October 2026 Our Special Village newsletter (T386 988 tel: link).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
+T386: 988 in the footer is a tel: link, matching STEP TN / Disability Rights TN.
 T385: Mercedes name/role centered to the right of her photo; description below
 that block, left-aligned with the picture. Footer names 988 as the Suicide &
 Crisis Lifeline. No other newsletter changes.
@@ -570,7 +571,7 @@ ABOUT = ("A village for families like ours in Murfreesboro and surrounding areas
          "to every kind of difference and disability.")
 
 NUMBERS = [
-    (b("988 Suicide &amp; Crisis Lifeline") + " &middot; Call or text any hour."),
+    (b(tel("988", "988") + " Suicide &amp; Crisis Lifeline") + " &middot; Call or text any hour."),
     (b("STEP TN") + " (IEP help): " + tel("800-280-7837", "+18002807837")
      + " / Espa&ntilde;ol " + tel("800-975-2919", "+18009752919") + "."),
     (b("Disability Rights TN:") + " " + tel("800-342-1660", "+18003421660") + "."),
@@ -703,7 +704,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T385: VH Mercedes name/role centered right of photo; blurb below left-aligned with picture. 988 named. -->
+<!-- T386: 988 is a tel: link. T385: VH Mercedes name/role centered right of photo; blurb below left-aligned with picture. 988 named. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -1442,7 +1443,9 @@ def main():
     assert name_i < blurb_i
     assert "</tr>" in html[name_i:blurb_i]
     assert "os-vh-guestblurb" in html
-    assert "988 Suicide &amp; Crisis Lifeline" in html
+    assert 'href="tel:988"' in html
+    assert 'href="tel:988"' in html_browser
+    assert "Suicide &amp; Crisis Lifeline" in html
     assert "988 Suicide & Crisis Lifeline" in txt
     assert "988 · Call or text any hour." not in txt
     assert "os-intro-byline" in html
