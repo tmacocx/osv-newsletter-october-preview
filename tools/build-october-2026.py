@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T386 988 tel: link).
+"""Build the October 2026 Our Special Village newsletter (T387 Mercedes photo + bio).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
+T387: Village Hall Mercedes photo is the family headshot; bio says two
+neurodivergent children (not one child with Autism). ACCESS/Creative Spaces
+logo omitted so the T385 name/role layout stays uncrowded.
 T386: 988 in the footer is a tel: link, matching STEP TN / Disability Rights TN.
 T385: Mercedes name/role centered to the right of her photo; description below
 that block, left-aligned with the picture. Footer names 988 as the Suicide &
@@ -704,7 +707,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T386: 988 is a tel: link. T385: VH Mercedes name/role centered right of photo; blurb below left-aligned with picture. 988 named. -->
+<!-- T387: Mercedes family photo + two ND children. T386: 988 is a tel: link. T385: VH Mercedes name/role centered right of photo; blurb below left-aligned with picture. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -832,8 +835,8 @@ def build_html(base, browser=False):
         'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">'
         '<tr>'
         f'<td width="88" valign="middle" style="width:88px;padding:0 12px 0 0;vertical-align:middle;">'
-        f'<img class="os-vh-portrait" src="{art("mercedes-lawson-160.jpg")}" width="88" height="126" '
-        f'alt="Mercedes Lawson, M.S. Ed., founder of A.C.C.E.S.S." '
+        f'<img class="os-vh-portrait" src="{art("mercedes-lawson-160.jpg")}" width="88" height="115" '
+        f'alt="Mercedes Lawson, M.S. Ed., with her family." '
         f'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
         '</td>'
         '<td class="os-vh-guestname" valign="middle" align="center" '
@@ -844,7 +847,7 @@ def build_html(base, browser=False):
         '<tr><td colspan="2" class="os-vh-guestblurb" align="left" '
         'style="padding:10px 0 0 0;vertical-align:top;text-align:left;">'
         + p("She grew up with a sibling with disabilities, taught special education for nine years "
-           "helping 250+ students, and has a child with Autism. Through A.C.C.E.S.S. "
+           "helping 250+ students, and has two neurodivergent children. Through A.C.C.E.S.S. "
            "(Advocacy &amp; Consultation Center for Educational Student Supports), she helps families "
            "with IEP consultation, educational advocacy, and tutoring.",
            13, 19, SAND, 400, extra="text-align:left;")
@@ -1092,7 +1095,7 @@ def build_text():
     w("9:30 to 11:00 AM Central")
     w("Online")
     w("Topic and guest: The IEP process and navigating the school system")
-    w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. (Advocacy & Consultation Center for Educational Student Supports) in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has a child with Autism. She helps families with IEP consultation, educational advocacy, and tutoring.")
+    w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. (Advocacy & Consultation Center for Educational Student Supports) in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has two neurodivergent children. She helps families with IEP consultation, educational advocacy, and tutoring.")
     w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
     w(f"Register for Village Hall: {SITE}/village-hall")
     w("Choose what you can pay: Every family is welcome – choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward")
@@ -1406,6 +1409,12 @@ def main():
     assert "$0 always welcome &middot;" not in html
     assert "45-minute lesson" in html
     assert "mercedes-lawson-160.jpg" in html
+    assert "two neurodivergent children" in html
+    assert "two neurodivergent children" in txt
+    assert "a child with Autism" not in html
+    assert "a child with Autism" not in txt
+    assert "child with Autism" not in html
+    assert "child with Autism" not in txt
     assert "taylor-hickok-160.jpg" in html
     assert "No formal diagnosis required" in html
     assert "Neurodivergent parents, you are welcome too" not in html
