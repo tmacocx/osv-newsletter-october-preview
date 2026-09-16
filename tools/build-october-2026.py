@@ -139,9 +139,16 @@ def chip(top, big=None, bottom=None, year=False):
         inner = (p(top, 13, 17, INK, 700, extra=nowrap) +
                  p(bottom, 13, 17, INK, 700, extra=nowrap))
         return shell_open.format(pad="17px 3px 17px 3px") + inner + shell_close
-    # "to Dec 7" / "to Jan 15" wrapped in 62px chips — keep one line via en dash + nbsp
+    # Range bottoms stay one line via nbsp. "to Dec 7" / "to Jan 15" keep a leading
+    # en dash; T367 §4 / T382: "Nov 1" on the Boo at the Zoo chip must not.
     if isinstance(bottom, str) and bottom.startswith("to "):
-        bottom = "&ndash;" + bottom[3:].replace(" ", "&nbsp;")
+        rest = bottom[3:].replace(" ", "&nbsp;")
+        if rest.replace("&nbsp;", " ") == "Nov 1":
+            bottom = rest
+        else:
+            bottom = "&ndash;" + rest
+    elif isinstance(bottom, str) and " " in bottom and "&nbsp;" not in bottom:
+        bottom = bottom.replace(" ", "&nbsp;")
     bottom_size = 11 if "&ndash;" in (bottom or "") or "&nbsp;" in (bottom or "") else 12
     inner = (p(top, 12, 14, ACCENT, 700, extra=nowrap) +
              p(big, 22, 26, INK, 700, margin="1px 0 0 0", extra=nowrap) +
@@ -478,7 +485,7 @@ SECONDARY_EVENTS = [
          meta="12:00&ndash;1:00 PM &middot; Frist Art Museum, Nashville &middot; Free for members and ages 18 and under &middot; About 45 min",
          sensory="gallery sound lowered for the hour, multisensory carts with volunteers.",
          link=("https://fristartmuseum.org/event/sensory-sunday-hour-5/", "Details")),
-    dict(chip=chip("Oct", "16", "to Nov 1"),
+    dict(chip=chip("Oct", "16", "Nov 1"),
          title="Boo at the Zoo &middot; Nashville Zoo",
          meta="Nightly 5:00&ndash;9:00 PM &middot; $19&ndash;$23 ages 2+, parking $10 &middot; About 35 min",
          sensory="free Zooper Packs and a social story; Mon&ndash;Wed quietest.",
@@ -1414,6 +1421,9 @@ def main():
     text = re.sub(r"&\w+;", " ", text)
     words = len(text.split())
     # T365 shortens support copy; allow slightly leaner range.
+    # T382 / T367 §4: Boo at the Zoo date tile is "Nov 1" with no leading dash
+    assert "&ndash;Nov" not in html
+    assert ">Nov&nbsp;1<" in html
     assert 850 <= words <= 1550, f"word count {words} outside 850-1550"
     print(f"wrote {out}: email {len(html_email.encode('utf-8'))}B, browser {len(html_browser.encode('utf-8'))}B, txt {len(txt.encode('utf-8'))}B, words≈{words}")
 
