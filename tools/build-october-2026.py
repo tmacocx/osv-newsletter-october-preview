@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T379 last polish).
+"""Build the October 2026 Our Special Village newsletter (T385 VH Mercedes + 988).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
-T379: desktop intro alignment; Mercedes name/title right of photo above blurb;
-mobile VH pay amounts vertically centered; We Rock title + childcare/$15 copy.
-Keeps T375 polish (icons, pay cards, SG tags, intro/CTAs/about), T373 spacing,
-T372 hierarchy/mobile, T367 desktop align, T365 email 600px path.
+T385: Mercedes name/role centered to the right of her photo; description below
+that block, left-aligned with the picture. Footer names 988 as the Suicide &
+Crisis Lifeline. No other newsletter changes.
+Keeps T379 last polish, T375, T373 spacing, T372 hierarchy/mobile, T367, T365.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
 
@@ -570,7 +570,7 @@ ABOUT = ("A village for families like ours in Murfreesboro and surrounding areas
          "to every kind of difference and disability.")
 
 NUMBERS = [
-    (b("988") + " &middot; Call or text any hour."),
+    (b("988 Suicide &amp; Crisis Lifeline") + " &middot; Call or text any hour."),
     (b("STEP TN") + " (IEP help): " + tel("800-280-7837", "+18002807837")
      + " / Espa&ntilde;ol " + tel("800-975-2919", "+18009752919") + "."),
     (b("Disability Rights TN:") + " " + tel("800-342-1660", "+18003421660") + "."),
@@ -583,8 +583,11 @@ def head():
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
 u + #os-body a{color:ACCENT;text-decoration:underline;}
-/* T379 last polish + T375 + T373; email keeps max-width:600px */
+/* T385 Mercedes guest: name/role centered; T379 last polish + T375 + T373; email keeps max-width:600px */
 .os-cred{white-space:nowrap !important;}
+.os-vh-guestname{text-align:center;}
+.os-vh-guestname p{text-align:center;}
+.os-vh-guestblurb{text-align:left;}
 .os-sig{margin-left:8px !important;}
 .os-pay-note{white-space:nowrap;}
 .os-sg-cta{margin-top:20px !important;}
@@ -619,6 +622,8 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-about-photo{flex:0 0 160px !important;width:160px !important;max-width:160px !important;margin:0 !important;}
   .os-about-text{flex:1 1 auto !important;min-width:0 !important;}
   .os-vh-portrait{width:96px !important;max-width:96px !important;}
+  .os-vh-guestname{text-align:center !important;}
+  .os-vh-guestname p{text-align:center !important;}
   .os-tiny,.os-tiny a,.os-footer p{font-size:14px !important;line-height:21px !important;}
   .os-confirm{font-size:14px !important;line-height:21px !important;}
   .os-desk-hide{display:none !important;max-height:0 !important;overflow:hidden !important;mso-hide:all;}
@@ -676,6 +681,8 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-paybox tbody,.os-paybox tr{display:flex !important;flex:1 1 auto !important;width:100% !important;height:100% !important;}
   .os-paybox td{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;width:100% !important;height:100% !important;padding:6px 4px !important;vertical-align:middle !important;box-sizing:border-box !important;}
   .os-vh-portrait{width:88px !important;max-width:88px !important;}
+  .os-vh-guestname{text-align:center !important;}
+  .os-vh-guestname p{text-align:center !important;}
 }
 @media only screen and (max-width:359px){
   .os-issue-cell{display:block !important;width:100% !important;max-width:100% !important;padding:0 0 8px 0 !important;}
@@ -696,7 +703,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T379: last polish - intro align, Mercedes, pay center, We Rock (email 600px unchanged). -->
+<!-- T385: VH Mercedes name/role centered right of photo; blurb below left-aligned with picture. 988 named. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -817,25 +824,32 @@ def build_html(base, browser=False):
         f'alt="Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting" '
         f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;">'
     )
-    # T379: name + title to the right of photo, above expanded blurb (mobile + desktop)
+    # T385: name + role/location centered to the right of photo; description
+    # below that block, left-aligned with the picture (mobile + desktop).
     mercedes = (
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;"><tr>'
-        f'<td class="os-stack" width="88" valign="top" style="width:88px;padding:0 12px 0 0;vertical-align:top;">'
+        '<table role="presentation" class="os-vh-guest" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">'
+        '<tr>'
+        f'<td width="88" valign="middle" style="width:88px;padding:0 12px 0 0;vertical-align:middle;">'
         f'<img class="os-vh-portrait" src="{art("mercedes-lawson-160.jpg")}" width="88" height="126" '
         f'alt="Mercedes Lawson, M.S. Ed., founder of A.C.C.E.S.S." '
         f'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
-        f'</td><td class="os-stack" valign="top" style="padding:0;vertical-align:top;">'
-        + p("Mercedes Lawson, M.S. Ed.", 15, 20, GOLD, 700, margin="0 0 2px 0")
-        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 13, 18, SAND, 700, margin="0 0 6px 0")
+        '</td>'
+        '<td class="os-vh-guestname" valign="middle" align="center" '
+        'style="padding:0;vertical-align:middle;text-align:center;">'
+        + p("Mercedes Lawson, M.S. Ed.", 15, 20, GOLD, 700, margin="0 0 2px 0", extra="text-align:center;")
+        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 13, 18, SAND, 700, margin="0", extra="text-align:center;")
+        + '</td></tr>'
+        '<tr><td colspan="2" class="os-vh-guestblurb" align="left" '
+        'style="padding:10px 0 0 0;vertical-align:top;text-align:left;">'
         + p("She grew up with a sibling with disabilities, taught special education for nine years "
            "helping 250+ students, and has a child with Autism. Through A.C.C.E.S.S. "
            "(Advocacy &amp; Consultation Center for Educational Student Supports), she helps families "
            "with IEP consultation, educational advocacy, and tutoring.",
-           13, 19, SAND, 400)
+           13, 19, SAND, 400, extra="text-align:left;")
         + '</td></tr></table>'
     )
-    # T375 icons + T379 guest layout: date → time/online icons → Topic → title → photo|name/title/blurb
+    # T375 icons + T385 guest layout: date → time/online icons → Topic → title → photo|name/role then blurb
     vh_panel = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
           '<tr><td align="left" style="padding:16px 18px 20px 18px;">'
           + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 4px 0")
@@ -1152,7 +1166,7 @@ def build_text():
     w(f"How we check information: {SITE}/editorial-policy")
     w("")
     w("NUMBERS WORTH KEEPING")
-    w("988 · Call or text any hour.")
+    w("988 Suicide & Crisis Lifeline · Call or text any hour.")
     w("STEP TN (IEP help): 800-280-7837 / Español 800-975-2919.")
     w("Disability Rights TN: 800-342-1660.")
     w("")
@@ -1419,8 +1433,18 @@ def main():
     assert "ONLINE" in html and "WEEKLY" in html and "FREE" in html
     assert "village-hall-iep-compact.jpg" in html
     assert "os-sec" in html
-    # T379 Mercedes: name/title right of photo (not stacked above)
+    # T385 Mercedes: name/role centered right of photo; blurb below, left-aligned with picture
     assert html.find("Mercedes Lawson, M.S. Ed.") > html.find("mercedes-lawson-160.jpg")
+    assert "os-vh-guestname" in html
+    assert 'colspan="2"' in html
+    name_i = html.find("Mercedes Lawson, M.S. Ed.")
+    blurb_i = html.find("She grew up with a sibling with disabilities")
+    assert name_i < blurb_i
+    assert "</tr>" in html[name_i:blurb_i]
+    assert "os-vh-guestblurb" in html
+    assert "988 Suicide &amp; Crisis Lifeline" in html
+    assert "988 Suicide & Crisis Lifeline" in txt
+    assert "988 · Call or text any hour." not in txt
     assert "os-intro-byline" in html
     assert "os-pay-wrap" in html
     assert 'class="chip"' in deadlines
