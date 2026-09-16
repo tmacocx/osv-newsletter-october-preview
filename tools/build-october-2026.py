@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T393 Mercedes headshot).
+"""Build the October 2026 Our Special Village newsletter (T394 Mercedes guest layout).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
+T394: Village Hall Mercedes title (name + role) sits on its own row above
+the headshot. Headshot is left of her description (bio), vertically centered
+with that copy — not left of the title. Desktop/browser-wide: title left-
+aligned. Mobile: title centered so “Greater Nashville” stays on one line.
+Photo+bio stay a two-column row on mobile (not stacked above the title).
+No copy or headshot-asset change (still art/mercedes-headshot-160.jpg).
 T393: Village Hall Mercedes photo is the IMG_1427 professional headshot
 (long hair, black blazer, pearls) at art/mercedes-headshot-160.jpg. New
 filename so Cloudflare/browser cache of the T387 family photo dies. Family
@@ -12,14 +18,11 @@ photo stays off this newsletter; it is for live Village Businesses #access
 only. Bio still says two neurodivergent children.
 T389: We Rock card eyebrow is IN PERSON · WEEKLY · FREE (drop GROUP). Online
 Parent Group already says ONLINE · WEEKLY · FREE. No other copy/layout changes.
-T388: Desktop/browser-wide only — Village Hall Mercedes name/role sit next to
-the photo instead of centering in the leftover cell. Mobile/email CSS unchanged.
+T388: Desktop/browser-wide title left-align (was name/role next to photo).
 T387: Bio says two neurodivergent children (not one child with Autism).
-ACCESS/Creative Spaces logo omitted so the T385 name/role layout stays uncrowded.
+ACCESS/Creative Spaces logo omitted so the guest block stays uncrowded.
 T386: 988 in the footer is a tel: link, matching STEP TN / Disability Rights TN.
-T385: Mercedes name/role centered to the right of her photo on mobile/email;
-description below that block, left-aligned with the picture. Footer names 988
-as the Suicide & Crisis Lifeline. No other newsletter changes.
+T385: Footer names 988 as the Suicide & Crisis Lifeline.
 Keeps T379 last polish, T375, T373 spacing, T372 hierarchy/mobile, T367, T365.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
@@ -595,10 +598,11 @@ def head():
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
 u + #os-body a{color:ACCENT;text-decoration:underline;}
-/* T388 desktop name/role next to photo; T385 mobile/email stay centered; T379 + T375 + T373 */
+/* T394: title row above photo+bio; T388 desktop title left; T385 mobile title centered; T379 + T375 + T373 */
 .os-cred{white-space:nowrap !important;}
 .os-vh-guestname{text-align:center;}
 .os-vh-guestname p{text-align:center;}
+.os-vh-guestrole{white-space:nowrap;}
 .os-vh-guestblurb{text-align:left;}
 .os-sig{margin-left:8px !important;}
 .os-pay-note{white-space:nowrap;}
@@ -634,7 +638,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-about-photo{flex:0 0 160px !important;width:160px !important;max-width:160px !important;margin:0 !important;}
   .os-about-text{flex:1 1 auto !important;min-width:0 !important;}
   .os-vh-portrait{width:96px !important;max-width:96px !important;}
-  /* T388: desktop/browser-wide only: name/role adjacent to photo, not centered in leftover cell */
+  /* T394/T388: desktop/browser-wide only: title left-aligned on its own row */
   .os-vh-guestname{text-align:left !important;}
   .os-vh-guestname p{text-align:left !important;}
   .os-tiny,.os-tiny a,.os-footer p{font-size:14px !important;line-height:21px !important;}
@@ -694,12 +698,16 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-paybox tbody,.os-paybox tr{display:flex !important;flex:1 1 auto !important;width:100% !important;height:100% !important;}
   .os-paybox td{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;width:100% !important;height:100% !important;padding:6px 4px !important;vertical-align:middle !important;box-sizing:border-box !important;}
   .os-vh-portrait{width:88px !important;max-width:88px !important;}
+  /* T394: full-width title centered so Greater Nashville stays one line; photo stays left of bio */
   .os-vh-guestname{text-align:center !important;}
   .os-vh-guestname p{text-align:center !important;}
+  .os-vh-guestname,.os-vh-guestname p{overflow-wrap:normal !important;word-break:normal !important;}
+  .os-vh-guestrole{white-space:nowrap !important;}
 }
 @media only screen and (max-width:359px){
   .os-issue-cell{display:block !important;width:100% !important;max-width:100% !important;padding:0 0 8px 0 !important;}
   .os-cred{font-size:11px !important;line-height:15px !important;letter-spacing:0 !important;}
+  .os-vh-guestrole{font-size:12px !important;line-height:16px !important;}
 }
 """.replace("ACCENT", ACCENT)
     dark = f"""
@@ -716,7 +724,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T393: Mercedes IMG_1427 headshot (mercedes-headshot-160.jpg). T388: desktop VH name/role adjacent to photo. T387: two ND children bio. T386: 988 is a tel: link. T385: mobile/email name/role centered right of photo; blurb below left-aligned with picture. -->
+<!-- T394: VH title on its own row; headshot left of bio. T393: mercedes-headshot-160.jpg. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -837,25 +845,28 @@ def build_html(base, browser=False):
         f'alt="Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting" '
         f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;">'
     )
-    # T385/T388: name + role to the right of photo; description below, left-
-    # aligned with the picture. Mobile/email keep T385 centering; desktop
-    # (>=700px) left-aligns so name/role sit next to the photo.
+    # T394: name + role on their own row above the photo. Headshot left of
+    # the description, vertically centered with that copy. Mobile/email keep
+    # the title centered (Greater Nashville stays one line); desktop
+    # (>=700px) left-aligns the title. Photo+bio stay a two-column row.
     mercedes = (
         '<table role="presentation" class="os-vh-guest" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">'
         '<tr>'
-        f'<td width="88" valign="middle" style="width:88px;padding:0 12px 0 0;vertical-align:middle;">'
+        '<td colspan="2" class="os-vh-guestname" align="center" '
+        'style="padding:0 0 10px 0;vertical-align:top;text-align:center;">'
+        + p("Mercedes Lawson, M.S. Ed.", 15, 20, GOLD, 700, margin="0 0 2px 0", extra="text-align:center;")
+        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 13, 18, SAND, 700,
+            margin="0", extra="text-align:center;white-space:nowrap;", cls="os-vh-guestrole")
+        + '</td></tr>'
+        '<tr>'
+        f'<td class="os-vh-guestphoto" width="88" valign="middle" style="width:88px;padding:0 12px 0 0;vertical-align:middle;">'
         f'<img class="os-vh-portrait" src="{art("mercedes-headshot-160.jpg")}" width="88" height="115" '
         f'alt="Mercedes Lawson, M.S. Ed." '
         f'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
         '</td>'
-        '<td class="os-vh-guestname" valign="middle" align="center" '
-        'style="padding:0;vertical-align:middle;text-align:center;">'
-        + p("Mercedes Lawson, M.S. Ed.", 15, 20, GOLD, 700, margin="0 0 2px 0", extra="text-align:center;")
-        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 13, 18, SAND, 700, margin="0", extra="text-align:center;")
-        + '</td></tr>'
-        '<tr><td colspan="2" class="os-vh-guestblurb" align="left" '
-        'style="padding:10px 0 0 0;vertical-align:top;text-align:left;">'
+        '<td class="os-vh-guestblurb" valign="middle" align="left" '
+        'style="padding:0;vertical-align:middle;text-align:left;">'
         + p("She grew up with a sibling with disabilities, taught special education for nine years "
            "helping 250+ students, and has two neurodivergent children. Through A.C.C.E.S.S. "
            "(Advocacy &amp; Consultation Center for Educational Student Supports), she helps families "
@@ -863,7 +874,7 @@ def build_html(base, browser=False):
            13, 19, SAND, 400, extra="text-align:left;")
         + '</td></tr></table>'
     )
-    # T375 icons + T385 guest layout: date → time/online icons → Topic → title → photo|name/role then blurb
+    # T375 icons + T394 guest layout: date → time/online → Topic → title → name/role → photo|bio
     vh_panel = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
           '<tr><td align="left" style="padding:16px 18px 20px 18px;">'
           + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 4px 0")
@@ -1461,16 +1472,22 @@ def main():
     assert "ONLINE" in html and "WEEKLY" in html and "FREE" in html
     assert "village-hall-iep-compact.jpg" in html
     assert "os-sec" in html
-    # T385 Mercedes: name/role right of photo; blurb below, left-aligned with picture
-    assert html.find("Mercedes Lawson, M.S. Ed.") > html.find("mercedes-headshot-160.jpg")
+    # T394 Mercedes: title on its own row above photo; headshot left of bio
+    guest_i = html.find('class="os-vh-guest"')
+    name_i = html.find("Mercedes Lawson, M.S. Ed.", guest_i)
+    photo_i = html.find("mercedes-headshot-160.jpg", guest_i)
+    blurb_i = html.find("She grew up with a sibling with disabilities", guest_i)
+    assert guest_i != -1 and name_i != -1 and photo_i != -1 and blurb_i != -1
+    assert name_i < photo_i < blurb_i
     assert "os-vh-guestname" in html
-    assert 'colspan="2"' in html
-    name_i = html.find("Mercedes Lawson, M.S. Ed.")
-    blurb_i = html.find("She grew up with a sibling with disabilities")
-    assert name_i < blurb_i
-    assert "</tr>" in html[name_i:blurb_i]
     assert "os-vh-guestblurb" in html
-    # T388: desktop (>=700px) left-aligns name beside photo; mobile/email stay centered
+    assert "os-vh-guestrole" in html
+    assert 'colspan="2"' in html[guest_i:name_i]
+    assert "</tr>" in html[name_i:photo_i]
+    assert "</tr>" not in html[photo_i:blurb_i]
+    assert "vertical-align:middle" in html[photo_i - 120:photo_i]
+    assert "vertical-align:middle" in html[photo_i:blurb_i]
+    # T394/T388: desktop (>=700px) left-aligns title; mobile/email stay centered
     desk_css = html.split("@media only screen and (min-width:700px)")[1].split("@media")[0]
     assert ".os-vh-guestname{text-align:left !important;}" in desk_css
     assert ".os-vh-guestname p{text-align:left !important;}" in desk_css
@@ -1478,6 +1495,7 @@ def main():
     mob_css = html.split("@media only screen and (max-width:620px)")[1].split("@media")[0]
     assert ".os-vh-guestname{text-align:center !important;}" in mob_css
     assert ".os-vh-guestname p{text-align:center !important;}" in mob_css
+    assert ".os-vh-guestrole{white-space:nowrap !important;}" in mob_css
     assert ".os-vh-guestname{text-align:center;}" in html
     assert 'href="tel:988"' in html
     assert 'href="tel:988"' in html_browser
