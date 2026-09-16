@@ -128,6 +128,34 @@ def row(chip_html, content_html, last=False, featured=False, tight=False):
             f'<td style="vertical-align:top;">{content_html}</td></tr></table></td></tr>')
 
 
+_MONTH_ABBR = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+_NON_OCT_MONTHS = tuple(m for m in _MONTH_ABBR if m != "Oct")
+_LEADING_DASHES = ("&ndash;", "&mdash;", "–", "—", "-")
+
+
+def format_chip_range_end(label):
+    """Calendar-tile secondary date line. Keep one line via nbsp.
+
+    T382 / T367 §4: never show a leading en-dash or hyphen before a
+    non-October month (Nov, Dec, Jan, …). Mid-range dashes in body copy
+    (5:00–9:00 PM, Oct 15–Dec 7) are unrelated and stay put.
+    """
+    if not isinstance(label, str):
+        return label
+    text = label[3:] if label.startswith("to ") else label
+    for prefix in _LEADING_DASHES:
+        if text.startswith(prefix):
+            rest = text[len(prefix):].lstrip()
+            month = rest.replace("&nbsp;", " ").split()[0] if rest else ""
+            if month in _NON_OCT_MONTHS:
+                text = rest
+            break
+    if " " in text and "&nbsp;" not in text:
+        text = text.replace(" ", "&nbsp;")
+    return text
+
+
 def chip(top, big=None, bottom=None, year=False):
     """Date square. Bottom range labels stay on one line (nowrap; shorten 'to …')."""
     nowrap = "text-align:center;white-space:nowrap;word-break:normal;overflow-wrap:normal;"
@@ -139,9 +167,7 @@ def chip(top, big=None, bottom=None, year=False):
         inner = (p(top, 13, 17, INK, 700, extra=nowrap) +
                  p(bottom, 13, 17, INK, 700, extra=nowrap))
         return shell_open.format(pad="17px 3px 17px 3px") + inner + shell_close
-    # "to Dec 7" / "to Jan 15" wrapped in 62px chips — keep one line via en dash + nbsp
-    if isinstance(bottom, str) and bottom.startswith("to "):
-        bottom = "&ndash;" + bottom[3:].replace(" ", "&nbsp;")
+    bottom = format_chip_range_end(bottom)
     bottom_size = 11 if "&ndash;" in (bottom or "") or "&nbsp;" in (bottom or "") else 12
     inner = (p(top, 12, 14, ACCENT, 700, extra=nowrap) +
              p(big, 22, 26, INK, 700, margin="1px 0 0 0", extra=nowrap) +
@@ -478,7 +504,7 @@ SECONDARY_EVENTS = [
          meta="12:00&ndash;1:00 PM &middot; Frist Art Museum, Nashville &middot; Free for members and ages 18 and under &middot; About 45 min",
          sensory="gallery sound lowered for the hour, multisensory carts with volunteers.",
          link=("https://fristartmuseum.org/event/sensory-sunday-hour-5/", "Details")),
-    dict(chip=chip("Oct", "16", "to Nov 1"),
+    dict(chip=chip("Oct", "16", "Nov 1"),
          title="Boo at the Zoo &middot; Nashville Zoo",
          meta="Nightly 5:00&ndash;9:00 PM &middot; $19&ndash;$23 ages 2+, parking $10 &middot; About 35 min",
          sensory="free Zooper Packs and a social story; Mon&ndash;Wed quietest.",
@@ -1147,8 +1173,7 @@ def build_text():
 
 def deadline_chip(dow, day, moy):
     """Newsletter-style date square (left chip). Range bottoms stay one line."""
-    if isinstance(moy, str) and moy.startswith("to "):
-        moy = "&ndash;" + moy[3:].replace(" ", "&nbsp;")
+    moy = format_chip_range_end(moy)
     return (
         f'<div class="chip" aria-hidden="true">'
         f'<div class="dow">{dow}</div>'
@@ -1186,12 +1211,12 @@ def build_deadlines_page():
     ])
     items_health = "".join([
         deadline_item(
-            "Oct", "15", "to Dec 7",
+            "Oct", "15", "Dec 7",
             "Medicare open enrollment: Oct&nbsp;15&ndash;Dec&nbsp;7",
             'Compare or switch drug and Advantage plans for 2027. TN SHIP: 1-877-801-0044. '
             '<a href="https://www.medicare.gov/health-drug-plans/open-enrollment">Medicare.gov</a>'),
         deadline_item(
-            "Nov", "1", "to Jan 15",
+            "Nov", "1", "Jan 15",
             "HealthCare.gov: Nov&nbsp;1&ndash;Jan&nbsp;15",
             'Enroll by Dec 15 for Jan 1 coverage. Kids may qualify for TennCare or CoverKids any time. '
             '<a href="https://www.healthcare.gov/quick-guide/dates-and-deadlines/">Dates</a>'),
@@ -1414,6 +1439,17 @@ def main():
     text = re.sub(r"&\w+;", " ", text)
     words = len(text.split())
     # T365 shortens support copy; allow slightly leaner range.
+    # T382 / T367 §4: calendar-tile secondary lines have no leading dash
+    # before a non-October month. Body mid-range dashes (5:00–9:00, Oct 15–Dec 7) stay.
+    for month in _NON_OCT_MONTHS:
+        assert not re.search(
+            rf'overflow-wrap:normal;">(?:&ndash;|&mdash;|–|—|-){month}', html)
+        assert f'class="moy">&ndash;{month}' not in deadlines
+        assert f'class="moy">–{month}' not in deadlines
+        assert f'class="moy">-{month}' not in deadlines
+    assert ">Nov&nbsp;1<" in html
+    assert 'class="moy">Dec&nbsp;7<' in deadlines
+    assert 'class="moy">Jan&nbsp;15<' in deadlines
     assert 850 <= words <= 1550, f"word count {words} outside 850-1550"
     print(f"wrote {out}: email {len(html_email.encode('utf-8'))}B, browser {len(html_browser.encode('utf-8'))}B, txt {len(txt.encode('utf-8'))}B, words≈{words}")
 
