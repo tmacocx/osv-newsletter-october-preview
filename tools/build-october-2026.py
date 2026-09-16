@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T372 hierarchy/mobile).
+"""Build the October 2026 Our Special Village newsletter (T373 final spacing).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
-T372: visual hierarchy, spacing system, card density, mobile readability. Keeps
-T367 desktop align (photo-left intro, VH stacked, equal-height pairs) and T365
-email 600px stacked path. We Rock audience tag; In this issue full-width under
-intro; compact Village Hall; sentence-case Connect heading.
+T373: Village Hall contribution hierarchy + remaining spacing refinements. Keeps
+T372 hierarchy/mobile, T367 desktop align, T365 email 600px path. Register →
+Choose what you can pay → meeting-link note; parent-card architecture match;
+We Rock copy; month-ahead crop.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
 
@@ -223,9 +223,14 @@ def secondary_tags_text(parts):
 
 
 
-def meta_row(icon_name, label, first=False):
-    """Icon + label meta row (T364 mockup)."""
-    top = "6px" if first else "2px"
+def meta_row(icon_name, label, first=False, title_gap=False):
+    """Icon + label meta row (T364 mockup; T373: 10px after title when title_gap)."""
+    if title_gap:
+        top = "10px"
+    elif first:
+        top = "6px"
+    else:
+        top = "2px"
     src = f"{PAGES}art/icons/{icon_name}.png"
     return (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
@@ -240,22 +245,23 @@ def meta_row(icon_name, label, first=False):
 
 
 def good_to_know(items):
-    """T364 mockup checklist under a hairline divider."""
+    """T364 mockup checklist under a hairline divider (T373: 16px before, 8–10px items)."""
     rows = []
-    for t in items:
+    for i, t in enumerate(items):
+        bot = "0" if i == len(items) - 1 else "8px"
         rows.append(
-            '<tr><td valign="top" style="padding:0 8px 6px 0;width:18px;">'
+            f'<tr><td valign="top" style="padding:0 8px {bot} 0;width:18px;">'
             f'<span style="font-family:{FONT};font-size:15px;line-height:22px;color:{ACCENT};'
             'font-weight:700;">&#10003;</span>'
-            '</td><td valign="top" style="padding:0 0 6px 0;">'
+            f'</td><td valign="top" style="padding:0 0 {bot} 0;">'
             + p(t, 15, 22, BODY, 400)
             + '</td></tr>'
         )
     return (
         f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        f'style="width:100%;border-collapse:collapse;margin:12px 0 0 0;border-top:1px solid {RULE};">'
+        f'style="width:100%;border-collapse:collapse;margin:16px 0 0 0;border-top:1px solid {RULE};">'
         f'<tr><td style="padding:12px 0 0 0;">'
-        + p("Good to know", 15, 22, INK, 700, margin="0 0 6px 0")
+        + p("Good to know", 15, 22, INK, 700, margin="0 0 8px 0")
         + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:collapse;">'
         + "".join(rows)
@@ -278,9 +284,11 @@ def group_cta(href, label):
 
 def group_card(badges, name, meta_pairs, blurb, good_items, btn_href, btn_label,
               audience=None, secondary=None, cost_note=None):
-    """Support-group card: optional audience tag, badges/secondary, title, meta, blurb, GTK, CTA."""
+    """Support-group card: audience → metadata → title → schedule → blurb → GTK → CTA (T373)."""
+    # T373: 10px between title and first schedule row
     metas = "".join(
-        meta_row(icon, label, first=(i == 0)) for i, (icon, label) in enumerate(meta_pairs)
+        meta_row(icon, label, first=(i == 0), title_gap=(i == 0))
+        for i, (icon, label) in enumerate(meta_pairs)
     )
     head = ""
     if audience:
@@ -291,13 +299,14 @@ def group_card(badges, name, meta_pairs, blurb, good_items, btn_href, btn_label,
         head += badges_row(badges)
     if cost_note:
         head += p(cost_note, 13, 18, ACCENT, 700, margin="0 0 8px 0", cls="os-tiny")
+    # 8px audience→meta already in audience_tag; 8px meta→title in secondary_tags_text
     inner = (
         head
         + p(name, 17, 23, INK, 700, margin="0")
         + metas
-        + p(blurb, 15, 22, BODY, 400, margin="8px 0 0 0")
+        + p(blurb, 15, 22, BODY, 400, margin="12px 0 0 0")
         + good_to_know(good_items)
-        + '<div class="os-card-cta" style="margin:14px 0 0 0;">'
+        + '<div class="os-card-cta" style="margin:16px 0 0 0;">'
         + group_cta(btn_href, btn_label)
         + '</div>'
     )
@@ -386,45 +395,57 @@ def step(n, text, last=False):
 
 
 def price_boxes():
-    """Compact VH pay boxes; desktop 4-up, mobile 2x2 via .os-paycell CSS."""
+    """VH contribution grid (T373): Choose what you can pay → 4 equal boxes → meeting note.
+
+    Desktop: 16px under Register CTA (via caller margin), 8px heading→grid, 8–10px gaps,
+    min-height 68–72px, 10/6 padding, 4px price→label, 10–12px under grid.
+    Mobile: 2×2 via .os-paycell CSS with 8px gaps; min 44px tap; equal heights.
+    Boxes stay visually secondary to the gold Register button.
+    """
     boxes = [
         ("$0", "Always<br>welcome"),
         ("$10", "Helps"),
         ("$20", "Suggested"),
-        ("$35", "Sponsors<br>another seat"),
+        ("$35", "Sponsors<br>a seat"),
     ]
     cells = []
     n = len(boxes)
     for i, (amt, label) in enumerate(boxes):
+        # ~8–10px gaps: 5px half-gap each side → 10px between boxes on desktop
         if i == 0:
-            pad = "0 3px 0 0"
+            pad = "0 5px 0 0"
         elif i == n - 1:
-            pad = "0 0 0 3px"
+            pad = "0 0 0 5px"
         else:
-            pad = "0 3px 0 3px"
+            pad = "0 5px 0 5px"
         if "<br>" not in label:
             label_html = f"{label}<br>&nbsp;"
         else:
             label_html = label
         inner = (
             f'<table role="presentation" class="os-paybox" cellpadding="0" cellspacing="0" border="0" width="100%" '
-            f'bgcolor="#e4e9f2" style="width:100%;min-height:52px;border-collapse:separate;background-color:#e4e9f2;border-radius:10px;">'
-            f'<tr><td class="os-paybox" align="center" valign="middle" style="padding:8px 4px;min-height:44px;vertical-align:middle;">'
+            f'bgcolor="#e4e9f2" style="width:100%;min-height:70px;border-collapse:separate;background-color:#e4e9f2;border-radius:10px;">'
+            f'<tr><td class="os-paybox" align="center" valign="middle" style="padding:10px 6px;min-height:44px;vertical-align:middle;">'
             + p(amt, 18, 22, INK, 700, extra="text-align:center;")
-            + p(label_html, 11, 14, BODY, 400, margin="2px 0 0 0", extra="text-align:center;")
+            + p(label_html, 11, 14, BODY, 400, margin="4px 0 0 0", extra="text-align:center;")
             + '</td></tr></table>'
         )
         cells.append(
             f'<td class="os-paycell os-stack" width="25%" valign="top" '
             f'style="width:25%;padding:{pad};vertical-align:top;">{inner}</td>'
         )
-    return (
+    heading = p("Choose what you can pay", 14, 20, SAND, 700, margin="16px 0 0 0",
+                extra="text-align:left;letter-spacing:0.2px;")
+    grid = (
         '<table role="presentation" class="os-paygrid" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:separate;margin:12px 0 0 0;"><tr>'
+        'style="width:100%;border-collapse:separate;margin:8px 0 0 0;table-layout:fixed;"><tr>'
         + "".join(cells)
         + '</tr></table>'
-        + p("The meeting link is emailed to registrants.", 13, 18, SAND, 400, margin="6px 0 0 0")
     )
+    # Meeting-link note: muted supporting info, 10–12px below grid; panel keeps bottom pad
+    note = p("The meeting link is emailed to registrants.", 12, 18, SAND, 400,
+             margin="12px 0 0 0", extra="opacity:0.92;")
+    return heading + grid + note
 
 
 def sensory(text, link_html):
@@ -522,7 +543,7 @@ def head():
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
 u + #os-body a{color:ACCENT;text-decoration:underline;}
-/* T372 spacing system + T367 desktop align; email clients keep inline max-width:600px */
+/* T373 spacing + T372 hierarchy + T367 desktop align; email keeps max-width:600px */
 .os-sec{height:48px !important;line-height:48px !important;font-size:0 !important;}
 @media only screen and (min-width:700px){
   .os-wrap{max-width:880px !important;width:100% !important;}
@@ -589,12 +610,14 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   table[width="26"],td[width="30"]{width:26px !important;max-width:30px !important;}
   table[width="40"]{width:40px !important;max-width:40px !important;}
   table[width="160"]{width:160px !important;max-width:160px !important;}
-  /* Village Hall pay boxes: 2x2 */
-  .os-paygrid{width:100% !important;}
-  .os-paygrid tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;}
-  .os-paycell{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 4px 8px 0 !important;height:auto !important;}
+  /* Village Hall pay boxes: 2x2 with consistent 8px gaps (T373) */
+  .os-paygrid{width:100% !important;table-layout:fixed !important;}
+  .os-paygrid tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;align-items:stretch !important;}
+  .os-paycell{display:flex !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 4px 8px 0 !important;height:auto !important;}
   .os-paycell:nth-child(even){padding:0 0 8px 4px !important;}
-  .os-paybox{min-height:44px !important;height:auto !important;}
+  .os-paycell:nth-child(n+3){padding-bottom:0 !important;}
+  .os-paycell > table.os-paybox{width:100% !important;height:100% !important;min-height:70px !important;}
+  .os-paybox{min-height:70px !important;height:100% !important;}
   .os-vh-portrait{width:88px !important;max-width:88px !important;}
 }
 @media only screen and (max-width:359px){
@@ -615,7 +638,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T372: hierarchy/mobile + T367 desktop align (email 600px unchanged). -->
+<!-- T373: final spacing + VH contribution hierarchy (email 600px unchanged). -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -705,17 +728,17 @@ def build_html(base, browser=False):
         f'{photo_col}{text_col}</div>'
     )
     o.append(padrow(intro_row))
-    o.append(sp(14))
+    o.append(sp(6))  # T373: ~6–8px tighter gap before In this issue
     o.append(padrow('<div style="margin:0;">' + issue_chips_block() + '</div>'))
 
     o.append(major_sp())
     o.append(section_head("deadlines", "Three things to know this month"))
     o.append(sp(12))
     o.append(padrow(card(rows_table(TOP_DEADLINE_ROWS), pad="8px 20px 8px 20px")))
-    o.append(sp(12))
+    o.append(sp(14))  # T373: 12–14px between deadline card and See all deadlines
     o.append(padrow(
         button(DEADLINES_URL, "See all deadlines", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
-        + p("Dates confirmed Sept 14. If something changed, reply and we will fix it.", 13, 20, MUTED, 400, margin="10px 0 0 0", cls="os-confirm")))
+        + p("Dates confirmed Sept 14. If something changed, reply and we will fix it.", 13, 20, MUTED, 400, margin="8px 0 0 0", cls="os-confirm")))
 
 
     # --- Village Hall (T372 compact; T367 stacked full-width) ---
@@ -734,10 +757,11 @@ def build_html(base, browser=False):
         f'alt="Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting" '
         f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;">'
     )
+    # T373: compact guest row (photo→text gap tight); 14–16px below guest before desc
     mercedes = (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;margin:0 0 12px 0;"><tr>'
-        f'<td class="os-stack" width="88" valign="top" style="width:88px;padding:0 12px 0 0;vertical-align:top;">'
+        'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;"><tr>'
+        f'<td class="os-stack" width="88" valign="top" style="width:88px;padding:0 10px 0 0;vertical-align:top;">'
         f'<img class="os-vh-portrait" src="{art("mercedes-lawson-160.jpg")}" width="88" height="126" '
         f'alt="Mercedes Lawson, M.S. Ed., founder of A.C.C.E.S.S." '
         f'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
@@ -749,14 +773,18 @@ def build_html(base, browser=False):
            13, 19, SAND, 400)
         + '</td></tr></table>'
     )
+    # T373 hierarchy: date/time/online (~4px) → Topic (18px) → title (6px) → guest (12–14px)
+    # → desc (14–16px via mercedes margin) → Register (16px) → Choose what you can pay → note
+    # Remove "Pay what you can…" from event-details; pricing lives beside contribution options.
     vh_panel = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
-          '<tr><td align="left" style="padding:16px 18px 16px 18px;">'
+          '<tr><td align="left" style="padding:16px 18px 20px 18px;">'
           + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 4px 0")
-          + p("9:30 to 11:00 AM Central, Online<br>Pay what you can, including nothing", 15, 22, SAND, 400, margin="0 0 12px 0")
-          + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 4px 0")
-          + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 17, 24, CREAM, 700, margin="0 0 10px 0")
+          + p("9:30 to 11:00 AM Central", 15, 20, SAND, 400, margin="0 0 4px 0")
+          + p("Online", 15, 20, SAND, 400, margin="0 0 18px 0")
+          + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
+          + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 17, 24, CREAM, 700, margin="0 0 14px 0")
           + mercedes
-          + p("A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 14, 21, SAND, 400, margin="0 0 14px 0")
+          + p("A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 14, 21, SAND, 400, margin="0 0 16px 0")
           + button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK).replace('class="os-btn"', 'class="os-btn os-btn-gold"')
           + price_boxes()
           + '</td></tr></table>')
@@ -780,10 +808,11 @@ def build_html(base, browser=False):
         f'alt="Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones" '
         f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;"></a>'
     )
-    featured_copy = (p("Featured", 13, 18, ACCENT, 700, margin="12px 0 4px 0")
-                     + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 18, 25, INK, 700)
-                     + p("Thu Oct 15 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required", 16, 24, BODY, 400, margin="4px 0 0 0")
-                     + p(a(MONSTERS_URL, "Reserve your spot"), 16, 24, BODY, 400, margin="6px 0 0 0"))
+    # T373: 12px image→Featured, 5–6 label→title, 6 title→meta, 8 meta→link
+    featured_copy = (p("Featured", 13, 18, ACCENT, 700, margin="12px 0 0 0")
+                     + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 18, 25, INK, 700, margin="6px 0 0 0")
+                     + p("Thu Oct 15 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required", 16, 24, BODY, 400, margin="6px 0 0 0")
+                     + p(a(MONSTERS_URL, "Reserve your spot"), 16, 24, BODY, 400, margin="8px 0 0 0"))
     o.append(padrow(card(featured_art + featured_copy, pad="12px 20px 16px 20px")))
 
     o.append(sp(16))
@@ -799,27 +828,28 @@ def build_html(base, browser=False):
     o.append(major_sp())
     o.append(section_head("library", "New in the library"))
     o.append(sp(12))
+    # T373 library: 12px image→label, 5–6 label→title, 8 title→desc, 8 desc→link; 16px h-pad
     therapy_img = (
         f'<img class="os-card-art" src="{art("guide-therapy-styles-landscape-compact.jpg")}" '
         f'width="490" height="228" '
         f'alt="Adult and child sharing a calm sensory play tray in a warm playroom" '
-        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 10px 0;">'
+        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 12px 0;">'
     )
     therapy = (therapy_img
-               + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 4px 0", cls="os-tiny")
-               + p("Therapy styles: play, structure, and compliance", 17, 24, INK, 700)
-               + p("Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like.", 15, 22, BODY, 400, margin="6px 0 0 0")
+               + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 0 0", cls="os-tiny")
+               + p("Therapy styles: play, structure, and compliance", 17, 24, INK, 700, margin="6px 0 0 0")
+               + p("Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like.", 15, 22, BODY, 400, margin="8px 0 0 0")
                + p(a(f"{SITE}/resources/therapy-styles", "Read the guide"), 15, 22, BODY, 400, margin="8px 0 0 0", cls="os-card-cta"))
     grief_img = (
         f'<img class="os-card-art" src="{art("guide-grief-landscape-compact.jpg")}" '
         f'width="490" height="228" '
         f'alt="Parent on a porch in autumn while a child plays nearby in leaves - quiet and hopeful" '
-        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 10px 0;">'
+        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 12px 0;">'
     )
     grief = (grief_img
-             + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 4px 0", cls="os-tiny")
-             + p("Grief and disability: the loss nobody sends a card for", 17, 24, INK, 700)
-             + p("This kind of grief rarely has an occasion attached. It shows up at a birthday, a missed milestone, or in the parking lot after an evaluation.", 15, 22, BODY, 400, margin="6px 0 0 0")
+             + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 0 0", cls="os-tiny")
+             + p("Grief and disability: the loss nobody sends a card for", 17, 24, INK, 700, margin="6px 0 0 0")
+             + p("This kind of grief rarely has an occasion attached. It shows up at a birthday, a missed milestone, or in the parking lot after an evaluation.", 15, 22, BODY, 400, margin="8px 0 0 0")
              + p(a(f"{SITE}/resources/grieving-the-life-you-imagined", "Read the grief guide"), 15, 22, BODY, 400, margin="8px 0 0 0", cls="os-card-cta"))
     o.append(padrow(browser_cols(
         card(therapy, pad="16px 16px 16px 16px"),
@@ -837,21 +867,24 @@ def build_html(base, browser=False):
         step(2, f'{b("Ask for an IEP team meeting.")} Request one in writing any time. If things stall, copy the district special education director. Bring notes and a friend.'),
         step(3, f'{b("Use free state help.")} File a TDOE administrative complaint (no lawyer, decision in 60 days), or call STEP TN at {tel("800-280-7837", "+18002807837")}.', last=True),
     ])
+    # T373: 14–16px final step→divider; 10px links→disclaimer; lean bottom pad
     qa = (p("October&rsquo;s question", 13, 18, ACCENT, 700, margin="0 0 6px 0")
           + p("&ldquo;What do I do if my child&rsquo;s IEP isn&rsquo;t being followed?&rdquo;", 18, 25, INK, 700)
           + p("An IEP is legally binding. The school has to deliver what is written in it.", 16, 24, BODY, 400, margin="10px 0 12px 0")
           + steps
-          + f'<div style="margin:14px 0 0 0;border-top:1px solid {RULE};font-size:0;line-height:0;height:1px;">&nbsp;</div>'
+          + f'<div style="margin:16px 0 0 0;border-top:1px solid {RULE};font-size:0;line-height:0;height:1px;">&nbsp;</div>'
           + p(a(f"{SITE}/resources/iep-504", "IEP &amp; 504 guide") + " &nbsp;&middot;&nbsp; " + a("https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html", "TDOE dispute options"), 15, 22, BODY, 400, margin="12px 0 0 0")
-          + p("Parent-to-parent guidance, not legal advice.", 13, 20, MUTED, 400, margin="8px 0 0 0", cls="os-tiny"))
-    o.append(padrow(card(qa, pad="16px 20px 16px 20px")))
+          + p("Parent-to-parent guidance, not legal advice.", 13, 20, MUTED, 400, margin="10px 0 0 0", cls="os-tiny"))
+    o.append(padrow(card(qa, pad="16px 20px 14px 20px")))
 
     # --- Connect / support (T372 We Rock audience + sentence-case heading) ---
     o.append(major_sp())
     o.append(section_head("ongoing", "Connect with other local parents"))
     o.append(sp(12))
+    # T373 matching card architecture:
+    # audience tag → one secondary metadata line → title (no FREE PARENT GROUP layer)
     online_card = group_card(
-        ["ONLINE", "FREE", "WEEKLY"],
+        [],
         "Our Special Village Online Parent Group",
         [
             ("calendar", "Thursdays"),
@@ -868,6 +901,8 @@ def build_html(base, browser=False):
         ],
         f"{SITE}/group",
         "Join the Online Group",
+        audience="FOR PARENTS &amp; CAREGIVERS",
+        secondary=["ONLINE", "WEEKLY", "FREE"],
     )
     werock_card = group_card(
         [],
@@ -876,18 +911,17 @@ def build_html(base, browser=False):
             ("calendar", "Wednesdays at 5:00 PM"),
             ("pin", "We Rock the Spectrum Murfreesboro"),
         ],
-        "Connect with other parents and caregivers of kids with special needs while children enjoy supervised-by-parent gym play.",
+        "Connect with other parents and caregivers of kids with special needs while children enjoy the gym with their parent or caregiver.",
         [
             "Led by Cari Parr",
             "Parents remain with their children",
             "Childcare is not provided",
-            "Gym play admission is separate and available at a discounted group rate",
+            "Discounted gym admission is available separately.",
         ],
         WRTS_URL,
         "Plan Your Visit",
         audience="FOR PARENTS OF KIDS WITH SPECIAL NEEDS",
-        secondary=["IN PERSON", "WEEKLY"],
-        cost_note="FREE PARENT GROUP",
+        secondary=["IN PERSON", "WEEKLY", "FREE GROUP"],
     )
     o.append(padrow(
         '<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
@@ -981,14 +1015,14 @@ def build_text():
     w("THE NEXT DEEP DIVE · VILLAGE HALL")
     w("")
     w("Village Hall: Saturday, October 10, 2026")
-    w("9:30 to 11:00 AM Central, Online")
-    w("Pay what you can, including nothing")
+    w("9:30 to 11:00 AM Central")
+    w("Online")
     w("Topic and guest: The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.")
     w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has a child with Autism.")
     w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
-    w("Pay what you can (equal boxes): $0 Always welcome / $10 Helps / $20 Suggested / $35 Sponsors another seat")
-    w("The meeting link is emailed to registrants.")
     w(f"Register for Village Hall: {SITE}/village-hall")
+    w("Choose what you can pay: $0 Always welcome / $10 Helps / $20 Suggested / $35 Sponsors a seat")
+    w("The meeting link is emailed to registrants.")
     w("")
     w("----------------------------------------")
     w("THE MONTH AHEAD")
@@ -1036,17 +1070,18 @@ def build_text():
     w("----------------------------------------")
     w("CONNECT WITH OTHER LOCAL PARENTS")
     w("")
-    w("Our Special Village Online Parent Group · ONLINE · FREE · WEEKLY")
+    w("Our Special Village Online Parent Group")
+    w("  FOR PARENTS & CAREGIVERS · ONLINE · WEEKLY · FREE")
     w("  Thursdays · 7:00-8:00 PM Central · Online")
     w("  Connect with parents and caregivers of neurodivergent and disabled children in a welcoming, judgment-free space.")
     w("  Good to know: No formal diagnosis required; Drop in any Thursday beginning October 1; Cameras are optional; Meetings are never recorded.")
     w(f"  Join the Online Group: {SITE}/group")
     w("")
     w("We Rock the Spectrum Parent & Caregiver Group")
-    w("  FOR PARENTS OF KIDS WITH SPECIAL NEEDS · IN PERSON · WEEKLY · FREE PARENT GROUP")
+    w("  FOR PARENTS OF KIDS WITH SPECIAL NEEDS · IN PERSON · WEEKLY · FREE GROUP")
     w("  Wednesdays at 5:00 PM · We Rock the Spectrum Murfreesboro")
-    w("  Connect with other parents and caregivers of kids with special needs while children enjoy supervised-by-parent gym play.")
-    w("  Good to know: Led by Cari Parr; Parents remain with their children; Childcare is not provided; Gym play admission is separate and available at a discounted group rate.")
+    w("  Connect with other parents and caregivers of kids with special needs while children enjoy the gym with their parent or caregiver.")
+    w("  Good to know: Led by Cari Parr; Parents remain with their children; Childcare is not provided; Discounted gym admission is available separately.")
     w(f"  Plan Your Visit: {WRTS_URL}")
     w("")
     w("----------------------------------------")
@@ -1282,9 +1317,13 @@ def main():
     assert "Sensory:" not in html
     assert "Voter registration deadline: Mon&nbsp;Oct&nbsp;5" in html
     assert "Topic and guest" in html
-    assert "Sponsors<br>another seat" in html or "Sponsors another seat" in html
+    assert "Sponsors<br>a seat" in html or "Sponsors a seat" in html
+    assert "Sponsors another seat" not in html and "Sponsors<br>another seat" not in html
+    assert "Choose what you can pay" in html
+    assert "Pay what you can, including nothing" not in html
     # FEEDBACK-2: Village Hall navy card must never use interpunct dots
-    assert "9:30 to 11:00 AM Central, Online" in html
+    assert "9:30 to 11:00 AM Central" in html
+    assert "9:30 to 11:00 AM Central, Online" not in html
     assert "9:30 to 11:00 AM Central &middot;" not in html
     assert "Always<br>welcome" in html and "Helps" in html and "Suggested" in html
     assert "os-paybox" in html
@@ -1304,13 +1343,17 @@ def main():
     assert "Parents remain with their children" in html
     assert "Childcare is not provided" in html
     assert "Good to know" in html
-    # T372 We Rock audience / cost clarity
+    # T373 We Rock / parent-card architecture
     assert "FOR PARENTS OF KIDS WITH SPECIAL NEEDS" in html
+    assert "FOR PARENTS &amp; CAREGIVERS" in html
     assert "We Rock the Spectrum Parent &amp; Caregiver Group" in html
-    assert "supervised-by-parent gym play" in html
-    assert "FREE PARENT GROUP" in html
-    assert "Gym play admission is separate and available at a discounted group rate" in html
-    assert "Discounted gym admission is available" not in html
+    assert "enjoy the gym with their parent or caregiver" in html
+    assert "supervised-by-parent gym play" not in html
+    assert "FREE PARENT GROUP" not in html
+    assert "FREE GROUP" in html
+    assert "Discounted gym admission is available separately." in html
+    assert "Gym play admission is separate and available at a discounted group rate" not in html
+    assert "ONLINE" in html and "WEEKLY" in html and "FREE" in html
     assert "village-hall-iep-compact.jpg" in html
     assert "os-sec" in html
     assert "os-audience" in html
