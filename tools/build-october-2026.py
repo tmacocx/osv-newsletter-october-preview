@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T387 Mercedes photo + bio).
+"""Build the October 2026 Our Special Village newsletter (T388 desktop VH spacing).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
+T388: Desktop/browser-wide only — Village Hall Mercedes name/role sit next to
+the photo instead of centering in the leftover cell. Mobile/email CSS unchanged.
 T387: Village Hall Mercedes photo is the family headshot; bio says two
 neurodivergent children (not one child with Autism). ACCESS/Creative Spaces
 logo omitted so the T385 name/role layout stays uncrowded.
 T386: 988 in the footer is a tel: link, matching STEP TN / Disability Rights TN.
-T385: Mercedes name/role centered to the right of her photo; description below
-that block, left-aligned with the picture. Footer names 988 as the Suicide &
-Crisis Lifeline. No other newsletter changes.
+T385: Mercedes name/role centered to the right of her photo on mobile/email;
+description below that block, left-aligned with the picture. Footer names 988
+as the Suicide & Crisis Lifeline. No other newsletter changes.
 Keeps T379 last polish, T375, T373 spacing, T372 hierarchy/mobile, T367, T365.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
@@ -587,7 +589,7 @@ def head():
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
 u + #os-body a{color:ACCENT;text-decoration:underline;}
-/* T385 Mercedes guest: name/role centered; T379 last polish + T375 + T373; email keeps max-width:600px */
+/* T388 desktop name/role next to photo; T385 mobile/email stay centered; T379 + T375 + T373 */
 .os-cred{white-space:nowrap !important;}
 .os-vh-guestname{text-align:center;}
 .os-vh-guestname p{text-align:center;}
@@ -626,8 +628,9 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-about-photo{flex:0 0 160px !important;width:160px !important;max-width:160px !important;margin:0 !important;}
   .os-about-text{flex:1 1 auto !important;min-width:0 !important;}
   .os-vh-portrait{width:96px !important;max-width:96px !important;}
-  .os-vh-guestname{text-align:center !important;}
-  .os-vh-guestname p{text-align:center !important;}
+  /* T388: desktop/browser-wide only: name/role adjacent to photo, not centered in leftover cell */
+  .os-vh-guestname{text-align:left !important;}
+  .os-vh-guestname p{text-align:left !important;}
   .os-tiny,.os-tiny a,.os-footer p{font-size:14px !important;line-height:21px !important;}
   .os-confirm{font-size:14px !important;line-height:21px !important;}
   .os-desk-hide{display:none !important;max-height:0 !important;overflow:hidden !important;mso-hide:all;}
@@ -707,7 +710,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T387: Mercedes family photo + two ND children. T386: 988 is a tel: link. T385: VH Mercedes name/role centered right of photo; blurb below left-aligned with picture. -->
+<!-- T388: desktop VH name/role adjacent to photo. T387: Mercedes family photo + two ND children. T386: 988 is a tel: link. T385: mobile/email name/role centered right of photo; blurb below left-aligned with picture. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -828,8 +831,9 @@ def build_html(base, browser=False):
         f'alt="Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting" '
         f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;">'
     )
-    # T385: name + role/location centered to the right of photo; description
-    # below that block, left-aligned with the picture (mobile + desktop).
+    # T385/T388: name + role to the right of photo; description below, left-
+    # aligned with the picture. Mobile/email keep T385 centering; desktop
+    # (>=700px) left-aligns so name/role sit next to the photo.
     mercedes = (
         '<table role="presentation" class="os-vh-guest" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">'
@@ -1443,7 +1447,7 @@ def main():
     assert "ONLINE" in html and "WEEKLY" in html and "FREE" in html
     assert "village-hall-iep-compact.jpg" in html
     assert "os-sec" in html
-    # T385 Mercedes: name/role centered right of photo; blurb below, left-aligned with picture
+    # T385 Mercedes: name/role right of photo; blurb below, left-aligned with picture
     assert html.find("Mercedes Lawson, M.S. Ed.") > html.find("mercedes-lawson-160.jpg")
     assert "os-vh-guestname" in html
     assert 'colspan="2"' in html
@@ -1452,6 +1456,15 @@ def main():
     assert name_i < blurb_i
     assert "</tr>" in html[name_i:blurb_i]
     assert "os-vh-guestblurb" in html
+    # T388: desktop (>=700px) left-aligns name beside photo; mobile/email stay centered
+    desk_css = html.split("@media only screen and (min-width:700px)")[1].split("@media")[0]
+    assert ".os-vh-guestname{text-align:left !important;}" in desk_css
+    assert ".os-vh-guestname p{text-align:left !important;}" in desk_css
+    assert ".os-vh-guestname{text-align:center !important;}" not in desk_css
+    mob_css = html.split("@media only screen and (max-width:620px)")[1].split("@media")[0]
+    assert ".os-vh-guestname{text-align:center !important;}" in mob_css
+    assert ".os-vh-guestname p{text-align:center !important;}" in mob_css
+    assert ".os-vh-guestname{text-align:center;}" in html
     assert 'href="tel:988"' in html
     assert 'href="tel:988"' in html_browser
     assert "Suicide &amp; Crisis Lifeline" in html

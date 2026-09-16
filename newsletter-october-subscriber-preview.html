@@ -4,7 +4,7 @@
 <title>October: sensory-friendly events + deadlines</title>
 <!-- MailerLite: Subject "October: sensory-friendly events + deadlines". Merge tags {$url} and {$unsubscribe}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T387: Mercedes family photo + two ND children. T386: 988 is a tel: link. T385: VH Mercedes name/role centered right of photo; blurb below left-aligned with picture. -->
+<!-- T388: desktop VH name/role adjacent to photo. T387: Mercedes family photo + two ND children. T386: 988 is a tel: link. T385: mobile/email name/role centered right of photo; blurb below left-aligned with picture. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 
@@ -12,7 +12,7 @@
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
 u + #os-body a{color:#964720;text-decoration:underline;}
-/* T385 Mercedes guest: name/role centered; T379 last polish + T375 + T373; email keeps max-width:600px */
+/* T388 desktop name/role next to photo; T385 mobile/email stay centered; T379 + T375 + T373 */
 .os-cred{white-space:nowrap !important;}
 .os-vh-guestname{text-align:center;}
 .os-vh-guestname p{text-align:center;}
@@ -51,8 +51,9 @@ u + #os-body a{color:#964720;text-decoration:underline;}
   .os-about-photo{flex:0 0 160px !important;width:160px !important;max-width:160px !important;margin:0 !important;}
   .os-about-text{flex:1 1 auto !important;min-width:0 !important;}
   .os-vh-portrait{width:96px !important;max-width:96px !important;}
-  .os-vh-guestname{text-align:center !important;}
-  .os-vh-guestname p{text-align:center !important;}
+  /* T388: desktop/browser-wide only: name/role adjacent to photo, not centered in leftover cell */
+  .os-vh-guestname{text-align:left !important;}
+  .os-vh-guestname p{text-align:left !important;}
   .os-tiny,.os-tiny a,.os-footer p{font-size:14px !important;line-height:21px !important;}
   .os-confirm{font-size:14px !important;line-height:21px !important;}
   .os-desk-hide{display:none !important;max-height:0 !important;overflow:hidden !important;mso-hide:all;}
