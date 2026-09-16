@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T388 desktop VH spacing).
+"""Build the October 2026 Our Special Village newsletter (T389 We Rock eyebrow).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
+T389: We Rock card eyebrow is IN PERSON · WEEKLY · FREE (drop GROUP). Online
+Parent Group already says ONLINE · WEEKLY · FREE. No other copy/layout changes.
 T388: Desktop/browser-wide only — Village Hall Mercedes name/role sit next to
 the photo instead of centering in the leftover cell. Mobile/email CSS unchanged.
 T387: Village Hall Mercedes photo is the family headshot; bio says two
@@ -1002,7 +1004,7 @@ def build_html(base, browser=False):
         ],
         WRTS_URL,
         "Plan Your Visit",
-        secondary=["IN PERSON", "WEEKLY", "FREE GROUP"],
+        secondary=["IN PERSON", "WEEKLY", "FREE"],
     )
     o.append(padrow(
         '<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
@@ -1159,7 +1161,7 @@ def build_text():
     w(f"  Join the Online Group: {SITE}/group")
     w("")
     w("We Rock the Spectrum Parent Group")
-    w("  IN PERSON · WEEKLY · FREE GROUP")
+    w("  IN PERSON · WEEKLY · FREE")
     w("  Wednesdays at 5:00 PM · We Rock the Spectrum Murfreesboro")
     w("  Connect with other parents of kids with special needs while children enjoy the gym. Gym staff watch the kids during group; childcare is available but not appropriate for all children.")
     w("  Good to know: Led by Cari Parr; $15 per child for kids to play; Gym staff watch children during group; not appropriate for all children; Discounted gym admission is available separately.")
@@ -1441,7 +1443,8 @@ def main():
     assert "Parent &amp; Caregiver Group" not in html
     assert "supervised-by-parent gym play" not in html
     assert "FREE PARENT GROUP" not in html
-    assert "FREE GROUP" in html
+    assert "FREE GROUP" not in html
+    assert "IN PERSON" in html and "WEEKLY" in html and "FREE" in html
     assert "Discounted gym admission is available separately." in html
     assert "Gym play admission is separate and available at a discounted group rate" not in html
     assert "ONLINE" in html and "WEEKLY" in html and "FREE" in html
