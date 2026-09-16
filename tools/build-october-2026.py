@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T373 final spacing).
+"""Build the October 2026 Our Special Village newsletter (T379 last polish).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
-T373: Village Hall contribution hierarchy + remaining spacing refinements. Keeps
-T372 hierarchy/mobile, T367 desktop align, T365 email 600px path. Register →
-Choose what you can pay → meeting-link note; parent-card architecture match;
-We Rock copy; month-ahead crop.
+T379: desktop intro alignment; Mercedes name/title right of photo above blurb;
+mobile VH pay amounts vertically centered; We Rock title + childcare/$15 copy.
+Keeps T375 polish (icons, pay cards, SG tags, intro/CTAs/about), T373 spacing,
+T372 hierarchy/mobile, T367 desktop align, T365 email 600px path.
 
 Edit this file and run it. Do not hand-edit the generated HTML.
 
@@ -306,7 +306,7 @@ def group_card(badges, name, meta_pairs, blurb, good_items, btn_href, btn_label,
         + metas
         + p(blurb, 15, 22, BODY, 400, margin="12px 0 0 0")
         + good_to_know(good_items)
-        + '<div class="os-card-cta" style="margin:16px 0 0 0;">'
+        + '<div class="os-card-cta os-sg-cta" style="margin:20px 0 0 0;">'
         + group_cta(btn_href, btn_label)
         + '</div>'
     )
@@ -394,58 +394,72 @@ def step(n, text, last=False):
 
 
 
-def price_boxes():
-    """VH contribution grid (T373): Choose what you can pay → 4 equal boxes → meeting note.
+def vh_meta_icon(icon_name, label, bottom="4px"):
+    """Gold icon + sand label row for Village Hall (T375)."""
+    src_url = f"{PAGES}art/icons/{icon_name}.png"
+    return (
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        f'style="width:100%;border-collapse:collapse;margin:0 0 {bottom} 0;"><tr>'
+        '<td width="22" valign="middle" style="width:22px;padding:0 8px 0 0;vertical-align:middle;">'
+        f'<img src="{src_url}" width="16" height="16" alt="" aria-hidden="true" '
+        'style="display:block;width:16px;height:16px;border:0;outline:none;text-decoration:none;">'
+        '</td><td valign="middle" style="padding:0;vertical-align:middle;">'
+        + p(label, 15, 20, SAND, 400)
+        + '</td></tr></table>'
+    )
 
-    Desktop: 16px under Register CTA (via caller margin), 8px heading→grid, 8–10px gaps,
-    min-height 68–72px, 10/6 padding, 4px price→label, 10–12px under grid.
-    Mobile: 2×2 via .os-paycell CSS with 8px gaps; min 44px tap; equal heights.
-    Boxes stay visually secondary to the gold Register button.
+
+def price_boxes():
+    """VH contribution grid (T375/T379): Choose what you can pay → note → 4 equal boxes.
+
+    Shorter cards (Welcome / Helps / Suggested / Pay it forward). Mobile 2×2 with
+    amounts vertically centered in each rectangle (T379).
     """
     boxes = [
-        ("$0", "Always<br>welcome"),
+        ("$0", "Welcome"),
         ("$10", "Helps"),
         ("$20", "Suggested"),
-        ("$35", "Sponsors<br>a seat"),
+        ("$35", "Pay it forward"),
     ]
     cells = []
     n = len(boxes)
     for i, (amt, label) in enumerate(boxes):
-        # ~8–10px gaps: 5px half-gap each side → 10px between boxes on desktop
         if i == 0:
             pad = "0 5px 0 0"
         elif i == n - 1:
             pad = "0 0 0 5px"
         else:
             pad = "0 5px 0 5px"
-        if "<br>" not in label:
-            label_html = f"{label}<br>&nbsp;"
-        else:
-            label_html = label
         inner = (
             f'<table role="presentation" class="os-paybox" cellpadding="0" cellspacing="0" border="0" width="100%" '
-            f'bgcolor="#e4e9f2" style="width:100%;min-height:70px;border-collapse:separate;background-color:#e4e9f2;border-radius:10px;">'
-            f'<tr><td class="os-paybox" align="center" valign="middle" style="padding:10px 6px;min-height:44px;vertical-align:middle;">'
-            + p(amt, 18, 22, INK, 700, extra="text-align:center;")
-            + p(label_html, 11, 14, BODY, 400, margin="4px 0 0 0", extra="text-align:center;")
+            f'bgcolor="#e4e9f2" style="width:100%;min-height:52px;height:100%;border-collapse:separate;'
+            f'background-color:#e4e9f2;border-radius:10px;">'
+            f'<tr><td class="os-paybox" align="center" valign="middle" height="100%" '
+            f'style="padding:6px 4px;min-height:40px;height:100%;vertical-align:middle;">'
+            + p(amt, 17, 20, INK, 700, extra="text-align:center;")
+            + p(label, 11, 14, BODY, 400, margin="2px 0 0 0", extra="text-align:center;")
             + '</td></tr></table>'
         )
         cells.append(
-            f'<td class="os-paycell os-stack" width="25%" valign="top" '
-            f'style="width:25%;padding:{pad};vertical-align:top;">{inner}</td>'
+            f'<td class="os-paycell os-stack" width="25%" valign="middle" '
+            f'style="width:25%;padding:{pad};vertical-align:middle;">{inner}</td>'
         )
     heading = p("Choose what you can pay", 14, 20, SAND, 700, margin="16px 0 0 0",
                 extra="text-align:left;letter-spacing:0.2px;")
+    support = p(
+        "Every family is welcome&ndash;choose $0, or give more to help cover another seat.",
+        13, 18, SAND, 400, margin="6px 0 0 0", extra="text-align:left;opacity:0.95;",
+        cls="os-pay-note",
+    )
     grid = (
         '<table role="presentation" class="os-paygrid" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:separate;margin:8px 0 0 0;table-layout:fixed;"><tr>'
         + "".join(cells)
         + '</tr></table>'
     )
-    # Meeting-link note: muted supporting info, 10–12px below grid; panel keeps bottom pad
     note = p("The meeting link is emailed to registrants.", 12, 18, SAND, 400,
              margin="12px 0 0 0", extra="opacity:0.92;")
-    return heading + grid + note
+    return f'<div class="os-pay-wrap" style="width:100%;">{heading}{support}{grid}</div>' + note
 
 
 def sensory(text, link_html):
@@ -543,7 +557,11 @@ def head():
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
 u + #os-body a{color:ACCENT;text-decoration:underline;}
-/* T373 spacing + T372 hierarchy + T367 desktop align; email keeps max-width:600px */
+/* T379 last polish + T375 + T373; email keeps max-width:600px */
+.os-cred{white-space:nowrap !important;}
+.os-sig{margin-left:8px !important;}
+.os-pay-note{white-space:nowrap;}
+.os-sg-cta{margin-top:20px !important;}
 .os-sec{height:48px !important;line-height:48px !important;font-size:0 !important;}
 @media only screen and (min-width:700px){
   .os-wrap{max-width:880px !important;width:100% !important;}
@@ -555,11 +573,17 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-browser-col > table.os-card > tbody > tr.os-card-body{height:100% !important;}
   .os-browser-col > table.os-card td.os-cardpad{height:100% !important;vertical-align:top !important;display:flex !important;flex-direction:column !important;box-sizing:border-box !important;}
   .os-card-cta{margin-top:auto !important;}
-  .os-intro-cols{align-items:flex-start !important;gap:18px !important;}
-  .os-intro-photo-col{flex:0 0 176px !important;max-width:176px !important;width:176px !important;display:block !important;}
+  .os-equal-pair .os-sg-cta{margin-top:auto !important;padding-top:20px !important;}
+  .os-pay-note{white-space:nowrap !important;}
+  /* T379: clean desktop intro - photo + byline as one centered unit beside letter */
+  .os-intro-cols{align-items:flex-start !important;gap:24px !important;}
+  .os-intro-photo-col{flex:0 0 200px !important;max-width:200px !important;width:200px !important;display:block !important;text-align:center !important;}
   .os-intro-text-col{flex:1 1 auto !important;min-width:0 !important;}
-  .os-intro-photo{width:176px !important;max-width:176px !important;height:176px !important;}
-  .os-intro-photocell{width:176px !important;}
+  .os-intro-photo{width:160px !important;max-width:160px !important;height:160px !important;margin:0 auto !important;}
+  .os-intro-photocell{width:200px !important;text-align:center !important;padding:0 0 8px 0 !important;}
+  .os-intro-byline{text-align:center !important;}
+  .os-intro-byline p{text-align:center !important;}
+  .os-cred{font-size:12px !important;line-height:16px !important;white-space:nowrap !important;}
   .os-vh-stack{display:block !important;width:100% !important;}
   .os-vh-stack > .os-browser-col{display:block !important;width:100% !important;max-width:100% !important;flex:none !important;margin:0 0 10px 0 !important;}
   .os-vh-stack > .os-browser-col:last-child{margin-bottom:0 !important;}
@@ -590,16 +614,19 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;}
   .os-col-photo{padding:0 0 12px 0 !important;}
   .os-photo{width:100% !important;max-width:160px !important;height:auto !important;}
-  .os-intro-photo{width:104px !important;max-width:104px !important;height:104px !important;border-radius:50% !important;}
+  .os-intro-photo{width:104px !important;max-width:104px !important;height:104px !important;border-radius:50% !important;margin:0 auto !important;}
   .os-intro-col{display:block !important;width:100% !important;max-width:100% !important;}
-  .os-intro-photocell{padding:0 0 6px 0 !important;text-align:left !important;}
-  .os-intro-photo-col{margin:0 0 10px 0 !important;}
+  .os-intro-photocell{padding:0 0 6px 0 !important;text-align:center !important;}
+  .os-intro-photo-col{margin:0 0 10px 0 !important;text-align:center !important;}
+  .os-intro-photo-col p{text-align:center !important;}
+  .os-intro-byline{text-align:center !important;}
+  .os-cred{font-size:12px !important;line-height:16px !important;white-space:nowrap !important;}
   .os-browser-cols{display:block !important;}
   .os-browser-col{display:block !important;width:100% !important;margin:0 0 16px 0 !important;}
-  .os-about-photo{margin:0 0 12px 0 !important;}
-  .os-about-photo .os-photo,.os-about-photo img{margin:0 !important;}
-  .os-about-row{display:block !important;}
-  /* Keep 2-col chips when possible; only stack at very narrow */
+  .os-about-photo{width:160px !important;max-width:160px !important;margin:0 auto 16px auto !important;text-align:center !important;}
+  .os-about-photo .os-photocell,.os-about-photo table{margin:0 auto !important;}
+  .os-about-photo .os-photo,.os-about-photo img{margin:0 auto !important;}
+  .os-about-row{display:block !important;text-align:left !important;}
   .os-issue-cell{width:50% !important;max-width:50% !important;box-sizing:border-box !important;}
   body,table,td,p,a,span{overflow-wrap:anywhere !important;word-break:break-word !important;}
   .os-chip,.os-chip p,table[width="62"] p,td[width="62"] p{white-space:nowrap !important;overflow-wrap:normal !important;word-break:normal !important;}
@@ -610,18 +637,23 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   table[width="26"],td[width="30"]{width:26px !important;max-width:30px !important;}
   table[width="40"]{width:40px !important;max-width:40px !important;}
   table[width="160"]{width:160px !important;max-width:160px !important;}
-  /* Village Hall pay boxes: 2x2 with consistent 8px gaps (T373) */
-  .os-paygrid{width:100% !important;table-layout:fixed !important;}
-  .os-paygrid tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;align-items:stretch !important;}
-  .os-paycell{display:flex !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 4px 8px 0 !important;height:auto !important;}
+  /* Village Hall pay boxes: centered 2x2; amounts vertically centered (T379) */
+  .os-pay-wrap{text-align:center !important;}
+  .os-pay-note{white-space:normal !important;display:inline-block !important;text-align:center !important;}
+  .os-wrap table.os-paygrid,.os-paygrid{width:100% !important;max-width:100% !important;margin:8px auto 0 auto !important;table-layout:fixed !important;}
+  .os-paygrid tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;align-items:stretch !important;justify-content:center !important;}
+  .os-paycell{display:flex !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 4px 8px 0 !important;height:auto !important;align-items:stretch !important;}
   .os-paycell:nth-child(even){padding:0 0 8px 4px !important;}
   .os-paycell:nth-child(n+3){padding-bottom:0 !important;}
-  .os-paycell > table.os-paybox{width:100% !important;height:100% !important;min-height:70px !important;}
-  .os-paybox{min-height:70px !important;height:100% !important;}
+  .os-paycell > table.os-paybox{width:100% !important;height:100% !important;min-height:64px !important;display:flex !important;flex-direction:column !important;}
+  .os-paybox{min-height:64px !important;height:100% !important;}
+  .os-paybox tbody,.os-paybox tr{display:flex !important;flex:1 1 auto !important;width:100% !important;height:100% !important;}
+  .os-paybox td{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;width:100% !important;height:100% !important;padding:6px 4px !important;vertical-align:middle !important;box-sizing:border-box !important;}
   .os-vh-portrait{width:88px !important;max-width:88px !important;}
 }
 @media only screen and (max-width:359px){
   .os-issue-cell{display:block !important;width:100% !important;max-width:100% !important;padding:0 0 8px 0 !important;}
+  .os-cred{font-size:11px !important;line-height:15px !important;letter-spacing:0 !important;}
 }
 """.replace("ACCENT", ACCENT)
     dark = f"""
@@ -638,7 +670,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T373: final spacing + VH contribution hierarchy (email 600px unchanged). -->
+<!-- T379: last polish - intro align, Mercedes, pay center, We Rock (email 600px unchanged). -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -693,8 +725,8 @@ def build_html(base, browser=False):
         + "".join(note_paras_html)
         + p("With love,", 16, 24, BODY, 400, margin="10px 0 2px 0")
         + (
-            f'<img src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
-            f'style="display:block;width:96px;max-width:96px;height:auto;margin:0;padding:0;border:0;outline:none;'
+            f'<img class="os-sig" src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
+            f'style="display:block;width:96px;max-width:96px;height:auto;margin:0 0 0 8px;padding:0;border:0;outline:none;'
             f'text-decoration:none;font-family:Georgia, Times New Roman, serif;font-size:22px;font-style:italic;color:{ACCENT};">'
         )
     )
@@ -707,11 +739,13 @@ def build_html(base, browser=False):
     photo_block = (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:collapse;">'
-        f'<tr><td class="os-intro-photocell" align="left" style="padding:0 0 6px 0;">{photo}</td></tr>'
-        f'<tr><td align="left" style="padding:0;">'
-        + p("Dr. Taylor Hickok", 15, 20, INK, 700, extra="text-align:left;")
+        f'<tr><td class="os-intro-photocell" align="center" style="padding:0 0 8px 0;">'
+        + photo.replace('margin:0;', 'margin:0 auto;')
+        + '</td></tr>'
+        f'<tr><td class="os-intro-byline" align="center" style="padding:0;">'
+        + p("Dr. Taylor Hickok", 15, 20, INK, 700, extra="text-align:center;")
         + p("Founder &middot; SLP &middot; AuDHD parent", 13, 18, MUTED, 400, margin="2px 0 0 0",
-            extra="text-align:left;", cls="os-tiny")
+            extra="text-align:center;white-space:nowrap;", cls="os-tiny os-cred")
         + '</td></tr></table>'
     )
     # Wrap cols with intro-specific classes (T367 photo-left)
@@ -757,32 +791,32 @@ def build_html(base, browser=False):
         f'alt="Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting" '
         f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;">'
     )
-    # T373: compact guest row (photo→text gap tight); 14–16px below guest before desc
+    # T379: name + title to the right of photo, above expanded blurb (mobile + desktop)
     mercedes = (
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
         'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;"><tr>'
-        f'<td class="os-stack" width="88" valign="top" style="width:88px;padding:0 10px 0 0;vertical-align:top;">'
+        f'<td class="os-stack" width="88" valign="top" style="width:88px;padding:0 12px 0 0;vertical-align:top;">'
         f'<img class="os-vh-portrait" src="{art("mercedes-lawson-160.jpg")}" width="88" height="126" '
         f'alt="Mercedes Lawson, M.S. Ed., founder of A.C.C.E.S.S." '
         f'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
-        f'</td><td class="os-stack" valign="middle" style="padding:0;vertical-align:middle;">'
+        f'</td><td class="os-stack" valign="top" style="padding:0;vertical-align:top;">'
         + p("Mercedes Lawson, M.S. Ed.", 15, 20, GOLD, 700, margin="0 0 2px 0")
-        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 13, 18, SAND, 700, margin="0 0 4px 0")
+        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 13, 18, SAND, 700, margin="0 0 6px 0")
         + p("She grew up with a sibling with disabilities, taught special education for nine years "
-           "helping 250+ students, and has a child with Autism.",
+           "helping 250+ students, and has a child with Autism. Through A.C.C.E.S.S. "
+           "(Advocacy &amp; Consultation Center for Educational Student Supports), she helps families "
+           "with IEP consultation, educational advocacy, and tutoring.",
            13, 19, SAND, 400)
         + '</td></tr></table>'
     )
-    # T373 hierarchy: date/time/online (~4px) → Topic (18px) → title (6px) → guest (12–14px)
-    # → desc (14–16px via mercedes margin) → Register (16px) → Choose what you can pay → note
-    # Remove "Pay what you can…" from event-details; pricing lives beside contribution options.
+    # T375 icons + T379 guest layout: date → time/online icons → Topic → title → photo|name/title/blurb
     vh_panel = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
           '<tr><td align="left" style="padding:16px 18px 20px 18px;">'
           + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 4px 0")
-          + p("9:30 to 11:00 AM Central", 15, 20, SAND, 400, margin="0 0 4px 0")
-          + p("Online", 15, 20, SAND, 400, margin="0 0 18px 0")
+          + vh_meta_icon("clock-gold", "9:30 to 11:00 AM Central", bottom="4px")
+          + vh_meta_icon("video-gold", "Online", bottom="18px")
           + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
-          + p("The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.", 17, 24, CREAM, 700, margin="0 0 14px 0")
+          + p("The IEP process and navigating the school system", 17, 24, CREAM, 700, margin="0 0 14px 0")
           + mercedes
           + p("A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 14, 21, SAND, 400, margin="0 0 16px 0")
           + button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK).replace('class="os-btn"', 'class="os-btn os-btn-gold"')
@@ -901,26 +935,25 @@ def build_html(base, browser=False):
         ],
         f"{SITE}/group",
         "Join the Online Group",
-        audience="FOR PARENTS &amp; CAREGIVERS",
         secondary=["ONLINE", "WEEKLY", "FREE"],
     )
     werock_card = group_card(
         [],
-        "We Rock the Spectrum Parent &amp; Caregiver Group",
+        "We Rock the Spectrum Parent Group",
         [
             ("calendar", "Wednesdays at 5:00 PM"),
             ("pin", "We Rock the Spectrum Murfreesboro"),
         ],
-        "Connect with other parents and caregivers of kids with special needs while children enjoy the gym with their parent or caregiver.",
+        "Connect with other parents of kids with special needs while children enjoy the gym. "
+        "Gym staff watch the kids during group; childcare is available but not appropriate for all children.",
         [
             "Led by Cari Parr",
-            "Parents remain with their children",
-            "Childcare is not provided",
+            "$15 per child for kids to play",
+            "Gym staff watch children during group; not appropriate for all children",
             "Discounted gym admission is available separately.",
         ],
         WRTS_URL,
         "Plan Your Visit",
-        audience="FOR PARENTS OF KIDS WITH SPECIAL NEEDS",
         secondary=["IN PERSON", "WEEKLY", "FREE GROUP"],
     )
     o.append(padrow(
@@ -937,13 +970,13 @@ def build_html(base, browser=False):
                   + p(a(f"{SITE}/about", "About the Village") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/editorial-policy", "How we check information"), 14, 21, BODY, 400, margin="8px 0 0 0"))
     photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="160" class="os-photocell" bgcolor="{BLUSH}" '
              f'style="width:160px;border-collapse:separate;background-color:{BLUSH};border-radius:12px;">'
-             f'<tr><td class="os-photocell" align="left" style="width:160px;vertical-align:middle;border-radius:12px;">'
+             f'<tr><td class="os-photocell" align="center" style="width:160px;vertical-align:middle;border-radius:12px;">'
              f'<img class="os-photo" src="{art("about-family-bowling-small.jpg")}" width="160" height="160" alt="Taylor, her husband, and their daughter at a bowling alley." '
              f'style="display:block;width:160px;max-width:100%;height:auto;margin:0;border:0;outline:none;text-decoration:none;border-radius:12px;font-family:{FONT};font-size:13px;line-height:18px;color:{BODY};"></td></tr></table>')
     # T367 desktop: photo + text row; mobile stacks
     about = (
         f'<div class="os-about-row" style="display:block;width:100%;">'
-        f'<div class="os-about-photo" style="display:block;width:160px;max-width:160px;margin:0 0 12px 0;">{photo}</div>'
+        f'<div class="os-about-photo" style="display:block;width:160px;max-width:160px;margin:0 0 16px 0;">{photo}</div>'
         f'<div class="os-about-text" style="display:block;width:100%;">{about_copy}</div>'
         f'</div>'
     )
@@ -1017,11 +1050,11 @@ def build_text():
     w("Village Hall: Saturday, October 10, 2026")
     w("9:30 to 11:00 AM Central")
     w("Online")
-    w("Topic and guest: The IEP process and navigating the school system, with Mercedes Lawson of A.C.C.E.S.S.")
-    w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has a child with Autism.")
+    w("Topic and guest: The IEP process and navigating the school system")
+    w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. (Advocacy & Consultation Center for Educational Student Supports) in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has a child with Autism. She helps families with IEP consultation, educational advocacy, and tutoring.")
     w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
     w(f"Register for Village Hall: {SITE}/village-hall")
-    w("Choose what you can pay: $0 Always welcome / $10 Helps / $20 Suggested / $35 Sponsors a seat")
+    w("Choose what you can pay: Every family is welcome – choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward")
     w("The meeting link is emailed to registrants.")
     w("")
     w("----------------------------------------")
@@ -1071,17 +1104,17 @@ def build_text():
     w("CONNECT WITH OTHER LOCAL PARENTS")
     w("")
     w("Our Special Village Online Parent Group")
-    w("  FOR PARENTS & CAREGIVERS · ONLINE · WEEKLY · FREE")
+    w("  ONLINE · WEEKLY · FREE")
     w("  Thursdays · 7:00-8:00 PM Central · Online")
     w("  Connect with parents and caregivers of neurodivergent and disabled children in a welcoming, judgment-free space.")
     w("  Good to know: No formal diagnosis required; Drop in any Thursday beginning October 1; Cameras are optional; Meetings are never recorded.")
     w(f"  Join the Online Group: {SITE}/group")
     w("")
-    w("We Rock the Spectrum Parent & Caregiver Group")
-    w("  FOR PARENTS OF KIDS WITH SPECIAL NEEDS · IN PERSON · WEEKLY · FREE GROUP")
+    w("We Rock the Spectrum Parent Group")
+    w("  IN PERSON · WEEKLY · FREE GROUP")
     w("  Wednesdays at 5:00 PM · We Rock the Spectrum Murfreesboro")
-    w("  Connect with other parents and caregivers of kids with special needs while children enjoy the gym with their parent or caregiver.")
-    w("  Good to know: Led by Cari Parr; Parents remain with their children; Childcare is not provided; Discounted gym admission is available separately.")
+    w("  Connect with other parents of kids with special needs while children enjoy the gym. Gym staff watch the kids during group; childcare is available but not appropriate for all children.")
+    w("  Good to know: Led by Cari Parr; $15 per child for kids to play; Gym staff watch children during group; not appropriate for all children; Discounted gym admission is available separately.")
     w(f"  Plan Your Visit: {WRTS_URL}")
     w("")
     w("----------------------------------------")
@@ -1317,16 +1350,19 @@ def main():
     assert "Sensory:" not in html
     assert "Voter registration deadline: Mon&nbsp;Oct&nbsp;5" in html
     assert "Topic and guest" in html
-    assert "Sponsors<br>a seat" in html or "Sponsors a seat" in html
+    assert "Pay it forward" in html
     assert "Sponsors another seat" not in html and "Sponsors<br>another seat" not in html
+    assert "Welcome" in html and "Helps" in html and "Suggested" in html
     assert "Choose what you can pay" in html
+    assert "Every family is welcome" in html
     assert "Pay what you can, including nothing" not in html
     # FEEDBACK-2: Village Hall navy card must never use interpunct dots
     assert "9:30 to 11:00 AM Central" in html
     assert "9:30 to 11:00 AM Central, Online" not in html
     assert "9:30 to 11:00 AM Central &middot;" not in html
-    assert "Always<br>welcome" in html and "Helps" in html and "Suggested" in html
     assert "os-paybox" in html
+    assert "clock-gold.png" in html and "video-gold.png" in html
+    assert "Advocacy &amp; Consultation Center for Educational Student Supports" in html
     assert "$0 always welcome &middot;" not in html
     assert "45-minute lesson" in html
     assert "mercedes-lawson-160.jpg" in html
@@ -1340,14 +1376,16 @@ def main():
     assert "border-radius:12px" in html  # T364 full-width support CTAs
     assert "Contact We Rock the Spectrum" not in html
     assert "Led by Cari Parr" in html
-    assert "Parents remain with their children" in html
-    assert "Childcare is not provided" in html
+    assert "$15 per child for kids to play" in html
+    assert "not appropriate for all children" in html
+    assert "Parents remain with their children" not in html
+    assert "Childcare is not provided" not in html
     assert "Good to know" in html
-    # T373 We Rock / parent-card architecture
-    assert "FOR PARENTS OF KIDS WITH SPECIAL NEEDS" in html
-    assert "FOR PARENTS &amp; CAREGIVERS" in html
-    assert "We Rock the Spectrum Parent &amp; Caregiver Group" in html
-    assert "enjoy the gym with their parent or caregiver" in html
+    # T379 We Rock: drop & Caregiver; childcare caveat + $15
+    assert "FOR PARENTS OF KIDS WITH SPECIAL NEEDS" not in html
+    assert "FOR PARENTS &amp; CAREGIVERS" not in html
+    assert "We Rock the Spectrum Parent Group" in html
+    assert "Parent &amp; Caregiver Group" not in html
     assert "supervised-by-parent gym play" not in html
     assert "FREE PARENT GROUP" not in html
     assert "FREE GROUP" in html
@@ -1356,7 +1394,10 @@ def main():
     assert "ONLINE" in html and "WEEKLY" in html and "FREE" in html
     assert "village-hall-iep-compact.jpg" in html
     assert "os-sec" in html
-    assert "os-audience" in html
+    # T379 Mercedes: name/title right of photo (not stacked above)
+    assert html.find("Mercedes Lawson, M.S. Ed.") > html.find("mercedes-lawson-160.jpg")
+    assert "os-intro-byline" in html
+    assert "os-pay-wrap" in html
     assert 'class="chip"' in deadlines
     assert "Sun" in deadlines and "Nov" in deadlines
     assert "Drop in any Thursday beginning October 1" in html
