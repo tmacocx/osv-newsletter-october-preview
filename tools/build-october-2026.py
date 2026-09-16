@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T389 We Rock eyebrow).
+"""Build the October 2026 Our Special Village newsletter (T393 Mercedes headshot).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
+T393: Village Hall Mercedes photo is the IMG_1427 professional headshot
+(long hair, black blazer, pearls) at art/mercedes-headshot-160.jpg. New
+filename so Cloudflare/browser cache of the T387 family photo dies. Family
+photo stays off this newsletter; it is for live Village Businesses #access
+only. Bio still says two neurodivergent children.
 T389: We Rock card eyebrow is IN PERSON · WEEKLY · FREE (drop GROUP). Online
 Parent Group already says ONLINE · WEEKLY · FREE. No other copy/layout changes.
 T388: Desktop/browser-wide only — Village Hall Mercedes name/role sit next to
 the photo instead of centering in the leftover cell. Mobile/email CSS unchanged.
-T387: Village Hall Mercedes photo is the family headshot; bio says two
-neurodivergent children (not one child with Autism). ACCESS/Creative Spaces
-logo omitted so the T385 name/role layout stays uncrowded.
+T387: Bio says two neurodivergent children (not one child with Autism).
+ACCESS/Creative Spaces logo omitted so the T385 name/role layout stays uncrowded.
 T386: 988 in the footer is a tel: link, matching STEP TN / Disability Rights TN.
 T385: Mercedes name/role centered to the right of her photo on mobile/email;
 description below that block, left-aligned with the picture. Footer names 988
@@ -712,7 +716,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T388: desktop VH name/role adjacent to photo. T387: Mercedes family photo + two ND children. T386: 988 is a tel: link. T385: mobile/email name/role centered right of photo; blurb below left-aligned with picture. -->
+<!-- T393: Mercedes IMG_1427 headshot (mercedes-headshot-160.jpg). T388: desktop VH name/role adjacent to photo. T387: two ND children bio. T386: 988 is a tel: link. T385: mobile/email name/role centered right of photo; blurb below left-aligned with picture. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -841,8 +845,8 @@ def build_html(base, browser=False):
         'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">'
         '<tr>'
         f'<td width="88" valign="middle" style="width:88px;padding:0 12px 0 0;vertical-align:middle;">'
-        f'<img class="os-vh-portrait" src="{art("mercedes-lawson-160.jpg")}" width="88" height="115" '
-        f'alt="Mercedes Lawson, M.S. Ed., with her family." '
+        f'<img class="os-vh-portrait" src="{art("mercedes-headshot-160.jpg")}" width="88" height="115" '
+        f'alt="Mercedes Lawson, M.S. Ed." '
         f'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
         '</td>'
         '<td class="os-vh-guestname" valign="middle" align="center" '
@@ -1414,7 +1418,14 @@ def main():
     assert "Advocacy &amp; Consultation Center for Educational Student Supports" in html
     assert "$0 always welcome &middot;" not in html
     assert "45-minute lesson" in html
-    assert "mercedes-lawson-160.jpg" in html
+    assert "mercedes-headshot-160.jpg" in html
+    assert "mercedes-headshot-160.jpg" in html_browser
+    assert "mercedes-lawson-160.jpg" not in html
+    assert "mercedes-lawson-160.jpg" not in html_browser
+    assert "mercedes-lawson.jpg" not in html
+    assert "mercedes-lawson.jpg" not in html_browser
+    assert "with her family" not in html
+    assert "with her family" not in html_browser
     assert "two neurodivergent children" in html
     assert "two neurodivergent children" in txt
     assert "a child with Autism" not in html
@@ -1451,7 +1462,7 @@ def main():
     assert "village-hall-iep-compact.jpg" in html
     assert "os-sec" in html
     # T385 Mercedes: name/role right of photo; blurb below, left-aligned with picture
-    assert html.find("Mercedes Lawson, M.S. Ed.") > html.find("mercedes-lawson-160.jpg")
+    assert html.find("Mercedes Lawson, M.S. Ed.") > html.find("mercedes-headshot-160.jpg")
     assert "os-vh-guestname" in html
     assert 'colspan="2"' in html
     name_i = html.find("Mercedes Lawson, M.S. Ed.")
