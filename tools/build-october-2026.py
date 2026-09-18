@@ -5,8 +5,9 @@ Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + mer
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
-T400: Sensory Spooktacular is the last dated event in The month ahead
-(Sun Oct 25; Little Luminaries and Cultivate Play).
+T400: Sensory Spooktacular sits in chronological order in The month ahead
+(Sun Oct 25 before Sat Oct 31 Evergreen; Little Luminaries and Cultivate Play).
+Details link matches sibling rows (OSV events calendar; no inline extra copy).
 T398: Village Hall guest block lists only ACCESS website + email (no other
 Mercedes/ACCESS contacts).
 T397: Village Hall guest photo is the IMG_7283 family photo (children’s
@@ -540,22 +541,18 @@ SECONDARY_EVENTS = [
          meta="Nightly 5:00&ndash;9:00 PM &middot; $19&ndash;$23 ages 2+, parking $10 &middot; About 35 min",
          sensory="free Zooper Packs and a social story; Mon&ndash;Wed quietest.",
          link=("https://www.nashvillezoo.org/boo", "Tickets and social story")),
-    dict(chip=chip("Sat", "31", "Oct"),
-         title="Evergreen Trunk or Treat &middot; Evergreen Life Services",
-         meta="1:00&ndash;3:00 PM &middot; Antioch &middot; Free &middot; About 30 min",
-         sensory="outdoors; trunks, games, and booths built for IDD families.",
-         link=("https://evergreenls.org/trunkortreat/", "Details")),
-    # T400: last event in the October newsletter (after the other dated rows).
+    # T400: Sun Oct 25 before Sat Oct 31 so The month ahead stays chronological.
     dict(chip=chip("Sun", "25", "Oct"),
          title="Sensory Spooktacular",
          meta=("1:00&ndash;4:00 PM (sensory-sensitive hour 1:00&ndash;2:00 PM) &middot; "
                "Little Luminaries and Cultivate Play, 1810 Ward Dr, Murfreesboro &middot; "
                "Free, tickets limited"),
-         extra=[
-             "On site: local resources trunk-or-treat; mobile sensory room; sensory tables "
-             "and activities; singing pumpkins and foggy bubbles; food and treats available.",
-             "Thanks to location sponsors Little Luminaries and Cultivate Play.",
-         ]),
+         link=(f"{SITE}/events", "Details")),
+    dict(chip=chip("Sat", "31", "Oct"),
+         title="Evergreen Trunk or Treat &middot; Evergreen Life Services",
+         meta="1:00&ndash;3:00 PM &middot; Antioch &middot; Free &middot; About 30 min",
+         sensory="outdoors; trunks, games, and booths built for IDD families.",
+         link=("https://evergreenls.org/trunkortreat/", "Details")),
 ]
 
 MONSTERS_URL = "https://www.explorethedc.org/event/monsters-in-the-museum/"
@@ -752,7 +749,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T400: Sensory Spooktacular last event. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
+<!-- T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + Details link. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -949,11 +946,7 @@ def build_html(base, browser=False):
     o.append(sp(16))
     ev_rows = []
     for i, e in enumerate(SECONDARY_EVENTS):
-        lines = [e["meta"]]
-        lines.extend(e.get("extra") or [])
-        if e.get("link"):
-            lines.append(a(*e["link"]))
-        content = item(e["title"], lines)
+        content = item(e["title"], [e["meta"], a(*e["link"])])
         ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
     o.append(padrow(card(rows_table(ev_rows), pad="6px 20px 6px 20px")))
     o.append(sp(20))
@@ -1173,10 +1166,7 @@ def build_text():
     for e in SECONDARY_EVENTS:
         w(strip(e["title"]))
         w(f"  {strip(e['meta'])}")
-        for extra in e.get("extra") or []:
-            w(f"  {strip(extra)}")
-        if e.get("link"):
-            w(f"  {e['link'][1]}: {e['link'][0]}")
+        w(f"  {e['link'][1]}: {e['link'][0]}")
         w("")
     w(f"View the full October events calendar: {EVENTS_CAL_URL}")
     w("")
@@ -1497,12 +1487,24 @@ def main():
     assert "1810 Ward Dr, Murfreesboro" in html
     assert "tickets limited" in html
     assert "Little Luminaries and Cultivate Play" in html
-    assert "Thanks to location sponsors Little Luminaries and Cultivate Play" in html
-    assert html.rfind("Sensory Spooktacular") > html.rfind("Evergreen Trunk or Treat")
-    assert txt.rfind("Sensory Spooktacular") > txt.rfind("Evergreen Trunk or Treat")
-    month = html.split("The month ahead", 1)[1]
-    assert month.find("Sensory Spooktacular") > month.find("Evergreen Trunk or Treat")
+    assert "On site:" not in html and "On site:" not in txt
+    assert "Thanks to location sponsors" not in html
+    assert "Thanks to location sponsors" not in txt
+    titles = [e["title"] for e in SECONDARY_EVENTS]
+    spook_i = titles.index("Sensory Spooktacular")
+    ever_i = next(i for i, t in enumerate(titles) if "Evergreen Trunk or Treat" in t)
+    assert spook_i < ever_i
+    assert SECONDARY_EVENTS[spook_i]["link"] == (f"{SITE}/events", "Details")
+    assert "extra" not in SECONDARY_EVENTS[spook_i]
+    month = html.split("The month ahead", 1)[1].split("New in the library", 1)[0]
+    assert month.find("Sensory Spooktacular") < month.find("Evergreen Trunk or Treat")
+    assert month.find(">25</p>") < month.find(">31</p>")
     assert month.find("Sensory Spooktacular") < month.find("View the full October events calendar")
+    spook_row = month[month.find("Sensory Spooktacular"):month.find("Evergreen Trunk or Treat")]
+    assert f'href="{SITE}/events"' in spook_row
+    assert ">Details</span>" in spook_row
+    assert txt.find("Sensory Spooktacular") < txt.find("Evergreen Trunk or Treat")
+    assert f"Details: {SITE}/events" in txt[txt.find("Sensory Spooktacular"):txt.find("Evergreen Trunk or Treat")]
     assert "two neurodivergent children" in html
     assert "two neurodivergent children" in txt
     assert "a child with Autism" not in html
