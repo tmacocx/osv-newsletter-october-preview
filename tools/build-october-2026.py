@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T397/T398/T400).
+"""Build the October 2026 Our Special Village newsletter (T404/T397/T398/T400).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
+T404: Three things to know this month — all three items use title 18px /
+body 16px (Fall break, voter, clocks). Item 3 was 16/15 because CLOCKS
+omitted featured=True. Section heading (21px) and date chips unchanged.
 T400: Sensory Spooktacular sits in chronological order in The month ahead
 (Sun Oct 25 before Sat Oct 31 Evergreen; Little Luminaries and Cultivate Play).
 Details is a native <details> expand with the on-site + sponsor copy (not a
@@ -215,6 +218,7 @@ def item(title, lines, featured=False, label=None, first=True):
         tmargin = "0"
     else:
         tmargin = "0" if first else "14px 0 0 0"
+    # featured=True: 18/25 title + 16/24 body (Three things card). Else 16/23 + 15/22.
     tsize, tlh = (18, 25) if featured else (16, 23)
     # Keep date headers readable: no mid-number breaks from mobile word-break CSS
     title_extra = "overflow-wrap:normal;word-break:normal;"
@@ -603,10 +607,12 @@ VOTER = item(
     "Voter registration deadline: Mon&nbsp;Oct&nbsp;5",
     ["For the Nov 3 election. Register or update your address at GoVoteTN.gov by Mon Oct 5. Early voting Oct 14 to 29. Voters with a disability can request a mail ballot by Sat Oct 24. &nbsp;"
      + a("https://govotetn.gov/", "GoVoteTN")], featured=True, first=True)
+# T404: same 18/16 title/body as Fall break + voter (featured=True).
 CLOCKS = item(
     "Clocks fall back one hour on Sun Nov 1",
     ["Daylight saving time ends at 2:00 AM. If sleep is fragile at your house, shift bedtime 10 to 15 minutes a night the week before. &nbsp;"
-     + a("https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst", "How DST works")])
+     + a("https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst", "How DST works")],
+    featured=True)
 
 def deadlines_oct5_block():
     """Fall break + voter under one date tile, separated by 14px + hairline."""
@@ -788,7 +794,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + expand Details. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
+<!-- T404: Three things items all 18/16. T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + expand Details. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -1469,6 +1475,25 @@ def main():
     assert "guide-grief-landscape-compact.jpg" in html
     assert "village-hall-iep-compact.jpg" in html
     assert "Three things to know this month" in html
+    # T404: all three Three-things item titles 18px, bodies 16px (email + browser).
+    three_titles = (
+        "Fall break, Oct 5 to 9: Rutherford County and Murfreesboro City Schools",
+        "Voter registration deadline: Mon&nbsp;Oct&nbsp;5",
+        "Clocks fall back one hour on Sun Nov 1",
+    )
+    for doc in (html, html_browser):
+        three = doc.split("Three things to know this month", 1)[1].split("See all deadlines", 1)[0]
+        heading = doc.split('id="deadlines"', 1)[1].split("</h2>", 1)[0]
+        assert "font-size:21px" in heading
+        for title in three_titles:
+            i = three.find(title)
+            assert i != -1, title
+            title_tag = three[three.rfind("<p ", 0, i):i]
+            assert "font-size:18px" in title_tag, title
+            after = three.find("</p>", i)
+            body_open = three.find("<p ", after)
+            body_tag = three[body_open:three.find(">", body_open) + 1]
+            assert "font-size:16px" in body_tag, title
     assert "See all deadlines" in html
     assert "View the full October events calendar" in html
     assert "Connect with other local parents" in html
