@@ -7,7 +7,8 @@ destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
 T400: Sensory Spooktacular sits in chronological order in The month ahead
 (Sun Oct 25 before Sat Oct 31 Evergreen; Little Luminaries and Cultivate Play).
-Details link matches sibling rows (OSV events calendar; no inline extra copy).
+Details is a native <details> expand with the on-site + sponsor copy (not a
+link-only jump to /events). Outlook/MSO gets the same copy in a conditional.
 T398: Village Hall guest block lists only ACCESS website + email (no other
 Mercedes/ACCESS contacts).
 T397: Village Hall guest photo is the IMG_7283 family photo (children’s
@@ -525,6 +526,40 @@ def sensory(text, link_html):
     return link_html
 
 
+def disclose(lines, label="Details"):
+    """Native expand/collapse for preview readers who stay on the page.
+
+    Supporting clients get <details><summary> styled like sibling Details links
+    (terracotta/gold underline). Outlook/MSO does not hide the body: the same
+    copy is emitted in an MSO conditional so it stays readable when <details>
+    is unsupported.
+    """
+    body = "".join(p(ln, 15, 22, BODY, 400, margin="4px 0 0 0") for ln in lines)
+    summary = (
+        f'<summary class="os-disclose-sum os-link" style="cursor:pointer;display:inline;'
+        f'font-family:{FONT};font-size:15px;line-height:22px;mso-line-height-rule:exactly;'
+        f'color:{ACCENT};font-weight:700;text-decoration:underline;white-space:nowrap;'
+        f'list-style:none;">'
+        f'<span class="os-link" style="color:{ACCENT};">{label}</span></summary>'
+    )
+    return (
+        f'<!--[if !mso]><!-->'
+        f'<details class="os-disclose" style="margin:4px 0 0 0;">'
+        f'{summary}{body}'
+        f'</details>'
+        f'<!--<![endif]-->'
+        f'<!--[if mso]>{body}<![endif]-->'
+    )
+
+
+SPOOK_ON_SITE = (
+    "On site: local resources trunk-or-treat; mobile sensory room; sensory tables "
+    "and activities; singing pumpkins and foggy bubbles; food and treats available."
+)
+SPOOK_THANKS = "Thanks to location sponsors Little Luminaries and Cultivate Play."
+SPOOK_DETAILS = [SPOOK_ON_SITE, SPOOK_THANKS]
+
+
 SECONDARY_EVENTS = [
     dict(chip=chip("Sat", "3", "Oct"),
          title="Game Day &middot; Autism Tennessee",
@@ -541,13 +576,13 @@ SECONDARY_EVENTS = [
          meta="Nightly 5:00&ndash;9:00 PM &middot; $19&ndash;$23 ages 2+, parking $10 &middot; About 35 min",
          sensory="free Zooper Packs and a social story; Mon&ndash;Wed quietest.",
          link=("https://www.nashvillezoo.org/boo", "Tickets and social story")),
-    # T400: Sun Oct 25 before Sat Oct 31 so The month ahead stays chronological.
+    # T400: Sun Oct 25 before Sat Oct 31; Details expands in-place (not /events).
     dict(chip=chip("Sun", "25", "Oct"),
          title="Sensory Spooktacular",
          meta=("1:00&ndash;4:00 PM (sensory-sensitive hour 1:00&ndash;2:00 PM) &middot; "
                "Little Luminaries and Cultivate Play, 1810 Ward Dr, Murfreesboro &middot; "
                "Free, tickets limited"),
-         link=(f"{SITE}/events", "Details")),
+         disclose=SPOOK_DETAILS),
     dict(chip=chip("Sat", "31", "Oct"),
          title="Evergreen Trunk or Treat &middot; Evergreen Life Services",
          meta="1:00&ndash;3:00 PM &middot; Antioch &middot; Free &middot; About 30 min",
@@ -632,6 +667,10 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 .os-pay-note{white-space:nowrap;}
 .os-sg-cta{margin-top:20px !important;}
 .os-sec{height:48px !important;line-height:48px !important;font-size:0 !important;}
+.os-disclose{margin:4px 0 0 0;display:block;}
+.os-disclose-sum{cursor:pointer;list-style:none;display:inline;}
+.os-disclose-sum::-webkit-details-marker{display:none;}
+.os-disclose-sum::marker{content:none;}
 @media only screen and (min-width:700px){
   .os-wrap{max-width:880px !important;width:100% !important;}
   .os-hero{max-width:880px !important;}
@@ -749,7 +788,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + Details link. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
+<!-- T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + expand Details. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -946,7 +985,12 @@ def build_html(base, browser=False):
     o.append(sp(16))
     ev_rows = []
     for i, e in enumerate(SECONDARY_EVENTS):
-        content = item(e["title"], [e["meta"], a(*e["link"])])
+        lines = [e["meta"]]
+        if e.get("link"):
+            lines.append(a(*e["link"]))
+        content = item(e["title"], lines)
+        if e.get("disclose"):
+            content += disclose(e["disclose"])
         ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
     o.append(padrow(card(rows_table(ev_rows), pad="6px 20px 6px 20px")))
     o.append(sp(20))
@@ -1166,7 +1210,10 @@ def build_text():
     for e in SECONDARY_EVENTS:
         w(strip(e["title"]))
         w(f"  {strip(e['meta'])}")
-        w(f"  {e['link'][1]}: {e['link'][0]}")
+        for extra in e.get("disclose") or []:
+            w(f"  {strip(extra)}")
+        if e.get("link"):
+            w(f"  {e['link'][1]}: {e['link'][0]}")
         w("")
     w(f"View the full October events calendar: {EVENTS_CAL_URL}")
     w("")
@@ -1487,24 +1534,30 @@ def main():
     assert "1810 Ward Dr, Murfreesboro" in html
     assert "tickets limited" in html
     assert "Little Luminaries and Cultivate Play" in html
-    assert "On site:" not in html and "On site:" not in txt
-    assert "Thanks to location sponsors" not in html
-    assert "Thanks to location sponsors" not in txt
     titles = [e["title"] for e in SECONDARY_EVENTS]
     spook_i = titles.index("Sensory Spooktacular")
     ever_i = next(i for i, t in enumerate(titles) if "Evergreen Trunk or Treat" in t)
     assert spook_i < ever_i
-    assert SECONDARY_EVENTS[spook_i]["link"] == (f"{SITE}/events", "Details")
-    assert "extra" not in SECONDARY_EVENTS[spook_i]
+    assert "link" not in SECONDARY_EVENTS[spook_i]
+    assert SECONDARY_EVENTS[spook_i]["disclose"] == SPOOK_DETAILS
     month = html.split("The month ahead", 1)[1].split("New in the library", 1)[0]
     assert month.find("Sensory Spooktacular") < month.find("Evergreen Trunk or Treat")
     assert month.find(">25</p>") < month.find(">31</p>")
     assert month.find("Sensory Spooktacular") < month.find("View the full October events calendar")
     spook_row = month[month.find("Sensory Spooktacular"):month.find("Evergreen Trunk or Treat")]
-    assert f'href="{SITE}/events"' in spook_row
+    assert "<details" in spook_row and "<summary" in spook_row
     assert ">Details</span>" in spook_row
+    assert SPOOK_ON_SITE in spook_row
+    assert SPOOK_THANKS in spook_row
+    assert f'href="{SITE}/events"' not in spook_row
+    assert "<!--[if mso]>" in spook_row
+    assert SPOOK_ON_SITE in html and SPOOK_ON_SITE in txt
+    assert SPOOK_THANKS in html and SPOOK_THANKS in txt
+    spook_txt = txt[txt.find("Sensory Spooktacular"):txt.find("Evergreen Trunk or Treat")]
     assert txt.find("Sensory Spooktacular") < txt.find("Evergreen Trunk or Treat")
-    assert f"Details: {SITE}/events" in txt[txt.find("Sensory Spooktacular"):txt.find("Evergreen Trunk or Treat")]
+    assert SPOOK_ON_SITE in spook_txt
+    assert SPOOK_THANKS in spook_txt
+    assert f"Details: {SITE}/events" not in spook_txt
     assert "two neurodivergent children" in html
     assert "two neurodivergent children" in txt
     assert "a child with Autism" not in html
