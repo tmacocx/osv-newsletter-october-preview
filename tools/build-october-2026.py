@@ -730,6 +730,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-vh-guestname p{text-align:center !important;}
   .os-vh-guestname,.os-vh-guestname p{overflow-wrap:normal !important;word-break:normal !important;}
   .os-vh-guestrole{white-space:nowrap !important;}
+  .os-vh-contact,.os-vh-contact a,.os-vh-contact span{overflow-wrap:anywhere !important;word-break:normal !important;}
 }
 @media only screen and (max-width:359px){
   .os-issue-cell{display:block !important;width:100% !important;max-width:100% !important;padding:0 0 8px 0 !important;}
@@ -899,9 +900,10 @@ def build_html(base, browser=False):
            "(Advocacy &amp; Consultation Center for Educational Student Supports), she helps families "
            "with IEP consultation, educational advocacy, and tutoring.",
            13, 19, SAND, 400, extra="text-align:left;")
-        + p(navy_a(ACCESS_URL, "accessyouredu.com") + " &nbsp;&middot;&nbsp; "
-           + navy_a(f"mailto:{ACCESS_EMAIL}", ACCESS_EMAIL, nowrap=False),
-           13, 18, SAND, 400, margin="8px 0 0 0", extra="text-align:left;")
+        + p(navy_a(ACCESS_URL, "accessyouredu.com"),
+           13, 18, SAND, 400, margin="8px 0 0 0", extra="text-align:left;", cls="os-vh-contact")
+        + p(navy_a(f"mailto:{ACCESS_EMAIL}", "access.your.education@<wbr>gmail.com", nowrap=False),
+           13, 18, SAND, 400, margin="2px 0 0 0", extra="text-align:left;", cls="os-vh-contact")
         + '</td></tr></table>'
     )
     # T375 icons + T394 guest layout: date → time/online → Topic → title → name/role → photo|bio
@@ -1482,6 +1484,8 @@ def main():
     assert ACCESS_URL in html and ACCESS_URL in html_browser and ACCESS_URL in txt
     assert ACCESS_EMAIL in html and ACCESS_EMAIL in html_browser and ACCESS_EMAIL in txt
     assert f'mailto:{ACCESS_EMAIL}' in html
+    assert "os-vh-contact" in html
+    assert "access.your.education@<wbr>gmail.com" in html
     assert "facebook.com" not in html.lower()
     assert "instagram.com" not in html.lower()
     # T398: the only ACCESS/Mercedes contacts in the guest block are website + email.
