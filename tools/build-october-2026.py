@@ -1,26 +1,31 @@
 #!/usr/bin/env python3
-"""Build the October 2026 Our Special Village newsletter (T394 Mercedes guest layout).
+"""Build the October 2026 Our Special Village newsletter (T397/T398/T400).
 
 Writes newsletter-october-subscriber-preview.html (MailerLite/email: 600px + merge
 tags), index.html (hosted browser preview: wider desktop layout + real link
 destinations), newsletter-october-2026.txt, and deadlines-october-2026.html.
 
+T400: Sensory Spooktacular is the last dated event in The month ahead
+(Sun Oct 25; Little Luminaries and Cultivate Play).
+T398: Village Hall guest block lists only ACCESS website + email (no other
+Mercedes/ACCESS contacts).
+T397: Village Hall guest photo is the IMG_7283 family photo (children’s
+faces already covered) at art/mercedes-family-hearts-160.jpg. New filename
+so Cloudflare/browser cache of the T393 headshot dies. Bio still says two
+neurodivergent children. ACCESS blurb kept. ACCESS logo omitted so T394
+layout stays: title on its own row; photo left of the description, not the
+title; desktop title left; mobile title centered.
 T394: Village Hall Mercedes title (name + role) sits on its own row above
-the headshot. Headshot is left of her description (bio), vertically centered
+the photo. Photo is left of her description (bio), vertically centered
 with that copy — not left of the title. Desktop/browser-wide: title left-
 aligned. Mobile: title centered so “Greater Nashville” stays on one line.
 Photo+bio stay a two-column row on mobile (not stacked above the title).
-No copy or headshot-asset change (still art/mercedes-headshot-160.jpg).
-T393: Village Hall Mercedes photo is the IMG_1427 professional headshot
-(long hair, black blazer, pearls) at art/mercedes-headshot-160.jpg. New
-filename so Cloudflare/browser cache of the T387 family photo dies. Family
-photo stays off this newsletter; it is for live Village Businesses #access
-only. Bio still says two neurodivergent children.
+T393: Headshot filename retired from this newsletter (was
+art/mercedes-headshot-160.jpg).
 T389: We Rock card eyebrow is IN PERSON · WEEKLY · FREE (drop GROUP). Online
 Parent Group already says ONLINE · WEEKLY · FREE. No other copy/layout changes.
 T388: Desktop/browser-wide title left-align (was name/role next to photo).
 T387: Bio says two neurodivergent children (not one child with Autism).
-ACCESS/Creative Spaces logo omitted so the guest block stays uncrowded.
 T386: 988 in the footer is a tel: link, matching STEP TN / Disability Rights TN.
 T385: Footer names 988 as the Suicide & Crisis Lifeline.
 Keeps T379 last polish, T375, T373 spacing, T372 hierarchy/mobile, T367, T365.
@@ -38,6 +43,9 @@ SITE = "https://ourspecialvillagetn.com"
 BROWSER_VIEW_URL = PAGES
 BROWSER_UNSUB_URL = f"{SITE}/newsletter"
 WRTS_URL = "https://werockthespectrummurfreesboro.com/"
+ACCESS_URL = "https://www.accessyouredu.com/"
+ACCESS_EMAIL = "access.your.education@gmail.com"
+MERCEDES_PHOTO = "mercedes-family-hearts-160.jpg"
 
 CREAM = "#f7f1e2"
 WHITE = "#ffffff"
@@ -77,6 +85,14 @@ def a(href, label, nowrap=True):
     return (f'<a class="os-link" href="{href}" style="color:{ACCENT};font-weight:700;'
             f'text-decoration:underline;{nowrap_css}">'
             f'<span class="os-link" style="color:{ACCENT};">{label}</span></a>')
+
+
+def navy_a(href, label, nowrap=True):
+    """Gold link for copy sitting on the Village Hall navy card."""
+    nowrap_css = "white-space:nowrap;" if nowrap else ""
+    return (f'<a class="os-gold" href="{href}" style="color:{GOLD};font-weight:700;'
+            f'text-decoration:underline;{nowrap_css}">'
+            f'<span class="os-gold" style="color:{GOLD};">{label}</span></a>')
 
 
 def tel(number_display, number_tel):
@@ -529,6 +545,17 @@ SECONDARY_EVENTS = [
          meta="1:00&ndash;3:00 PM &middot; Antioch &middot; Free &middot; About 30 min",
          sensory="outdoors; trunks, games, and booths built for IDD families.",
          link=("https://evergreenls.org/trunkortreat/", "Details")),
+    # T400: last event in the October newsletter (after the other dated rows).
+    dict(chip=chip("Sun", "25", "Oct"),
+         title="Sensory Spooktacular",
+         meta=("1:00&ndash;4:00 PM (sensory-sensitive hour 1:00&ndash;2:00 PM) &middot; "
+               "Little Luminaries and Cultivate Play, 1810 Ward Dr, Murfreesboro &middot; "
+               "Free, tickets limited"),
+         extra=[
+             "On site: local resources trunk-or-treat; mobile sensory room; sensory tables "
+             "and activities; singing pumpkins and foggy bubbles; food and treats available.",
+             "Thanks to location sponsors Little Luminaries and Cultivate Play.",
+         ]),
 ]
 
 MONSTERS_URL = "https://www.explorethedc.org/event/monsters-in-the-museum/"
@@ -703,6 +730,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
   .os-vh-guestname p{text-align:center !important;}
   .os-vh-guestname,.os-vh-guestname p{overflow-wrap:normal !important;word-break:normal !important;}
   .os-vh-guestrole{white-space:nowrap !important;}
+  .os-vh-contact,.os-vh-contact a,.os-vh-contact span{overflow-wrap:anywhere !important;word-break:normal !important;}
 }
 @media only screen and (max-width:359px){
   .os-issue-cell{display:block !important;width:100% !important;max-width:100% !important;padding:0 0 8px 0 !important;}
@@ -724,7 +752,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T394: VH title on its own row; headshot left of bio. T393: mercedes-headshot-160.jpg. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
+<!-- T400: Sensory Spooktacular last event. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -845,7 +873,7 @@ def build_html(base, browser=False):
         f'alt="Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting" '
         f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;">'
     )
-    # T394: name + role on their own row above the photo. Headshot left of
+    # T394: name + role on their own row above the photo. Photo left of
     # the description, vertically centered with that copy. Mobile/email keep
     # the title centered (Greater Nashville stays one line); desktop
     # (>=700px) left-aligns the title. Photo+bio stay a two-column row.
@@ -861,8 +889,8 @@ def build_html(base, browser=False):
         + '</td></tr>'
         '<tr>'
         f'<td class="os-vh-guestphoto" width="88" valign="middle" style="width:88px;padding:0 12px 0 0;vertical-align:middle;">'
-        f'<img class="os-vh-portrait" src="{art("mercedes-headshot-160.jpg")}" width="88" height="115" '
-        f'alt="Mercedes Lawson, M.S. Ed." '
+        f'<img class="os-vh-portrait" src="{art(MERCEDES_PHOTO)}" width="88" height="115" '
+        f'alt="Mercedes Lawson, M.S. Ed., with her family." '
         f'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
         '</td>'
         '<td class="os-vh-guestblurb" valign="middle" align="left" '
@@ -872,6 +900,10 @@ def build_html(base, browser=False):
            "(Advocacy &amp; Consultation Center for Educational Student Supports), she helps families "
            "with IEP consultation, educational advocacy, and tutoring.",
            13, 19, SAND, 400, extra="text-align:left;")
+        + p(navy_a(ACCESS_URL, "accessyouredu.com"),
+           13, 18, SAND, 400, margin="8px 0 0 0", extra="text-align:left;", cls="os-vh-contact")
+        + p(navy_a(f"mailto:{ACCESS_EMAIL}", "access.your.education@<wbr>gmail.com", nowrap=False),
+           13, 18, SAND, 400, margin="2px 0 0 0", extra="text-align:left;", cls="os-vh-contact")
         + '</td></tr></table>'
     )
     # T375 icons + T394 guest layout: date → time/online → Topic → title → name/role → photo|bio
@@ -917,7 +949,11 @@ def build_html(base, browser=False):
     o.append(sp(16))
     ev_rows = []
     for i, e in enumerate(SECONDARY_EVENTS):
-        content = item(e["title"], [e["meta"], a(*e["link"])])
+        lines = [e["meta"]]
+        lines.extend(e.get("extra") or [])
+        if e.get("link"):
+            lines.append(a(*e["link"]))
+        content = item(e["title"], lines)
         ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
     o.append(padrow(card(rows_table(ev_rows), pad="6px 20px 6px 20px")))
     o.append(sp(20))
@@ -1117,6 +1153,8 @@ def build_text():
     w("Online")
     w("Topic and guest: The IEP process and navigating the school system")
     w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. (Advocacy & Consultation Center for Educational Student Supports) in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has two neurodivergent children. She helps families with IEP consultation, educational advocacy, and tutoring.")
+    w(f"Website: {ACCESS_URL}")
+    w(f"Email: {ACCESS_EMAIL}")
     w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
     w(f"Register for Village Hall: {SITE}/village-hall")
     w("Choose what you can pay: Every family is welcome – choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward")
@@ -1135,7 +1173,10 @@ def build_text():
     for e in SECONDARY_EVENTS:
         w(strip(e["title"]))
         w(f"  {strip(e['meta'])}")
-        w(f"  {e['link'][1]}: {e['link'][0]}")
+        for extra in e.get("extra") or []:
+            w(f"  {strip(extra)}")
+        if e.get("link"):
+            w(f"  {e['link'][1]}: {e['link'][0]}")
         w("")
     w(f"View the full October events calendar: {EVENTS_CAL_URL}")
     w("")
@@ -1429,14 +1470,39 @@ def main():
     assert "Advocacy &amp; Consultation Center for Educational Student Supports" in html
     assert "$0 always welcome &middot;" not in html
     assert "45-minute lesson" in html
-    assert "mercedes-headshot-160.jpg" in html
-    assert "mercedes-headshot-160.jpg" in html_browser
+    assert MERCEDES_PHOTO in html
+    assert MERCEDES_PHOTO in html_browser
+    assert "mercedes-family-hearts-160.jpg" in html
+    assert "mercedes-headshot-160.jpg" not in html
+    assert "mercedes-headshot-160.jpg" not in html_browser
     assert "mercedes-lawson-160.jpg" not in html
     assert "mercedes-lawson-160.jpg" not in html_browser
     assert "mercedes-lawson.jpg" not in html
     assert "mercedes-lawson.jpg" not in html_browser
-    assert "with her family" not in html
-    assert "with her family" not in html_browser
+    assert "with her family" in html
+    assert "with her family" in html_browser
+    assert ACCESS_URL in html and ACCESS_URL in html_browser and ACCESS_URL in txt
+    assert ACCESS_EMAIL in html and ACCESS_EMAIL in html_browser and ACCESS_EMAIL in txt
+    assert f'mailto:{ACCESS_EMAIL}' in html
+    assert "os-vh-contact" in html
+    assert "access.your.education@<wbr>gmail.com" in html
+    assert "facebook.com" not in html.lower()
+    assert "instagram.com" not in html.lower()
+    # T398: the only ACCESS/Mercedes contacts in the guest block are website + email.
+    guest_slice = html[html.find('class="os-vh-guest"'):html.find("A 45-minute lesson")]
+    assert ACCESS_URL in guest_slice and ACCESS_EMAIL in guest_slice
+    assert "tel:" not in guest_slice
+    assert "Sensory Spooktacular" in html and "Sensory Spooktacular" in txt
+    assert "sensory-sensitive hour 1:00&ndash;2:00 PM" in html
+    assert "1810 Ward Dr, Murfreesboro" in html
+    assert "tickets limited" in html
+    assert "Little Luminaries and Cultivate Play" in html
+    assert "Thanks to location sponsors Little Luminaries and Cultivate Play" in html
+    assert html.rfind("Sensory Spooktacular") > html.rfind("Evergreen Trunk or Treat")
+    assert txt.rfind("Sensory Spooktacular") > txt.rfind("Evergreen Trunk or Treat")
+    month = html.split("The month ahead", 1)[1]
+    assert month.find("Sensory Spooktacular") > month.find("Evergreen Trunk or Treat")
+    assert month.find("Sensory Spooktacular") < month.find("View the full October events calendar")
     assert "two neurodivergent children" in html
     assert "two neurodivergent children" in txt
     assert "a child with Autism" not in html
@@ -1472,10 +1538,10 @@ def main():
     assert "ONLINE" in html and "WEEKLY" in html and "FREE" in html
     assert "village-hall-iep-compact.jpg" in html
     assert "os-sec" in html
-    # T394 Mercedes: title on its own row above photo; headshot left of bio
+    # T394 Mercedes: title on its own row above photo; photo left of bio
     guest_i = html.find('class="os-vh-guest"')
     name_i = html.find("Mercedes Lawson, M.S. Ed.", guest_i)
-    photo_i = html.find("mercedes-headshot-160.jpg", guest_i)
+    photo_i = html.find(MERCEDES_PHOTO, guest_i)
     blurb_i = html.find("She grew up with a sibling with disabilities", guest_i)
     assert guest_i != -1 and name_i != -1 and photo_i != -1 and blurb_i != -1
     assert name_i < photo_i < blurb_i
