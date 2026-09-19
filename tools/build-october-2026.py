@@ -10,6 +10,7 @@ body 16px (Fall break, voter, clocks). Item 3 was 16/15 because CLOCKS
 omitted featured=True. Section heading (21px) and date chips unchanged.
 T400: Sensory Spooktacular sits in chronological order in The month ahead
 (Sun Oct 25 before Sat Oct 31 Evergreen; Little Luminaries and Cultivate Play).
+T410: Free TicketsCandy registration link on Spooktacular (Details expand kept).
 Details is a native <details> expand with the on-site + sponsor copy (not a
 link-only jump to /events). Outlook/MSO gets the same copy in a conditional.
 T398: Village Hall guest block lists only ACCESS website + email (no other
@@ -562,6 +563,7 @@ SPOOK_ON_SITE = (
 )
 SPOOK_THANKS = "Thanks to location sponsors Little Luminaries and Cultivate Play."
 SPOOK_DETAILS = [SPOOK_ON_SITE, SPOOK_THANKS]
+SPOOK_REG_URL = "https://ticketscandy.com/e/sensory-space-presents-sensory-spooktacular-2026-21025"
 
 
 SECONDARY_EVENTS = [
@@ -581,11 +583,13 @@ SECONDARY_EVENTS = [
          sensory="free Zooper Packs and a social story; Mon&ndash;Wed quietest.",
          link=("https://www.nashvillezoo.org/boo", "Tickets and social story")),
     # T400: Sun Oct 25 before Sat Oct 31; Details expands in-place (not /events).
+    # T410: free TicketsCandy registration CTA alongside Details.
     dict(chip=chip("Sun", "25", "Oct"),
          title="Sensory Spooktacular",
          meta=("1:00&ndash;4:00 PM (sensory-sensitive hour 1:00&ndash;2:00 PM) &middot; "
                "Little Luminaries and Cultivate Play, 1810 Ward Dr, Murfreesboro &middot; "
                "Free, tickets limited"),
+         link=(SPOOK_REG_URL, "Free registration"),
          disclose=SPOOK_DETAILS),
     dict(chip=chip("Sat", "31", "Oct"),
          title="Evergreen Trunk or Treat &middot; Evergreen Life Services",
@@ -1563,7 +1567,7 @@ def main():
     spook_i = titles.index("Sensory Spooktacular")
     ever_i = next(i for i, t in enumerate(titles) if "Evergreen Trunk or Treat" in t)
     assert spook_i < ever_i
-    assert "link" not in SECONDARY_EVENTS[spook_i]
+    assert SECONDARY_EVENTS[spook_i]["link"] == (SPOOK_REG_URL, "Free registration")
     assert SECONDARY_EVENTS[spook_i]["disclose"] == SPOOK_DETAILS
     month = html.split("The month ahead", 1)[1].split("New in the library", 1)[0]
     assert month.find("Sensory Spooktacular") < month.find("Evergreen Trunk or Treat")
@@ -1574,6 +1578,8 @@ def main():
     assert ">Details</span>" in spook_row
     assert SPOOK_ON_SITE in spook_row
     assert SPOOK_THANKS in spook_row
+    assert f'href="{SPOOK_REG_URL}"' in spook_row
+    assert ">Free registration<" in spook_row or "Free registration" in spook_row
     assert f'href="{SITE}/events"' not in spook_row
     assert "<!--[if mso]>" in spook_row
     assert SPOOK_ON_SITE in html and SPOOK_ON_SITE in txt
@@ -1582,7 +1588,10 @@ def main():
     assert txt.find("Sensory Spooktacular") < txt.find("Evergreen Trunk or Treat")
     assert SPOOK_ON_SITE in spook_txt
     assert SPOOK_THANKS in spook_txt
+    assert SPOOK_REG_URL in spook_txt
+    assert "Free registration:" in spook_txt
     assert f"Details: {SITE}/events" not in spook_txt
+    assert SPOOK_REG_URL in html and SPOOK_REG_URL in html_browser and SPOOK_REG_URL in txt
     assert "two neurodivergent children" in html
     assert "two neurodivergent children" in txt
     assert "a child with Autism" not in html
