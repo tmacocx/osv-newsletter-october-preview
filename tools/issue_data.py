@@ -161,7 +161,7 @@ ISSUES = [
                    (f"{SITE}/resources/aac-devices", "Getting a device")],
             disclaimer="Parent-to-parent guidance, not medical advice.",
         ),
-        group_line="Drop in any Thursday",
+        group_line="Thursdays, off Thanksgiving (Nov 26)",
         todo=[],
     ),
     # ------------------------------------------------------------------ December 2026
@@ -239,7 +239,7 @@ ISSUES = [
                    (f"{SITE}/resources/sensory-processing", "Sensory processing")],
             disclaimer="Parent-to-parent guidance, not medical advice.",
         ),
-        group_line="Drop in any Thursday",
+        group_line="Thursdays, off Dec 24 and Dec 31",
         todo=[],
     ),
     # ------------------------------------------------------------------ January 2027
@@ -620,7 +620,7 @@ NOV["todo"] = [
     "Amanda&rsquo;s role line says &ldquo;LAMP Certified Professional &middot; PRC-Saltillo&rdquo;. Add her job title if she has one.",
     "Registration: the site still says Nov 14 registration is not open. Open it before Nov 1.",
 ]
-DEC["todo"] = COMMON_TODO + ["Does the Thursday group meet Dec 24 and Dec 31? Add a line if not."]
+DEC["todo"] = COMMON_TODO
 JAN["todo"] = COMMON_TODO + [
     "Only one January event is confirmed so far (rEcess, Jan 2). Discovery Center, Frist, Autism Tennessee and "
     "ABLE Youth had not posted January dates on Sept 28; I will add them when they do."]
