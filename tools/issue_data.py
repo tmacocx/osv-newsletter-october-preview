@@ -125,6 +125,12 @@ ISSUES = [
                      meta=("9:00 AM&ndash;12:00 PM &middot; Williamson County Rec Center, Franklin &middot; "
                            "Adaptive sports, RSVP required &middot; About 45 min"),
                      link=("https://www.ableyouth.org/event/super-sports-saturday-35/", "Details")),
+                # Verified Sept 28 on nashvillesymphony.org/America + /sensoryfriendly and nashvillezoo.org/glow-wild.
+                dict(chip=("Sun", "15", "Nov"), title="Sensory-friendly symphony + Glow Wild &middot; Nashville",
+                     meta=("Nashville Symphony family concert Sun Nov 15, 3:00 PM, with quiet spaces, headphones and "
+                           "fidgets. Nashville Zoo lights nightly from Nov 13, free sensory kits; 5 PM is quietest."),
+                     links=[("https://www.nashvillesymphony.org/America", "Symphony"),
+                            ("https://www.nashvillezoo.org/glow-wild", "Glow Wild")]),
             ],
             calendar_label="View the full November events calendar",
         ),
@@ -651,7 +657,7 @@ NOV["events"]["list"] = [
     dict(chip=("Sat", "7", "Nov"), title="rEcess &middot; Otter Creek Church and 99 Balloons",
          meta=RECESS_META, link=RECESS_LINK),
     dict(chip=("Sat", "7", "Nov"), title="Game Day &middot; Autism Tennessee", meta=GAME_DAY_META, link=GAME_DAY_LINK),
-] + [e for e in NOV["events"]["list"] if e["chip"][1] in ("16", "21")]
+] + [e for e in NOV["events"]["list"] if e["chip"][1] in ("15", "21")]
 
 DEC["events"]["list"].insert(3, dict(
     chip=("Thu", "10", "Dec"), title="All Access Night: Holiday Party &middot; Discovery Center",
@@ -674,9 +680,15 @@ NOV["todo"] = [
     "Kerry Hankins-Grider: add her bio and a photo (Village Hall card), and one or two intro sentences in your note.",
     "Amanda&rsquo;s role line says &ldquo;LAMP Certified Professional &middot; PRC-Saltillo&rdquo;. Add her job title if she has one.",
     "Registration: the site still says Nov 14 registration is not open. Open it before Nov 1.",
+    "Fall on the Farm photo: the Discovery Center site has no event photo, so this uses their building photo "
+    "(it shows in inboxes; the preview shows your painting instead). Send a picture you like to swap it.",
+    "More sensory Santa, library, and theater dates usually post in October, so they are worth a re-check mid-October.",
 ]
 DEC["todo"] = COMMON_TODO
-JAN["todo"] = COMMON_TODO + [
+JAN["todo"] = [
+    COMMON_TODO[0],
+    "Village Hall: Alyssa with Cultivate Play, Sat Jan 9. Add her last name, credentials, photo, bio, and the topic.",
+    COMMON_TODO[2],
     "Only one January event is confirmed so far (rEcess, Jan 2). Discovery Center, Frist, Autism Tennessee and "
     "ABLE Youth had not posted January dates on Sept 28; I will add them when they do."]
 FEB["todo"] = COMMON_TODO + [
@@ -689,3 +701,4 @@ NOV["events"]["list"] = [e for e in NOV["events"]["list"] if e["chip"][1] != "16
 # Taylor (Sept 28): less school-heavy. Grants and help lead every deadlines page.
 for _i in ISSUES:
     _i["all_deadlines"].sort(key=lambda sec: sec[0] != "Grants and help")
+NOV["events"]["list"].sort(key=lambda e: int(e["chip"][1]))

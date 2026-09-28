@@ -222,14 +222,24 @@ def month_ahead(issue, art):
         "intro", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.")),
            sp(12), padrow(card(art_html + copy, pad="12px 20px 16px 20px"))]
     if ev["list"]:
+        # Events on the same day share one date chip (lighter email, easier to scan).
+        groups = []
+        for e in ev["list"]:
+            if groups and groups[-1][0] == e["chip"]:
+                groups[-1][1].append(e)
+            else:
+                groups.append((e["chip"], [e]))
         rows = []
-        for i, e in enumerate(ev["list"]):
-            content = item(e["title"], [e["meta"]])
-            if e.get("link"):
-                content += btn_row([e["link"]])
-            if e.get("disclose"):
-                content += disclose(e["disclose"])
-            rows.append(row(chip(*e["chip"]), content, last=(i == len(ev["list"]) - 1), tight=True))
+        for i, (ch, evs) in enumerate(groups):
+            content = ""
+            for k, e in enumerate(evs):
+                block = item(e["title"], [e["meta"]])
+                if e.get("link") or e.get("links"):
+                    block += btn_row(e.get("links") or [e["link"]])
+                if e.get("disclose"):
+                    block += disclose(e["disclose"])
+                content += block if k == 0 else f'<div style="margin-top:14px;">{block}</div>'
+            rows.append(row(chip(*ch), content, last=(i == len(groups) - 1), tight=True))
         out += [sp(16), padrow(card(rows_table(rows), pad="6px 20px 6px 20px"))]
     if ev.get("note"):
         out += [sp(12), padrow(p(ev["note"], 14, 21, MUTED, 400, extra="text-align:center;"))]
@@ -426,6 +436,8 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     out = "\n".join(o) + "\n"
     out = out.replace(f"{PAGES}art/icons/", f"{base}icons/")  # O.meta_row / vh_meta_icon hard-code Pages
     out = out.replace("text-decoration:underline", "text-decoration:none")  # Taylor: no underlined links
+    # Same font stack without spaces: identical rendering, ~700 bytes lighter (keeps November under Gmail's clip).
+    out = out.replace("Figtree, 'Segoe UI', Helvetica, Arial, sans-serif", "Figtree,'Segoe UI',Helvetica,Arial,sans-serif")
     return render_ph(out)
 
 
@@ -501,8 +513,8 @@ def build_text(issue, deadlines_url):
         w(f"  {plain(e['meta'])}")
         for extra in e.get("disclose") or []:
             w(f"  {plain(extra)}")
-        if e.get("link"):
-            w(f"  {plain(e['link'][1])}: {e['link'][0]}")
+        for href, label in e.get("links") or ([e["link"]] if e.get("link") else []):
+            w(f"  {plain(label)}: {href}")
         w("")
     if ev.get("note"):
         w(plain(ev["note"]))

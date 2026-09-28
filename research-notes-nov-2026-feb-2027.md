@@ -182,3 +182,72 @@ Only items whose own page states a date or a fixed recurring window are in the v
 - **Camps**: Camp Discovery (Jaycees), Camp Conquest and Easterseals TN list no 2027 application dates. Camp Koinonia opened 2026 registration on "April 1", which falls outside the window. Camp Barnabas (Missouri) early-bird deadline was Aug 31, 2026. Camp Horizon is an oncology/sibling camp, not relevant.
 - **ECF CHOICES, TennCare renewals, DDA respite**: no fixed windows found. **ABLE TN**: no promotion or match found. Per ABLE NRC, the ABLE Saver's Credit "expires December 31, 2025" on that page, which may be out of date given later federal law. Check before printing.
 - **Disability Day on the Hill 2027**: no date posted. **TN Disability MegaConference** was Aug 21, 2026, outside the window.
+
+
+## November events deep dive (checked Sept 28, 2026)
+
+# November 2026 deep dive: new verified events (on top of the known list)
+
+Searched on 2026-09-28. Most organizers had not yet posted November 2026 dates. That includes holiday/Santa programs, library calendars, adaptive rec, respite nights and parent trainings. Three new events are confirmed on organizer pages. None of the three is autism- or disability-specific.
+
+## Sun Nov 8
+**Frist Arts Fest** (Frist Art Museum). This is a general family event, not a sensory event.
+- Sun Nov 8, 2026, 1:00–5:00 p.m. Frist Art Museum, 919 Broadway, Nashville
+- Cost: free for members and guests 18 and under; $20 for adults
+- Audience: families. "a day of indoor activities including performances, art making, music, and more"
+- Sensory supports: none stated for this event. The Frist did not list a Sensory Sunday Hour in November.
+- Event URL: https://fristartmuseum.org/event/frist-arts-fest-6/ (the fetch was blocked). The date comes from the listing on https://fristartmuseum.org/plan-your-visit/
+- Quote: "Sunday, November 8, 2026 … 1:00–5:00 p.m."
+- Photo: not checked
+
+## Fri Nov 13 (runs nightly through Jan 3, 2027)
+**Glow Wild holiday light show** (Nashville Zoo). This is a general event with accessibility tools, not a dedicated sensory night.
+- Nightly Nov 13, 2026 – Jan 3, 2027, 5–9 p.m. Nashville Zoo at Grassmere, Nashville
+- Cost: $27 single night (members save $5); $39 Platinum pass; under 2 free
+- Supports (quoted from the zoo's Glow Wild page): "Complimentary Zooper Packs are available at the ticket booth and include helpful items such as fidget toys, earplugs and other tools". The zoo also suggests arriving at the 5 p.m. opening on weeknights for a quieter visit. Santa is there nightly Nov 27 – Dec 24.
+- Tickets: https://buy.acmeticketing.com/orders/575/calendar?cart=true&eventId=6a96fc37169cc129ab883e03
+- Sources: https://www.nashvillezoo.org/upcoming-events (quote: "Glow Wild 11/13/26- 01/03/27") and https://www.nashvillezoo.org/glow-wild. The Glow Wild page still showed some 2025 text when fetched.
+- Photo: https://assets.speakcdn.com/assets/2147/zoolumination_desktop_banner_1400x720_-_north_pole.jpg (the zoo's page banner)
+
+## Sun Nov 15
+**Nashville Symphony Family Series: "How America Found Its Sound"** (Nashville Symphony). This is the strongest new find.
+- Sun Nov 15, 2026, 3:00 p.m. Schermerhorn Symphony Center, One Symphony Place, Nashville
+- Cost: single-ticket price not shown. The 4-concert Family Package is "from $72".
+- Audience: families. "invites families on a musical journey to discover how the music of many cultures came together to shape the sound of a nation."
+- Sensory supports: the Symphony's sensory page says "Currently, all Family Series concerts are sensory friendly." Listed supports:
+  - social stories in English and Spanish
+  - raised lighting and flexible seating
+  - quiet spaces
+  - fidgets and noise-cancelling headphones
+  - booster seats
+  - captioning and ASL
+  - instrument petting zoo (mentioned on the Family Series page)
+
+  The concert's own page does not repeat the sensory statement.
+- Tickets: https://tickets.nashvillesymphony.org/10229/10233
+- Sources: https://www.nashvillesymphony.org/America ("Sunday, November 15, 2026 at 3:00 PM") and https://www.nashvillesymphony.org/sensoryfriendly
+- Photo: none seen on the concert page
+
+## Found but couldn't verify, or doesn't fit
+- **Nashville Children's Theatre show, Nov 14, 2026 – Jan 3, 2027** (ages 3–8). The What's On page lists the dates, but the fetch did not return the show title or any sensory-friendly performance date. NCT has held one sensory-friendly performance per show before. Check nashvillechildrenstheatre.org/whats-on/.
+- **Nashville's Nutcracker** (Nashville Ballet with the Symphony, TPAC Jackson Hall). The ballet's page lists Fri Nov 27, 2026 at 2 PM, which looks like the opening. No sensory-friendly performance is listed yet. Image: http://static1.squarespace.com/static/53cfd0e5e4b057663ea1bc61/53cfd73ce4b09c2ab361da3a/69f8b7ec3e79f61178107e11/1777913891722/Nutcracker_Square.jpg
+- **TPAC, Death Becomes Her, Nov 8, 2026 at 1 PM.** This accessible performance has open captioning, ASL, audio description and Braille/large print (per tpac.org/plan-your-visit/accessible-services). It is not sensory-friendly and is an adult Broadway show.
+- **AMC Sensory Friendly Films.** AMC's page states the pattern "every 2nd and 4th Tuesday and Saturday of the month." That pattern would fall on Nov 10, 14, 24 and 28. No November 2026 titles or Middle TN locations are posted.
+- **YMCA Full Circle Friday Night Socials.** The YMCA page gives the pattern: monthly, 2nd Friday at Brentwood and 3rd Friday at Green Hills, 5–8 p.m., $15 deposit. That would be Nov 13 and Nov 20, but no dated November listing exists.
+- **Autism Tennessee community calendar** (autismtn.org). It returned 403 on every fetch. It may hold more November events, such as outings like the past "Connect at Zoolumination" or ICE! events.
+- **Little Blue Theatre Company.** Every show is sensory-friendly (Autism TN partner). Only "Love That Dog" (Oct 9–18, 2026) is posted; nothing for November yet.
+- **Not posted for 2026 as of 9/28:**
+  - Sensory/caring Santa: Green Hills (Dec 7 in 2025), RiverGate "Santa Cares" (Nov 12 in 2025), Opry Mills, Bass Pro, CoolSprings, Stones River Town Centre
+  - Gaylord ICE! YMCA sensory session (first held Dec 10, 2025)
+  - Studio Tenn sensory-friendly performance (its holiday show, It's A Wonderful Life, runs Dec 3–20, 2026)
+  - Williamson County Performing Arts Center sensory productions
+  - Center for the Arts
+  - Special Olympics Area 16 (bowling at Smyrna Bowling Center, 2026, no dates)
+  - Miracle League
+  - The Arc Rutherford, DSAMT, TNSTEP (calendar runs only through Oct 24), Pathfinder, Family Voices
+  - RCLS / La Vergne / WCPL / NPL sensory storytimes
+  - Nashville Predators: none of the November theme nights is disability- or sensory-focused (per the team's 2026-27 theme-night announcement)
+  - National Adoption Day (Nov 21) court events in Rutherford or Davidson counties
+- **Other VKC November items** are professional or research events, not family events: Nov 2 lecture, Nov 6 TRIAD early-intervention provider lunch-and-learn, Nov 13 Science Day.
+- **Also found:** the virtual National Disability AI & Enabling Technology Summit. It is free, Nov 17, 2026, 2–5 p.m. ET, run by My Tech For All, and listed in VKC's The Compass (Sept 2026 edition). No registration URL was given.
+- **Discovery Center Thanksgiving Break Campology,** Nov 23–25, 2026, K–5, $65–70 per day. It is general, not disability-specific: https://www.explorethedc.org/event/thanksgiving-break-campology-operation-ocean/
