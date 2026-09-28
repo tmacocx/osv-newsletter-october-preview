@@ -13,6 +13,12 @@ T400: Sensory Spooktacular sits in chronological order in The month ahead
 T410: Free TicketsCandy registration link on Spooktacular (Details expand kept).
 Details is a native <details> expand with the on-site + sponsor copy (not a
 link-only jump to /events). Outlook/MSO gets the same copy in a conditional.
+T429: Calendar rows for Hickok adds that were missing from The month ahead.
+Chronological: rEcess (Sat Oct 3, before Game Day), Dollywood (Wed Oct 21),
+Gallatin HOSA Trunk or Treat (Thu Oct 22), Caleb's Friends (Sun Oct 25, after
+Spooktacular), Pegram Fall Fest (Thu Oct 29). Evergreen Trunk or Treat keeps
+its row and gains the street address plus the flyer blurb. Amanda Rains
+Village Hall is Sat Nov 14 and stays out of this October issue.
 T398: Village Hall guest block lists only ACCESS website + email (no other
 Mercedes/ACCESS contacts).
 T397: Village Hall guest photo is the IMG_7283 family photo (children’s
@@ -564,9 +570,27 @@ SPOOK_ON_SITE = (
 SPOOK_THANKS = "Thanks to location sponsors Little Luminaries and Cultivate Play."
 SPOOK_DETAILS = [SPOOK_ON_SITE, SPOOK_THANKS]
 SPOOK_REG_URL = "https://ticketscandy.com/e/sensory-space-presents-sensory-spooktacular-2026-21025"
+# T429 flyer / organizer links. No external page for Gallatin, Caleb's, or Pegram.
+GALLATIN_FLYER = f"{SITE}/assets/event-flyers/gallatin-hosa-special-needs-trunk-or-treat-2026.png"
+CALEB_FLYER = f"{SITE}/assets/event-flyers/calebs-friends-halloween-party-2026.png"
+PEGRAM_FLYER = f"{SITE}/assets/event-flyers/special-needs-family-fall-fest-2026.png"
+RECESS_MAIL = "mailto:rebecca.whitaker@ottercreek.org"
+DOLLYWOOD_URL = "https://dreamcooperative.com/"
+EVERGREEN_URL = "https://evergreenls.org/trunkortreat/"
+EVERGREEN_BLURB = "Fun, fellowship, and safe Halloween activities where everyone matters."
 
+# T429 drive times: OSRM from Murfreesboro Public Square, rounded up to 5 minutes.
+# Gallatin High School 55.5 -> About 60 min. Dollywood 252.7 -> About 4 hours 15 min.
+# Pegram 63.4 -> About 65 min. Otter Creek, Brentwood 40.3 -> About 45 min.
+# Antioch 29.2 confirms the existing About 30 min. Heroes Den is in Murfreesboro.
 
 SECONDARY_EVENTS = [
+    # T429: first Saturday respite, before Game Day the same afternoon.
+    dict(chip=chip("Sat", "3", "Oct"),
+         title="rEcess &middot; Otter Creek Church",
+         meta="8:00&ndash;11:45 AM &middot; Otter Creek Church, 409 Franklin Road, Brentwood &middot; About 45 min",
+         note="Monthly respite with 99 Balloons. Kids and siblings stay for activities while parents step out.",
+         link=(RECESS_MAIL, "Reserve a spot")),
     dict(chip=chip("Sat", "3", "Oct"),
          title="Game Day &middot; Autism Tennessee",
          meta="12:00&ndash;3:00 PM &middot; Nashville &middot; Free, food provided &middot; About 45 min",
@@ -582,8 +606,22 @@ SECONDARY_EVENTS = [
          meta="Nightly 5:00&ndash;9:00 PM &middot; $19&ndash;$23 ages 2+, parking $10 &middot; About 35 min",
          sensory="free Zooper Packs and a social story; Mon&ndash;Wed quietest.",
          link=("https://www.nashvillezoo.org/boo", "Tickets and social story")),
+    # T429: Hickok flyer IMG_9695 (Agents #416). Rain date stays in the meta, not the chip.
+    dict(chip=chip("Wed", "21", "Oct"),
+         title="Special Needs &amp; Neurodiverse Day at Dollywood &middot; Dream Cooperative",
+         meta=("All day &middot; rain date Wed Oct 28 &middot; Dollywood, Pigeon Forge &middot; "
+               "$70 per person, due Oct 2 &middot; About 4 hours 15 min"),
+         note="RSVP by texting Heidi at (931) 265-5376.",
+         link=(DOLLYWOOD_URL, "Details")),
+    dict(chip=chip("Thu", "22", "Oct"),
+         title="Gallatin HOSA Special Needs Trunk or Treat",
+         meta=("4:30&ndash;6:30 PM &middot; Gallatin High School, 700 Dan P. Herron Drive, Gallatin &middot; "
+               "About 60 min"),
+         note="Touch-A-Truck after treats.",
+         link=(GALLATIN_FLYER, "Details")),
     # T400: Sun Oct 25 before Sat Oct 31; Details expands in-place (not /events).
     # T410: free TicketsCandy registration CTA alongside Details.
+    # T429: Caleb's Friends is the same Sunday, after the 1:00 PM Spooktacular.
     dict(chip=chip("Sun", "25", "Oct"),
          title="Sensory Spooktacular",
          meta=("1:00&ndash;4:00 PM (sensory-sensitive hour 1:00&ndash;2:00 PM) &middot; "
@@ -591,11 +629,23 @@ SECONDARY_EVENTS = [
                "Free, tickets limited"),
          link=(SPOOK_REG_URL, "Free registration"),
          disclose=SPOOK_DETAILS),
+    dict(chip=chip("Sun", "25", "Oct"),
+         title="Caleb&rsquo;s Friends Halloween Party",
+         meta=("2:00 PM &middot; Heroes Den, 1257 Broad Street, Murfreesboro &middot; "
+               "Teens and young adults with disabilities"),
+         note="Costume Contest &middot; Candy &middot; Games &middot; Dancing.",
+         link=(CALEB_FLYER, "Details")),
+    dict(chip=chip("Thu", "29", "Oct"),
+         title="Special Needs Family Fall Fest &middot; Pegram Church of Christ",
+         meta="6:00&ndash;7:00 PM &middot; 5019 WalkUp Road, Pegram, TN &middot; About 65 min",
+         note="Indoors with trick-or-treat and games.",
+         link=(PEGRAM_FLYER, "Details")),
     dict(chip=chip("Sat", "31", "Oct"),
          title="Evergreen Trunk or Treat &middot; Evergreen Life Services",
-         meta="1:00&ndash;3:00 PM &middot; Antioch &middot; Free &middot; About 30 min",
+         meta="1:00&ndash;3:00 PM &middot; 6050 Dana Way, Antioch, TN &middot; Free &middot; About 30 min",
+         note=EVERGREEN_BLURB,
          sensory="outdoors; trunks, games, and booths built for IDD families.",
-         link=("https://evergreenls.org/trunkortreat/", "Details")),
+         link=(EVERGREEN_URL, "Details")),
 ]
 
 MONSTERS_URL = "https://www.explorethedc.org/event/monsters-in-the-museum/"
@@ -798,7 +848,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T404: Three things items all 18/16. T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + expand Details. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
+<!-- T429: Oct calendar adds (rEcess, Dollywood, Gallatin HOSA, Caleb's Friends, Pegram) and Evergreen street + blurb. T404: Three things items all 18/16. T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + expand Details. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -996,6 +1046,8 @@ def build_html(base, browser=False):
     ev_rows = []
     for i, e in enumerate(SECONDARY_EVENTS):
         lines = [e["meta"]]
+        if e.get("note"):
+            lines.append(e["note"])
         if e.get("link"):
             lines.append(a(*e["link"]))
         content = item(e["title"], lines)
@@ -1222,6 +1274,8 @@ def build_text():
         w(f"  {strip(e['meta'])}")
         for extra in e.get("disclose") or []:
             w(f"  {strip(extra)}")
+        if e.get("note"):
+            w(f"  {strip(e['note'])}")
         if e.get("link"):
             w(f"  {e['link'][1]}: {e['link'][0]}")
         w("")
@@ -1592,6 +1646,43 @@ def main():
     assert "Free registration:" in spook_txt
     assert f"Details: {SITE}/events" not in spook_txt
     assert SPOOK_REG_URL in html and SPOOK_REG_URL in html_browser and SPOOK_REG_URL in txt
+    # T429: new October rows in start-time order, and Evergreen enriched from the flyer.
+    # Amanda Rains (Nov 14) is outside this issue.
+    t429_order = [
+        "rEcess",
+        "Game Day",
+        "Sensory Sunday Hour",
+        "Boo at the Zoo",
+        "Dollywood",
+        "Gallatin HOSA Special Needs Trunk or Treat",
+        "Sensory Spooktacular",
+        "Friends Halloween Party",
+        "Special Needs Family Fall Fest",
+        "Evergreen Trunk or Treat",
+    ]
+    for doc_name, doc in (("html", month), ("txt", txt)):
+        pos = -1
+        for name in t429_order:
+            i = doc.find(name)
+            assert i > pos, f"{doc_name} order: {name}"
+            pos = i
+    assert month.count(">25</p>") >= 2
+    assert "6050 Dana Way, Antioch, TN" in html and "6050 Dana Way, Antioch, TN" in txt
+    assert EVERGREEN_BLURB in html and EVERGREEN_BLURB in txt
+    assert "Touch-A-Truck after treats." in html and "Touch-A-Truck after treats." in txt
+    assert "700 Dan P. Herron Drive, Gallatin" in html and "700 Dan P. Herron Drive, Gallatin" in txt
+    assert "1257 Broad Street, Murfreesboro" in html
+    assert "1257 Broad Street, Murfreesboro" in txt
+    assert "5019 WalkUp Road, Pegram, TN" in html and "5019 WalkUp Road, Pegram, TN" in txt
+    assert "About 4 hours 15 min" in html and "About 4 hours 15 min" in txt
+    assert "(931) 265-5376" in html and "(931) 265-5376" in txt
+    assert f'href="{GALLATIN_FLYER}"' in html and GALLATIN_FLYER in txt
+    assert f'href="{CALEB_FLYER}"' in html and CALEB_FLYER in txt
+    assert f'href="{PEGRAM_FLYER}"' in html and PEGRAM_FLYER in txt
+    assert f'href="{DOLLYWOOD_URL}"' in html and DOLLYWOOD_URL in txt
+    assert f'href="{RECESS_MAIL}"' in html and RECESS_MAIL in txt
+    assert f'href="{EVERGREEN_URL}"' in html and EVERGREEN_URL in txt
+    assert "Amanda Rains" not in html and "Amanda Rains" not in txt
     assert "two neurodivergent children" in html
     assert "two neurodivergent children" in txt
     assert "a child with Autism" not in html

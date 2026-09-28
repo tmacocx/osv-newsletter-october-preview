@@ -124,7 +124,7 @@ MailerLite: `{$url}` (view in browser / hosted archive) and `{$unsubscribe}` (on
 ## Considered and left out
 
 - Sensory Sessions with Love Learning Music, Linebaugh Library (1st Saturdays on the OSV calendar): the library's own calendar still shows no October date; October URLs 404. Left out.
-- Special Needs Family Fall Fest, Pegram (Oct 29): no organizer link; ~60 miles. Left out.
+- Special Needs Family Fall Fest, Pegram (Oct 29): left out on Sept 14 (no organizer page). Added in T429 from the live calendar flyer.
 - Toys for Tots (Rutherford County): no 2026 request window published. Left out.
 - Vanderbilt TRIAD October sessions: provider-facing. Left out.
 - General trunk-or-treats and fall festivals sourced only via aggregators. Left out.
@@ -156,3 +156,27 @@ MailerLite: `{$url}` (view in browser / hosted archive) and `{$unsubscribe}` (on
 - Cari Parr: still named on live OSV support-groups + events (Wed WRTS series); included "Led by Cari Parr." Rem pre-check noted she is absent from WRTS staff roster (external facilitator) — not treated as contradictory.
 - Parent supervision: WRTS open-play policy requires parent/guardian accompaniment; no clear public "childcare included" for the Wed parent group. Card states parents stay with/supervise children (not included childcare).
 - Webhook truncated mid "SUPPORT-GROUP DESIGN CHANGES / Make the group na…"; shipped from issue verbatim — design tail not required to complete done-when.
+
+## T429 (2026-09-28)
+
+Live calendar cross-check: https://ourspecialvillagetn.com/events and `https://ourspecialvillagetn.com/data/events.json` (updated 2026-09-26).
+
+Added to The month ahead, in start-time order:
+
+| Date | Event | Why it is in this issue | Link |
+|---|---|---|---|
+| Sat Oct 3, 8:00–11:45 AM | rEcess · Otter Creek Church | Hickok flyer, Agents #422, verified 2026-09-23. Before Game Day the same day. | mailto:rebecca.whitaker@ottercreek.org |
+| Wed Oct 21 | Special Needs & Neurodiverse Day at Dollywood · Dream Cooperative | Hickok flyer IMG_9695, Agents #416, verified 2026-09-22. Rain date Wed Oct 28. $70 per person, due Oct 2. | https://dreamcooperative.com/ |
+| Thu Oct 22, 4:30–6:30 PM | Gallatin HOSA Special Needs Trunk or Treat | Agents #425 flyer. Touch-A-Truck after treats. No external URL. | gallatin-hosa flyer on ourspecialvillagetn.com |
+| Sun Oct 25, 2:00 PM | Caleb's Friends Halloween Party | Agents #424 flyer. Same day as Spooktacular (1:00 PM), listed after it. Teens and young adults. | calebs-friends flyer on ourspecialvillagetn.com |
+| Thu Oct 29, 6:00–7:00 PM | Special Needs Family Fall Fest · Pegram Church of Christ | On the live calendar; Sept 14 note had left it out. Indoors, trick-or-treat and games. | pegram flyer on ourspecialvillagetn.com |
+
+Evergreen Trunk or Treat (Sat Oct 31) stays. Meta now has 6050 Dana Way, Antioch, TN, Free, About 30 min, plus the flyer line "Fun, fellowship, and safe Halloween activities where everyone matters." Link remains https://evergreenls.org/trunkortreat/.
+
+Drive times from Murfreesboro Public Square via OSRM, rounded up to 5 minutes: Brentwood 40.3 → About 45 min; Gallatin High School 55.5 → About 60 min; Pegram 63.4 → About 65 min; Dollywood 252.7 → About 4 hours 15 min. Antioch 29.2 confirms About 30 min. Heroes Den is in Murfreesboro, so no drive time.
+
+Checked and not added:
+
+- Village Hall with Amanda Rains of PRC Saltillo is Sat Nov 14. Outside this October issue.
+- TRIAD Early Intervention Lunch & Learn (Fri Oct 2) stays out: provider-facing.
+- Super Sports Saturday (Sat Oct 17) and The EXTRA Mile (Sat Oct 24) are on the live calendar and were already in the Sept 14 research table. They are not new Hickok adds, and the shortened month-ahead had already left them off. Not restored here.
