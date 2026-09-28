@@ -181,7 +181,8 @@ ISSUES = [
             ("December is full: school programs, parties, travel, and gatherings that can stretch every "
              "nervous system in the house, including yours."),
             ("This issue keeps it simple: the dates to know before winter break, a sensory-friendly Santa "
-             "morning in Cool Springs, and a guide for the days you are running on empty."),
+             "morning in Cool Springs, and a guide for the days you are running on empty. At Village Hall on "
+             "Saturday, December 12, Katie Dell of Behavior Cubed joins us for all things behavior."),
             ("However your family celebrates, or doesn&rsquo;t, I hope the season gives you a few quiet "
              "moments that are just yours."),
         ],
@@ -189,7 +190,19 @@ ISSUES = [
         chips=[("#deadlines", "Winter break"), ("#events", "Sensory-friendly Santa"),
                ("#library", "Guides for full days"), ("#question", "Holiday gatherings")],
         three_things=[], all_deadlines=[], confirmed="", deadlines_meta="",
-        village_hall=VH_TBD,
+        village_hall=dict(
+            VH_TBD,
+            date="Saturday, December 12, 2026",
+            time=VH_TIME,
+            topic="All things behavior",
+            guests=[dict(
+                name="Katie Dell",
+                role="Neurodiversity-affirming BCBA &middot; Behavior Cubed",
+                photo=None,
+                photo_alt="Katie Dell.",
+                bio=ph("Katie&rsquo;s credentials, photo, and a short bio."),
+            )],
+        ),
         events=dict(
             featured=dict(
                 title="Santa&rsquo;s Sensory Wonderland &middot; Mindful Voices Autism Advocacy",
@@ -260,6 +273,8 @@ ISSUES = [
              "and this issue helps with both."),
             ("Inside: the school dates to know as classes start back, a step-by-step answer on asking your "
              "school for an evaluation, and a monthly respite morning for families who need a break."),
+            ("At Village Hall on Saturday, January 9, Alyssa Engel of Cultivate Play talks DIR-Floortime, "
+             "occupational therapy, neurodivergence, and PDA."),
             ("Whatever this year holds for your child, you do not have to figure it out alone."),
         ],
         note_highlight="you do not have to figure it out alone",
@@ -270,12 +285,13 @@ ISSUES = [
             VH_TBD,
             date="Saturday, January 9, 2027",
             time=VH_TIME,
+            topic="DIR-Floortime, occupational therapy, neurodivergence, and PDA",
             guests=[dict(
-                name="Alyssa",
+                name="Alyssa Engel",
                 role="Cultivate Play",
                 photo=None,
-                photo_alt="Alyssa of Cultivate Play.",
-                bio=ph("Alyssa&rsquo;s last name, credentials, photo, and a short bio."),
+                photo_alt="Alyssa Engel.",
+                bio=ph("Alyssa&rsquo;s credentials, photo, and a short bio."),
             )],
         ),
         events=dict(
@@ -684,10 +700,14 @@ NOV["todo"] = [
     "(it shows in inboxes; the preview shows your painting instead). Send a picture you like to swap it.",
     "More sensory Santa, library, and theater dates usually post in October, so they are worth a re-check mid-October.",
 ]
-DEC["todo"] = COMMON_TODO
+DEC["todo"] = [
+    COMMON_TODO[0],
+    "Village Hall: Katie Dell of Behavior Cubed, Sat Dec 12, all things behavior. Add her credentials, photo, and a short bio.",
+    COMMON_TODO[2],
+]
 JAN["todo"] = [
     COMMON_TODO[0],
-    "Village Hall: Alyssa with Cultivate Play, Sat Jan 9. Add her last name, credentials, photo, bio, and the topic.",
+    "Village Hall: Alyssa Engel of Cultivate Play, Sat Jan 9. Add her credentials, photo, and a short bio.",
     COMMON_TODO[2],
     "Only one January event is confirmed so far (rEcess, Jan 2). Discovery Center, Frist, Autism Tennessee and "
     "ABLE Youth had not posted January dates on Sept 28; I will add them when they do."]
