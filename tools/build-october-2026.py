@@ -13,6 +13,9 @@ T400: Sensory Spooktacular sits in chronological order in The month ahead
 T410: Free TicketsCandy registration link on Spooktacular (Details expand kept).
 Details is a native <details> expand with the on-site + sponsor copy (not a
 link-only jump to /events). Outlook/MSO gets the same copy in a conditional.
+T430: Wall of Hope returns between New in the library and One question,
+answered. Lead with Ellie's drawing win (photo + story, Sept 28, 2026,
+byline -Taylor) and keep a short share invitation under that card.
 T429: Calendar rows for Hickok adds that were missing from The month ahead.
 Chronological: rEcess (Sat Oct 3, before Game Day), Dollywood (Wed Oct 21),
 Gallatin HOSA Trunk or Treat (Thu Oct 22), Caleb's Friends (Sun Oct 25, after
@@ -848,7 +851,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T429: Oct calendar adds (rEcess, Dollywood, Gallatin HOSA, Caleb's Friends, Pegram) and Evergreen street + blurb. T404: Three things items all 18/16. T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + expand Details. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
+<!-- T430: Wall of Hope after the library (Ellie story, then invitation). T429: Oct calendar adds (rEcess, Dollywood, Gallatin HOSA, Caleb's Friends, Pegram) and Evergreen street + blurb. T404: Three things items all 18/16. T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + expand Details. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
@@ -1091,6 +1094,48 @@ def build_html(base, browser=False):
         gap=16,
     )))
 
+    # --- Wall of Hope (T430): story card, then a short invitation ---
+    o.append(major_sp())
+    o.append(section_head("hope", "Wall of Hope"))
+    o.append(sp(12))
+    hope_photo = (
+        f'<img class="os-hope-photo" src="{art("ellie-drawing-win-2026.jpg")}" width="240" height="307" '
+        f'alt="Ellie, age four, drawing X marks on a cardboard box with a marker." '
+        f'style="display:block;width:100%;max-width:240px;height:auto;border:0;outline:none;'
+        f'text-decoration:none;border-radius:12px;">'
+    )
+    hope_copy = (
+        p("September 28, 2026", 13, 18, ACCENT, 700, margin="0", cls="os-tiny")
+        + p("Ellie&rsquo;s drawing win", 17, 24, INK, 700, margin="6px 0 0 0")
+        + p("Ellie is four years old and has always struggled with fine motor skills. Because of this, "
+           "she has avoided drawing and attempting to write letters at all costs because she is a "
+           "perfectionist and is so petrified of doing something poorly.",
+           15, 22, BODY, 400, margin="8px 0 0 0")
+        + p("After lots of DIR Floortime work with her OT Alyssa that worked on prewriting, she picked "
+           "up a marker, and during play drew x&rsquo;s on a cardboard box. I had NEVER seen her draw "
+           "more than 2 seconds of scribbles and this was an incredible win for her.",
+           15, 22, BODY, 400, margin="8px 0 0 0")
+        + p("-Taylor", 15, 22, INK, 700, margin="12px 0 0 0")
+    )
+    # Email-safe two-cell table. .os-col stacks the photo above the story under 620px.
+    hope_table = (
+        '<table role="presentation" class="os-hope" cellpadding="0" cellspacing="0" border="0" width="100%" '
+        'style="width:100%;border-collapse:collapse;"><tr>'
+        f'<td class="os-col os-col-photo" width="240" valign="top" '
+        f'style="width:240px;padding:0 16px 0 0;vertical-align:top;">{hope_photo}</td>'
+        f'<td class="os-col" valign="top" style="vertical-align:top;">{hope_copy}</td>'
+        '</tr></table>'
+    )
+    o.append(padrow(card(hope_table, pad="16px 16px 16px 16px")))
+    o.append(sp(12))
+    invite = (
+        p("Borrow a little hope, or lend some", 17, 24, INK, 700, margin="0")
+        + p("Have a win of your own? Tell it like you would tell another parent. "
+           + a(f"{SITE}/hope", "Share your win"),
+           15, 22, BODY, 400, margin="8px 0 0 0")
+    )
+    o.append(padrow(card(invite, pad="16px 16px 16px 16px")))
+
     # --- One question ---
     o.append(major_sp())
     o.append(section_head("question", "One question, answered",
@@ -1291,6 +1336,18 @@ def build_text():
     w("New guide, reviewed Sept 2026 · Grief and disability: the loss nobody sends a card for")
     w("  This kind of grief rarely has an occasion attached. It shows up at a birthday, a missed milestone, or in the parking lot after an evaluation.")
     w(f"  Read the grief guide: {SITE}/resources/grieving-the-life-you-imagined")
+    w("")
+    w("----------------------------------------")
+    w("WALL OF HOPE")
+    w("")
+    w("September 28, 2026 · Ellie's drawing win")
+    w("  Ellie is four years old and has always struggled with fine motor skills. Because of this, she has avoided drawing and attempting to write letters at all costs because she is a perfectionist and is so petrified of doing something poorly.")
+    w("  After lots of DIR Floortime work with her OT Alyssa that worked on prewriting, she picked up a marker, and during play drew x's on a cardboard box. I had NEVER seen her draw more than 2 seconds of scribbles and this was an incredible win for her.")
+    w("  -Taylor")
+    w("")
+    w("Borrow a little hope, or lend some")
+    w("  Have a win of your own? Tell it like you would tell another parent.")
+    w(f"  Share your win: {SITE}/hope")
     w("")
     w("----------------------------------------")
     w("ONE QUESTION, ANSWERED")
@@ -1519,8 +1576,9 @@ def main():
         assert "—" not in s and "&mdash;" not in s, "em dash found"
         assert "Village Picks" not in s
         assert "Microsoft Teams" not in s
-        assert "Wall of Hope" not in s
         assert "autumn-events-collage" not in s
+    assert "Wall of Hope" in html_email and "Wall of Hope" in html_browser
+    assert "WALL OF HOPE" in txt
     assert "art/icons/" not in txt
     assert "art/icons/calendar.png" in html_email
     assert "art/icons/calendar.png" in html_browser
@@ -1718,6 +1776,27 @@ def main():
     assert "ONLINE" in html and "WEEKLY" in html and "FREE" in html
     assert "village-hall-iep-compact.jpg" in html
     assert "os-sec" in html
+    # T430: Wall of Hope between the library and the question, story then invitation.
+    for doc in (html, html_browser):
+        assert doc.find('id="library"') < doc.find('id="hope"') < doc.find('id="question"')
+        assert "ellie-drawing-win-2026.jpg" in doc
+        assert 'alt="Ellie, age four, drawing X marks on a cardboard box with a marker."' in doc
+        assert "September 28, 2026" in doc
+        assert "Ellie&rsquo;s drawing win" in doc
+        assert "Ellie is four years old" in doc
+        assert "drew x&rsquo;s on a cardboard box" in doc
+        assert "I had NEVER seen her draw" in doc
+        assert ">-Taylor</p>" in doc or "-Taylor" in doc
+        assert "class=\"os-col os-col-photo\"" in doc
+        assert "Borrow a little hope, or lend some" in doc
+        assert f'href="{SITE}/hope"' in doc
+        assert "The first stories are on their way" not in doc
+        hope_slice = doc.split('id="hope"', 1)[1].split('id="question"', 1)[0]
+        assert hope_slice.find("Ellie is four years old") < hope_slice.find("Borrow a little hope, or lend some")
+        assert hope_slice.find("os-hope") < hope_slice.find("Share your win")
+    assert txt.find("NEW IN THE LIBRARY") < txt.find("WALL OF HOPE") < txt.find("ONE QUESTION, ANSWERED")
+    assert "Ellie is four years old" in txt and "-Taylor" in txt
+    assert f"{SITE}/hope" in txt
     # T394 Mercedes: title on its own row above photo; photo left of bio
     guest_i = html.find('class="os-vh-guest"')
     name_i = html.find("Mercedes Lawson, M.S. Ed.", guest_i)
