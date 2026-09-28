@@ -260,7 +260,18 @@ ISSUES = [
         chips=[("#deadlines", "School dates"), ("#question", "Asking for an evaluation"),
                ("#events", "Respite + events"), ("#library", "School guides")],
         three_things=[], all_deadlines=[], confirmed="", deadlines_meta="",
-        village_hall=VH_TBD,
+        village_hall=dict(
+            VH_TBD,
+            date="Saturday, January 9, 2027",
+            time=VH_TIME,
+            guests=[dict(
+                name="Alyssa",
+                role="Cultivate Play",
+                photo=None,
+                photo_alt="Alyssa of Cultivate Play.",
+                bio=ph("Alyssa&rsquo;s last name, credentials, photo, and a short bio."),
+            )],
+        ),
         events=dict(
             featured=dict(
                 title="rEcess &middot; Otter Creek Church and 99 Balloons",
