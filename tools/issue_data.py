@@ -359,7 +359,7 @@ ISSUES = [
         chips=[("#deadlines", "School days off"), ("#events", "Winter outings"),
                ("#library", "Sensory + safety guides"), ("#question", "Finding a good therapist")],
         three_things=[], all_deadlines=[], confirmed="", deadlines_meta="",
-        village_hall=VH_TBD,
+        village_hall=dict(VH_TBD, date="Saturday, February 13, 2027", time=VH_TIME),
         events=dict(
             featured=dict(
                 title="rEcess &middot; Otter Creek Church and 99 Balloons",
@@ -711,7 +711,11 @@ JAN["todo"] = [
     COMMON_TODO[2],
     "Only one January event is confirmed so far (rEcess, Jan 2). Discovery Center, Frist, Autism Tennessee and "
     "ABLE Youth had not posted January dates on Sept 28; I will add them when they do."]
-FEB["todo"] = COMMON_TODO + [
+FEB["todo"] = [
+    COMMON_TODO[0],
+    "Village Hall, Sat Feb 13: Bradi (Braxy Speech) may be the guest, waiting on confirmation. Then add her name, role, photo, bio, and topic.",
+    COMMON_TODO[2],
+] + [
     "Only one February event is confirmed so far (rEcess, Feb 6). Same organizers to re-check in January."]
 
 # Keep November under Gmail's ~102 KB clip once the Wall of Hope story is added.
