@@ -15,8 +15,8 @@ Details is a native <details> expand with the on-site + sponsor copy (not a
 link-only jump to /events). Outlook/MSO gets the same copy in a conditional.
 T430: Wall of Hope returns between New in the library and One question,
 answered. Lead with Ellie's drawing win (photo + story). Under the story,
-the Wall of Hope line is "✎ First name, town" (placeholder
-"✎ Taylor, Murfreesboro"). No date. Short share invitation under the card.
+the attribution line is locked: "✎ Taylor, Murfreesboro". No date, no
+"-Taylor". Short share invitation under the card.
 T429: Calendar rows for Hickok adds that were missing from The month ahead.
 Chronological: rEcess (Sat Oct 3, before Game Day), Dollywood (Wed Oct 21),
 Gallatin HOSA Trunk or Treat (Thu Oct 22), Caleb's Friends (Sun Oct 25, after
