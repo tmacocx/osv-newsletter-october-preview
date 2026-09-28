@@ -21,3 +21,13 @@ Material shorten (keep Vincent/T323 art): short welcome, no TOC, “Three things
 - **Email:** View in browser → `{$url}`, Unsubscribe → `{$unsubscribe}`.
 - **Browser preview (`index.html`):** real destinations (Pages URL + `/newsletter`).
 - Attach `newsletter-october-2026.txt` as the plain-text part.
+
+## November 2026 to February 2027 issues
+
+Same template as October, one folder per month in `issues/` (`issues/index.html` is a month picker).
+
+- `python3 tools/prepare-issue-art.py --site ../OurSpecialVillage --headshot <amanda.png>` crops Taylor's fall/winter paintings.
+- `python3 tools/build-issues.py` builds `index.html`, `email.html`, `email.txt` and `deadlines.html` per issue.
+  Add `--site-export ../OurSpecialVillage` to write `newsletters/<id>/` and `public/assets/newsletters/<id>/` for the site's sender.
+- Content lives in `tools/issue_data.py`. Yellow dashed boxes are placeholders; `--strict` fails until they are filled.
+- Sources: `research-notes-nov-2026-feb-2027.md`.

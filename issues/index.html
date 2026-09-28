@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newsletters Nov to Feb</title>
+<style>
+:root{--bg:#f7f1e2;--ink:#1b2340;--body:#4a5169;--accent:#964720;--card:#fff;--hair:#e6dcc6;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);font-family:Figtree, 'Segoe UI', Helvetica, Arial, sans-serif;}
+header{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--hair);padding:12px 16px;}
+.wrap{max-width:980px;margin:0 auto;}
+h1{margin:0 0 8px;color:var(--ink);font-size:18px;}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;}
+.tabs button{font:inherit;font-weight:700;border:1px solid var(--hair);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer;}
+.tabs button[aria-selected=true]{background:var(--ink);color:#f7f1e2;border-color:var(--ink);}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:14px;}
+.row a{color:var(--accent);font-weight:700;}
+.row label{display:flex;gap:6px;align-items:center;}
+.todo{max-width:980px;margin:12px auto 0;padding:0 16px;}
+.todo section{background:#fff8dc;border:1px dashed #b8912f;border-radius:12px;padding:10px 16px;font-size:14px;}
+.todo h2{font-size:15px;margin:4px 0;color:var(--ink);}
+.todo ul{margin:4px 0 6px;padding-left:18px;}
+.frame{max-width:980px;margin:12px auto 32px;padding:0 16px;}
+iframe{display:block;width:100%;height:80vh;min-height:600px;border:1px solid var(--hair);border-radius:12px;background:#f7f1e2;margin:0 auto;}
+iframe.phone{width:390px;max-width:100%;}
+</style></head><body>
+<header><div class="wrap"><h1>Our Special Village newsletters, November to February</h1>
+<div class="tabs" role="tablist"><button role="tab" data-id="2026-11" aria-selected="true">November</button><button role="tab" data-id="2026-12" aria-selected="false">December</button><button role="tab" data-id="2027-01" aria-selected="false">January</button><button role="tab" data-id="2027-02" aria-selected="false">February</button></div>
+<div class="row"><label><input type="checkbox" id="phone"> Phone width</label>
+<a id="open" href="2026-11/index.html" target="_blank" rel="noopener">Open full page</a>
+<a id="dl" href="2026-11/deadlines.html" target="_blank" rel="noopener">All deadlines page</a></div></div></header>
+<div class="todo"><section data-for="2026-11"><h2>Still to fill in for November</h2><ul><li>Wall of Hope: add one parent story (two to four sentences) and a first name and town.</li><li>Village Hall title is my draft (&ldquo;AAC: helping your child communicate with a speech-generating device&rdquo;). Confirm or change it with Amanda.</li><li>Amanda&rsquo;s role line says &ldquo;LAMP Certified Professional &middot; PRC-Saltillo&rdquo;. Add her job title if she has one.</li><li>Registration: the site still says Nov 14 registration is not open. Open it before Nov 1.</li><li>My draft of your welcome note: edit it so it sounds like you.</li></ul></section><section data-for="2026-12" hidden><h2>Still to fill in for December</h2><ul><li>Wall of Hope: add one parent story (two to four sentences) and a first name and town.</li><li>Village Hall: add the date, time, topic, guest name, role, photo, and a short bio.</li><li>My draft of your welcome note: edit it so it sounds like you.</li><li>Does the Thursday group meet Dec 24 and Dec 31? Add a line if not.</li></ul></section><section data-for="2027-01" hidden><h2>Still to fill in for January</h2><ul><li>Wall of Hope: add one parent story (two to four sentences) and a first name and town.</li><li>Village Hall: add the date, time, topic, guest name, role, photo, and a short bio.</li><li>My draft of your welcome note: edit it so it sounds like you.</li><li>Only one January event is confirmed so far (rEcess, Jan 2). Discovery Center, Frist, Autism Tennessee and ABLE Youth had not posted January dates on Sept 28; I will add them when they do.</li></ul></section><section data-for="2027-02" hidden><h2>Still to fill in for February</h2><ul><li>Wall of Hope: add one parent story (two to four sentences) and a first name and town.</li><li>Village Hall: add the date, time, topic, guest name, role, photo, and a short bio.</li><li>My draft of your welcome note: edit it so it sounds like you.</li><li>Only one February event is confirmed so far (rEcess, Feb 6). Same organizers to re-check in January.</li></ul></section></div>
+<div class="frame"><iframe id="f" title="Newsletter preview" src="2026-11/index.html"></iframe></div>
+<script>
+const f=document.getElementById('f'),open=document.getElementById('open'),dl=document.getElementById('dl');
+function show(id){f.src=id+'/index.html';open.href=id+'/index.html';dl.href=id+'/deadlines.html';
+document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.id===id));
+document.querySelectorAll('.todo section').forEach(s=>s.hidden=s.dataset.for!==id);
+try{localStorage.setItem('osv-nl-tab',id)}catch(e){}}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.id));
+document.getElementById('phone').onchange=e=>f.classList.toggle('phone',e.target.checked);
+try{const t=localStorage.getItem('osv-nl-tab');if(t&&document.querySelector('[data-id="'+t+'"]'))show(t)}catch(e){}
+</script></body></html>
