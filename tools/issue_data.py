@@ -404,7 +404,41 @@ def L(href, label):
     return f'<a href="{href}">{label}</a>'
 
 
-RCS_MCS = f"{L(*RCS)}, {L(*MCS)}"
+RCS_MCS = f"{L(*RCS)} {L(*MCS)}"
+
+# Disability grants and programs, verified Sept 28, 2026 (sources in research-notes-nov-2026-feb-2027.md).
+FIRST_HAND = ("https://firsthandfoundation.org/grants/", "First Hand grants")
+UHCCF = ("https://www.uhccf.org/apply-for-a-grant/", "UHCCF grants")
+TTAP = ("https://www.tn.gov/humanservices/ds/ttap.html", "TTAP")
+OAR = ("https://researchautism.org/self-advocates/postsecondary-scholarships/", "OAR scholarships")
+MOSS = ("https://www.mossfoundation.org/scholarships/", "Moss scholarship")
+STEP_UP = ("https://www.collegefortn.org/tennessee-step-up-scholarship/", "STEP UP")
+SOTN = ("https://www.specialolympicstn.org/winter", "Special Olympics TN")
+EASTERSEALS = ("https://tn.easterseals.com/get-support/areas-of-support/recreational-camp/adult-recreational-camp", "Easterseals camp")
+UCP = ("https://www.ucpmidtn.org/family-support/", "UCP Family Support")
+
+
+def first_hand(mon, day, wk):
+    return (wk, day, mon, f"First Hand Foundation grant deadline: {mon}&nbsp;{day}",
+            "For kids 18 and under with a medical need, within income limits. Pays for future therapy, equipment, "
+            f"AAC and travel for care. Due the 15th of every month. {L(*FIRST_HAND)}")
+
+
+def first_hand_thing(chip, date_words):
+    return dict(chip=chip, items=[dict(
+        title=f"First Hand Foundation grants: next deadline {date_words}",
+        body=("Grants for kids 18 and under with a medical need, within income limits (for example $65,000 with "
+              "one child). They pay for future therapy, equipment, AAC, and travel for care. Due the 15th of "
+              "every month."),
+        links=[FIRST_HAND])])
+
+
+ALWAYS_OPEN = [
+    ("Any", "-", "time", "UnitedHealthcare Children&rsquo;s Foundation grants",
+     f"Up to $5,000 a year for kids 16 and under with commercial insurance. Reviewed monthly. {L(*UHCCF)}"),
+    ("Any", "-", "time", "TTAP: try, borrow, or get help paying for assistive technology",
+     f"Tennessee&rsquo;s free program for device demos, loans, and reused equipment. {L(*TTAP)}"),
+]
 KB_ROW = ("Any", "-", "time", "Katie Beckett (TennCare)",
           f'Apply any time; Part B has a waiting list. {L(SITE + "/resources/katie-beckett", "Katie Beckett guide")}')
 
@@ -414,15 +448,11 @@ NOV.update(
     confirmed=CONFIRMED,
     deadlines_meta="Dates confirmed Sept 28, 2026. Teen, college, and insurance items live here so the email can stay short.",
     three_things=[
+        first_hand_thing(("Sun", "15", "Nov"), "Sun Nov 15"),
         dict(chip=("Tue", "3", "Nov"), items=[dict(
-            title="Election Day, Tue Nov 3: no school in either district",
-            body=("Rutherford County Schools and Murfreesboro City Schools are both closed to students. Murfreesboro City Schools holds parent-teacher conferences and sends report "
-                  "cards that day; Rutherford County progress reports go home Nov 4 to 6. Ask for IEP progress data."),
-            links=[RCS, MCS])]),
-        dict(chip=("Mon", "23", "Nov"), items=[dict(
-            title="Thanksgiving break, Nov 23 to 27",
-            body=("Students in Rutherford County Schools and Murfreesboro City Schools are out all week. If a quiet week helps, pencil in one outing and "
-                  "leave the rest open."),
+            title="No school Tue Nov 3 and Thanksgiving week, Nov 23 to 27",
+            body=("Both Rutherford County Schools and Murfreesboro City Schools. Progress reports and report "
+                  "cards come home the first week of November; ask for IEP progress data."),
             links=[RCS, MCS])]),
         dict(chip=("Nov", "1", "Jan 15"), items=[dict(
             title="HealthCare.gov open enrollment: Nov 1 to Jan 15",
@@ -431,6 +461,7 @@ NOV.update(
             links=[HC])]),
     ],
     all_deadlines=[
+        ("Grants and help", [first_hand("Nov", "15", "Sun")] + ALWAYS_OPEN),
         ("School and community", [
             ("Tue", "3", "Nov", "Election Day: no school for students",
              f"Rutherford County Schools teacher admin day; Murfreesboro City Schools parent-teacher conferences and report cards. {RCS_MCS}"),
@@ -467,11 +498,7 @@ DEC.update(
             title="HealthCare.gov: pick a plan by Tue Dec 15 for Jan 1",
             body="Open enrollment runs to Jan 15, but plans chosen after Dec 15 start Feb 1.",
             links=[HC])]),
-        dict(chip=("Mon", "7", "Dec"), items=[dict(
-            title="Medicare open enrollment ends Mon Dec 7",
-            body=("For grandparents and caregivers on Medicare. Free, unbiased help from TN SHIP: "
-                  "1-877-801-0044."),
-            links=[MEDICARE])]),
+        first_hand_thing(("Tue", "15", "Dec"), "Tue Dec 15"),
     ],
     all_deadlines=[
         ("School", [
@@ -487,6 +514,11 @@ DEC.update(
             ("Fri", "15", "Jan", "HealthCare.gov open enrollment ends", L(*HC)),
             KB_ROW,
         ]),
+        ("Grants and help", [
+            first_hand("Dec", "15", "Tue"),
+            ("Fri", "4", "Dec 6", "Easterseals Tennessee adult weekend camp: Dec&nbsp;4&ndash;6",
+             f"For adults 17 and up with disabilities; $725. {L(*EASTERSEALS)}"),
+        ] + ALWAYS_OPEN),
         ("Money and benefits", [
             ("Any", "-", "time", "ABLE TN: up to $20,000 in contributions per calendar year",
              'Working beneficiaries may be able to add more through ABLE to Work. '
@@ -496,6 +528,8 @@ DEC.update(
             ("Thu", "10", "Dec", "EFS family office hours, 10&ndash;11&nbsp;AM&nbsp;CT",
              f'For current Education Freedom Scholarship families. 2027&ndash;28 application dates not posted yet. {L(EFS, "EFS")}'),
             ("Sat", "12", "Dec", "ACT test date", f'Scores out Tue Dec 22. {L(ACT_DATES, "ACT dates")}'),
+            ("Dec", "", "Apr", "OAR college scholarships open in December",
+             f"$3,000 for autistic students starting college, trade, vocational, or life-skills programs. Due in April. {L(*OAR)}"),
         ]),
     ],
 )
@@ -513,10 +547,12 @@ JAN.update(
             title="Last day of HealthCare.gov open enrollment: Fri Jan 15",
             body="Plans chosen Dec 16 to Jan 15 start Feb 1.",
             links=[HC])]),
-        dict(chip=("Mon", "18", "Jan"), items=[dict(
-            title="Martin Luther King Jr. Day, Mon Jan 18: no school",
-            body="Rutherford County Schools and Murfreesboro City Schools are both closed.",
-            links=[RCS, MCS])]),
+        dict(chip=("Jan", "1", "Apply"), items=[dict(
+            title="Family Support funds: apply early in the year",
+            body=("Tennessee&rsquo;s Family Support Program gives flexible money for respite, equipment, camp, and "
+                  "home changes to people with severe disabilities who are not on a waiver. Funds run out, so ask "
+                  "UCP of Middle Tennessee (615-796-3341) for this year&rsquo;s dates."),
+            links=[UCP, (SITE + "/resources/funding/family-support", "Family Support guide")])]),
     ],
     all_deadlines=[
         ("School and community", [
@@ -534,15 +570,21 @@ JAN.update(
             KB_ROW,
         ]),
         ("Money and benefits", [
-            ("Jan", "1", "Apr 15", "DDA Family Support Program priority window",
-             f'Up to $6,000 a year for respite, equipment, and home changes. Confirm this year&rsquo;s dates with '
-             f'UCP of Middle Tennessee (615-796-3341). {L(SITE + "/resources/funding/family-support", "Family Support guide")}'),
+            ("Jan", "1", "Apply", "Family Support Program: apply early in the year",
+             f'Up to $6,000 a year for respite, equipment, and home changes. Other regions open Jan&nbsp;1; confirm '
+             f'Rutherford&rsquo;s dates with UCP of Middle Tennessee (615-796-3341). {L(*UCP)}'),
             ("Fri", "15", "Jan", "EFS: projected quarter 3 payment", f'For current Education Freedom Scholarship families. {L(EFS, "EFS")}'),
         ]),
+        ("Grants and help", [
+            first_hand("Jan", "15", "Fri"),
+            ("Sun", "24", "Jan 26", "Special Olympics Tennessee Winter Games: Jan&nbsp;24&ndash;26", f"Gatlinburg. {L(*SOTN)}"),
+        ] + ALWAYS_OPEN),
         ("Teens and college", [
             ("Thu", "14", "Jan", "EFS family office hours, 1&ndash;2&nbsp;PM&nbsp;CT", L(EFS, "EFS")),
             ("Fri", "22", "Jan", "ACT Feb&nbsp;27: registration and accommodations by Fri&nbsp;Jan&nbsp;22",
              f'Through your school testing coordinator. Late registration ends Feb 9. {L(ACT_ACC, "ACT accommodations")}'),
+            ("Jan", "1", "Mar 31", "P. Buckley Moss Scholarship: Jan&nbsp;1&ndash;Mar&nbsp;31",
+             f"Up to $1,000 a year for a graduating senior with learning differences heading into visual arts. {L(*MOSS)}"),
         ]),
     ],
 )
@@ -551,10 +593,7 @@ FEB.update(
     confirmed=CONFIRMED,
     deadlines_meta="Dates confirmed Sept 28, 2026. Teen, college, and school-choice items live here so the email can stay short.",
     three_things=[
-        dict(chip=("Mon", "15", "Feb"), items=[dict(
-            title="Presidents&rsquo; Day, Mon Feb 15: no school",
-            body="Rutherford County Schools and Murfreesboro City Schools are both closed. City students are also out Fri Feb 12, so city families get a four-day weekend.",
-            links=[RCS, MCS])]),
+        first_hand_thing(("Mon", "15", "Feb"), "Mon Feb 15"),
         dict(chip=("Tue", "16", "Feb"), items=[dict(
             title="IEA applications projected to open Tue Feb 16",
             body=("Tennessee&rsquo;s Individualized Education Account for 2027&ndash;28 needs an active IEP and a "
@@ -567,6 +606,11 @@ FEB.update(
             links=[RCS, MCS, (NIST, "How DST works")])]),
     ],
     all_deadlines=[
+        ("Grants and help", [
+            first_hand("Feb", "15", "Mon"),
+            ("Mon", "1", "Mar", "Tennessee STEP UP Scholarship: spring deadline Mar&nbsp;1",
+             f"For students with intellectual disabilities in inclusive college programs. Up to $2,850 a semester. {L(*STEP_UP)}"),
+        ] + ALWAYS_OPEN),
         ("School and community", [
             ("Wed", "3", "Feb 5", "Rutherford County Schools progress reports: Feb&nbsp;3&ndash;5", L(*RCS)),
             ("Fri", "12", "Feb", "Murfreesboro City Schools planning day: no school for city students", L(*MCS)),
@@ -640,3 +684,8 @@ FEB["todo"] = COMMON_TODO + [
 
 # Keep November under Gmail's ~102 KB clip once the Wall of Hope story is added.
 NOV["events"]["list"] = [e for e in NOV["events"]["list"] if e["chip"][1] != "16"]
+
+
+# Taylor (Sept 28): less school-heavy. Grants and help lead every deadlines page.
+for _i in ISSUES:
+    _i["all_deadlines"].sort(key=lambda sec: sec[0] != "Grants and help")

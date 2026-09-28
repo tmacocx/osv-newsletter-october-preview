@@ -122,3 +122,63 @@ Sources used:
 - **Toys for Tots Rutherford County 2026.** No official local page with dates was found.
 - **Katie Beckett / TennCare.** The official page has no statewide dates for late 2026 or early 2027. Renewals are handled case by case.
 - **RCS main calendar web page (rcschools.net).** The page loads its content with scripts, so it could not be read. RCS dates above come from the district's own calendar file, revised June 3, 2026.
+
+
+## Disability grants and deadlines (checked Sept 28, 2026)
+
+# Disability-specific deadlines, Nov 1 2026 – Mar 31 2027 (checked Sep 28, 2026)
+
+Only items whose own page states a date or a fixed recurring window are in the verified list.
+
+## NOVEMBER 2026
+- **Nov 15 (and the 15th of every month): First Hand Foundation medical grants.** For children 18 and under with a clinical health need and household income under set limits (for example $65k with 1 child). Pays for future therapy, equipment, AT, and travel for care. https://firsthandfoundation.org/grants/ Quote: "Application deadline is the 15th of each month at 11:59pm CST; portal reopens the 16th". *Recurring monthly.*
+
+## DECEMBER 2026
+- **Dec 4–6: Easterseals Tennessee Adult Seasonal (weekend) Camp.** Weekend camp for adults 17 and up with physical or developmental disabilities or TBI; $725. The page gives no registration deadline. https://tn.easterseals.com/get-support/areas-of-support/recreational-camp/adult-recreational-camp Quote: "December 4th through 6th". *(This is an event date, not an application deadline.)*
+- **December: OAR Postsecondary Scholarships open.** $3,000 scholarships for autistic students starting full-time undergrad, 2-year, vocational, trade or life-skills programs. Applications are due in April. https://researchautism.org/self-advocates/postsecondary-scholarships/ Page shows "Application Opens" December and "Application Due" April. The page gives the month only, with no exact day.
+- **Dec 15: First Hand Foundation monthly deadline** (see November).
+
+## JANUARY 2027
+- **Jan 1 – Apr 15: DDA Family Support Program priority window (as run by some regional agencies).** Flexible funds (respite, equipment, camp, home modifications) for Tennesseans with severe disabilities who are not on a waiver. https://www.orangegrovecenter.org/family-support-program Quote: "open application period is January 1st thru April 15th of every year". *Recurring window.* CAUTION: Orange Grove serves Southeast TN. TARP (West TN) states "January 1st thru March 30th of every year" (https://tarp1.org/services/family-support/). **Rutherford County's agency is UCP of Middle TN** (https://www.ucpmidtn.org/family-support/), and its page gives **no** window, only a July 1–June 30 fiscal year. The state page (https://www.tn.gov/disability-and-aging/disability-aging-programs/family-support.html) lists no deadline either. Frame it as "apply early in the calendar year; call UCP to confirm."
+- **Jan 1 – Mar 31: P. Buckley Moss Endowed Scholarship.** Up to $1,000 a year, renewable, for a graduating high school senior with learning differences who plans a career in the visual arts. https://www.mossfoundation.org/scholarships/ Quote: "The application period is January 1 through March 31 annually." *Recurring.*
+- **Jan 15: First Hand Foundation monthly deadline** (see November).
+- **Jan 24–26: Special Olympics Tennessee State Winter Games, Gatlinburg.** Event dates only; no registration deadline listed. https://www.specialolympicstn.org/winter Quote: "January 24 - 26, 2027".
+
+## FEBRUARY 2027
+- **Feb 15: First Hand Foundation monthly deadline** (see November).
+
+## MARCH 2027
+- **Mar 1: Tennessee STEP UP Scholarship (spring deadline).** State scholarship for Tennessee students with intellectual disabilities (including those with occupational/special-ed diplomas or IEP certificates) enrolled in an eligible inclusive higher-education program. Up to $2,250–$2,850 per semester at 4-year schools. https://www.collegefortn.org/tennessee-step-up-scholarship/ Quote: "Spring Semester – March 1". *Recurring.*
+- **Mar 15: First Hand Foundation monthly deadline** (see November).
+- **Mar 31: P. Buckley Moss scholarship closes** (see January).
+- (TARP-region Family Support window closes Mar 30. This does not apply to Rutherford County.)
+
+## Year-round / rolling (usable any month, no deadline)
+- **UnitedHealthcare Children's Foundation**: up to $5,000 a year ($10k lifetime) for kids 16 and under with commercial insurance, within income limits. Page says year-round, reviewed monthly. https://www.uhccf.org/apply-for-a-grant/
+- **Chive Charities**: medical and quality-of-life equipment for people with rare conditions, veterans and first responders. No deadlines stated. https://chivecharities.org/recipient
+- **TTAP (Tennessee Technology Access Program)**: AT device demos, loans, reuse and funding help. No deadlines. https://www.tn.gov/humanservices/ds/ttap.html
+- **Katie Beckett (TennCare)**: no application window stated. Enrollment is capped by funding. You must be found eligible for Part B before Part A. https://www.tn.gov/tenncare/long-term-services-supports/katie-beckett-waiver.html
+- **TN CDD Scholarship Fund**: pays conference costs (registration, travel, respite) for Tennesseans with disabilities and their families. No deadline stated. The page still says "fiscal year 2026" (events July 1, 2025 – June 30, 2026), so it may be out of date. https://www.tn.gov/cdd/engage-with-us/scholarship-fund.html
+
+## Social Security (context)
+- **2027 COLA** is not announced yet. Per Motley Fool (not an official source), "SSA will announce the raise ... on Oct. 14". Check ssa.gov/cola after Oct 14. The ssa.gov page could not be fetched here.
+- The **SSA 2026 and 2027 payment-schedule PDFs** (https://www.ssa.gov/pubs/EN-05-10031-2027.pdf) state only "SSI on the 1st". I could not confirm from the PDF text that January 2027 SSI is paid early on Dec 31, 2026. That is likely, since Jan 1 is a holiday, but it is not verified.
+
+## Christmas help, Rutherford County
+- **Salvation Army Murfreesboro Angel Tree** covers Rutherford and Cannon counties, children 12 and under, first come first served. You apply online at saangeltree.org, and gifts are picked up at 1137 W Main St. **The page gives no 2026 registration dates.** https://www.salvationarmymurfreesboro.org/angel-tree-registration-information
+- Toys for Tots Rutherford County: no 2026 dates found. Apply through https://www.toysfortots.org/request-a-toy/
+- "Special Kids Cornelius Christmas" (special-needs families, Murfreesboro) was found only in a **2019** WGNS article. Status for 2026 is unknown. Contact Special Kids at 615.893.4892.
+
+## Could not verify / outside the window / not relevant
+- **ACT Today (Autism Care Today) grants**: window is "September 15th, 2026 to October 15th, 2026". It closes before November, so it can go in the October issue only.
+- **Partners in Policymaking (TN CDD)**: the 2026–27 class application is closed. There is no date yet for the 2027–28 class.
+- **TN Youth Leadership Forum**: no current TN program page found.
+- **Different Needz Foundation**: its page says no grant funding (outdated "2020" notice).
+- **Small Steps in Speech**: site blocked fetching, so its cycle is unverified.
+- **Autism Speaks family grants**: page blocked. **Aubrey Rose**: covers life-threatening conditions only and excludes autism. Its board meets in March, June, September and December, with no deadline.
+- **Lend-a-Hand Society**: Greater Boston only. **Variety**: Eastern TN only. **Parker's Place**: nothing relevant found.
+- **Kyle Pease Foundation**: its window closed Sep 18, 2026, and it requires having raced with KPF. **Freedom Concepts Dream Bike / Great Plays / AMBUCS AmTryke**: no windows stated. **Tobii Dynavox / PRC-Saltillo**: not checked.
+- **NCLD Anne Ford ($10k) and Allegra Ford Thomas ($5k)**: the last cycle ran to May 10, 2026. The open date for the next cycle is not stated. **Microsoft Disability Scholarship**: "Applications Currently Closed", no dates. **Lime Connect Pathways / Google**: 2026 cycle closed, no 2027 dates.
+- **Camps**: Camp Discovery (Jaycees), Camp Conquest and Easterseals TN list no 2027 application dates. Camp Koinonia opened 2026 registration on "April 1", which falls outside the window. Camp Barnabas (Missouri) early-bird deadline was Aug 31, 2026. Camp Horizon is an oncology/sibling camp, not relevant.
+- **ECF CHOICES, TennCare renewals, DDA respite**: no fixed windows found. **ABLE TN**: no promotion or match found. Per ABLE NRC, the ABLE Saver's Credit "expires December 31, 2025" on that page, which may be out of date given later federal law. Check before printing.
+- **Disability Day on the Hill 2027**: no date posted. **TN Disability MegaConference** was Aug 21, 2026, outside the window.
