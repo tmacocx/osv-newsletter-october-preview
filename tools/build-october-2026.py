@@ -14,8 +14,9 @@ T410: Free TicketsCandy registration link on Spooktacular (Details expand kept).
 Details is a native <details> expand with the on-site + sponsor copy (not a
 link-only jump to /events). Outlook/MSO gets the same copy in a conditional.
 T430: Wall of Hope returns between New in the library and One question,
-answered. Lead with Ellie's drawing win (photo + story, Sept 28, 2026,
-byline -Taylor) and keep a short share invitation under that card.
+answered. Lead with Ellie's drawing win (photo + story). Under the story,
+the Wall of Hope line is "✎ First name, town" (placeholder
+"✎ Taylor, Murfreesboro"). No date. Short share invitation under the card.
 T429: Calendar rows for Hickok adds that were missing from The month ahead.
 Chronological: rEcess (Sat Oct 3, before Game Day), Dollywood (Wed Oct 21),
 Gallatin HOSA Trunk or Treat (Thu Oct 22), Caleb's Friends (Sun Oct 25, after
@@ -1105,8 +1106,7 @@ def build_html(base, browser=False):
         f'text-decoration:none;border-radius:12px;">'
     )
     hope_copy = (
-        p("September 28, 2026", 13, 18, ACCENT, 700, margin="0", cls="os-tiny")
-        + p("Ellie&rsquo;s drawing win", 17, 24, INK, 700, margin="6px 0 0 0")
+        p("Ellie&rsquo;s drawing win", 17, 24, INK, 700, margin="0")
         + p("Ellie is four years old and has always struggled with fine motor skills. Because of this, "
            "she has avoided drawing and attempting to write letters at all costs because she is a "
            "perfectionist and is so petrified of doing something poorly.",
@@ -1115,7 +1115,7 @@ def build_html(base, browser=False):
            "up a marker, and during play drew x&rsquo;s on a cardboard box. I had NEVER seen her draw "
            "more than 2 seconds of scribbles and this was an incredible win for her.",
            15, 22, BODY, 400, margin="8px 0 0 0")
-        + p("-Taylor", 15, 22, INK, 700, margin="12px 0 0 0")
+        + p("&#9998; Taylor, Murfreesboro", 15, 22, INK, 700, margin="12px 0 0 0")
     )
     # Email-safe two-cell table. .os-col stacks the photo above the story under 620px.
     hope_table = (
@@ -1340,10 +1340,10 @@ def build_text():
     w("----------------------------------------")
     w("WALL OF HOPE")
     w("")
-    w("September 28, 2026 · Ellie's drawing win")
+    w("Ellie's drawing win")
     w("  Ellie is four years old and has always struggled with fine motor skills. Because of this, she has avoided drawing and attempting to write letters at all costs because she is a perfectionist and is so petrified of doing something poorly.")
     w("  After lots of DIR Floortime work with her OT Alyssa that worked on prewriting, she picked up a marker, and during play drew x's on a cardboard box. I had NEVER seen her draw more than 2 seconds of scribbles and this was an incredible win for her.")
-    w("  -Taylor")
+    w("  ✎ Taylor, Murfreesboro")
     w("")
     w("Borrow a little hope, or lend some")
     w("  Have a win of your own? Tell it like you would tell another parent.")
@@ -1781,21 +1781,25 @@ def main():
         assert doc.find('id="library"') < doc.find('id="hope"') < doc.find('id="question"')
         assert "ellie-drawing-win-2026.jpg" in doc
         assert 'alt="Ellie, age four, drawing X marks on a cardboard box with a marker."' in doc
-        assert "September 28, 2026" in doc
         assert "Ellie&rsquo;s drawing win" in doc
         assert "Ellie is four years old" in doc
         assert "drew x&rsquo;s on a cardboard box" in doc
         assert "I had NEVER seen her draw" in doc
-        assert ">-Taylor</p>" in doc or "-Taylor" in doc
+        assert "&#9998; Taylor, Murfreesboro" in doc
+        assert "September 28, 2026" not in doc
+        assert "-Taylor" not in doc
         assert "class=\"os-col os-col-photo\"" in doc
         assert "Borrow a little hope, or lend some" in doc
         assert f'href="{SITE}/hope"' in doc
         assert "The first stories are on their way" not in doc
         hope_slice = doc.split('id="hope"', 1)[1].split('id="question"', 1)[0]
+        assert hope_slice.find("incredible win for her") < hope_slice.find("&#9998; Taylor, Murfreesboro")
+        assert hope_slice.find("&#9998; Taylor, Murfreesboro") < hope_slice.find("Borrow a little hope, or lend some")
         assert hope_slice.find("Ellie is four years old") < hope_slice.find("Borrow a little hope, or lend some")
         assert hope_slice.find("os-hope") < hope_slice.find("Share your win")
     assert txt.find("NEW IN THE LIBRARY") < txt.find("WALL OF HOPE") < txt.find("ONE QUESTION, ANSWERED")
-    assert "Ellie is four years old" in txt and "-Taylor" in txt
+    assert "Ellie is four years old" in txt and "✎ Taylor, Murfreesboro" in txt
+    assert "-Taylor" not in txt and "September 28, 2026" not in txt
     assert f"{SITE}/hope" in txt
     # T394 Mercedes: title on its own row above photo; photo left of bio
     guest_i = html.find('class="os-vh-guest"')
