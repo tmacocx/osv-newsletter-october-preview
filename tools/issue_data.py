@@ -50,22 +50,25 @@ ISSUES = [
     # ------------------------------------------------------------------ November 2026
     dict(
         id="2026-11", send_on="2026-11-01", month="November", month_year="November 2026",
-        subject="November: AAC Village Hall + sensory-friendly events",
-        preheader=("Village Hall on AAC with Amanda Rains, Thanksgiving break dates, sensory-friendly "
+        subject="November: AAC round table + sensory-friendly events",
+        preheader=("An AAC round table with PRC-Saltillo and Tobii Dynavox, Thanksgiving break dates, sensory-friendly "
                    "events, and two guides on AAC devices and Katie Beckett funds."),
         hero_alt="Illustration of the village in autumn: homes, shops, and neighbors walking the path.",
         note=[
-            ("This month&rsquo;s Village Hall is one I have been looking forward to. Amanda Rains is a "
-             "speech-language pathologist who has spent her career helping children and young adults "
-             "communicate with AAC, and she is joining us on Saturday, November 14."),
-            ("Whether your child uses a device every day, is just starting with a picture board, or you "
-             "are wondering if AAC could help, bring your questions. This issue also has two guides on "
-             "getting an AAC device and using Katie Beckett funds, plus the month&rsquo;s sensory-friendly events."),
+            ("This month&rsquo;s Village Hall is one I have been looking forward to! I will be joining Amanda "
+             "Rains of PRC-Saltillo and Kerry Hankins-Grider with Tobii Dynavox for an AAC round table on "
+             "Saturday, November 14. Amanda is a speech-language pathologist and LAMP Certified Professional "
+             "who has spent her career helping children and young adults communicate with AAC. "
+             + ph("One or two sentences introducing Kerry (bio coming).")),
+            ("AAC can be more than just for people who are nonverbal or nonspeaking. Many autistic kids and "
+             "adults lose access to language when they are dysregulated, and a device can help in those moments "
+             "or simply give them more confidence. Whether your child uses a device every day or you are "
+             "wondering if AAC could help, bring your questions."),
             ("Thanksgiving can be a lot for our kids and for us. Whatever your table looks like this year, "
              "I hope you find a little room to rest."),
         ],
         note_highlight="a little room to rest",
-        chips=[("#deadlines", "Thanksgiving break"), ("#village-hall", "AAC Village Hall"),
+        chips=[("#deadlines", "Thanksgiving break"), ("#village-hall", "AAC round table"),
                ("#events", "Sensory-friendly events"), ("#library", "AAC + funding guides")],
         three_things=[],       # filled from research below
         all_deadlines=[],
@@ -74,19 +77,29 @@ ISSUES = [
         village_hall=dict(
             date="Saturday, November 14, 2026",
             time=VH_TIME,
-            topic="AAC: helping your child communicate with a speech-generating device",
-            guest=dict(
-                name="Amanda Rains, M.S., CCC-SLP",
-                role="LAMP Certified Professional &middot; PRC-Saltillo",
-                photo="amanda-rains-160.jpg",
-                photo_alt="Amanda Rains, M.S., CCC-SLP.",
-                bio=("Amanda has focused on AAC since graduate school, where she led an AAC group for adults "
-                     "with Down syndrome. In private practice she ran AAC evaluations and therapy for children "
-                     "and young adults who use AAC, and coached families and school teams to make devices work "
-                     "every day. She is a LAMP Certified Professional with PRC-Saltillo."),
-            ),
-            about=("A 45-minute lesson on AAC and how families can build communication at home, then live "
-                   "parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not."),
+            topic="AAC round table with Taylor, PRC-Saltillo, and Tobii Dynavox",
+            guests=[
+                dict(
+                    name="Amanda Rains, M.S., CCC-SLP",
+                    role="LAMP Certified Professional &middot; PRC-Saltillo",
+                    photo="amanda-rains-160.jpg",
+                    photo_alt="Amanda Rains, M.S., CCC-SLP.",
+                    bio=("Amanda has focused on AAC since graduate school, where she led an AAC group for adults "
+                         "with Down syndrome. In private practice she ran AAC evaluations and therapy for children "
+                         "and young adults who use AAC, and coached families and school teams to make devices work "
+                         "every day. She is a LAMP Certified Professional with PRC-Saltillo."),
+                ),
+                dict(
+                    name="Kerry Hankins-Grider",
+                    role="Tobii Dynavox",
+                    photo=None,
+                    photo_alt="Kerry Hankins-Grider.",
+                    bio=ph("Kerry&rsquo;s bio goes here (bio coming)."),
+                ),
+            ],
+            about=("A conversation about AAC: who it can help, how families choose and fund a device, and how to "
+                   "make it part of everyday life. Then live parent questions. The talk is recorded and sent to "
+                   "registrants; the Q&amp;A is not."),
             art_alt="The Village Hall with its doors open, neighbors seated outside listening to a speaker.",
         ),
         events=dict(
@@ -117,12 +130,12 @@ ISSUES = [
         ),
         library_title="From the library",
         guides=[
-            dict(label="Guide, reviewed Aug 2026", title="AAC devices and how to get one",
+            dict(label="Communication", title="AAC devices and how to get one",
                  blurb=("Evaluations, funding, free device trials, and the systems compared: the full path to "
                         "a reliable way to communicate."),
                  path="/resources/aac-devices",
                  art_alt="A therapy clinic and an open porch where a child and adults use a tablet together, in autumn."),
-            dict(label="Guide, reviewed Sept 2026", title="Using your Katie Beckett funds",
+            dict(label="Paying for care", title="Using your Katie Beckett funds",
                  blurb=("Practical Tennessee Katie Beckett Part B ideas for therapy, respite, equipment, supplies, "
                         "activities, and documentation."),
                  path="/resources/katie-beckett-funds", cta="Read the funds guide",
@@ -133,7 +146,9 @@ ISSUES = [
         question=dict(
             q="Will using an AAC device stop my child from learning to talk?",
             short=("Almost every parent worries about this, and the evidence points the other way: children "
-                   "given a reliable way to communicate tend to speak more, not less."),
+                   "given a reliable way to communicate tend to speak more, not less. AAC is not only for kids "
+                   "with no words; many autistic kids lose language when they are dysregulated, and a device "
+                   "can carry them through."),
             steps=[
                 ("Start without waiting.", "There is no readiness test and no age floor. A picture board on the "
                  "fridge counts, and nobody has to approve it first."),
@@ -195,12 +210,12 @@ ISSUES = [
         ),
         library_title="From the library",
         guides=[
-            dict(label="Guide, reviewed Sept 2026", title="When your nervous system is full",
+            dict(label="Parent well-being", title="When your nervous system is full",
                  blurb=("Understand co-regulation, notice your own overload sooner, and build a realistic plan "
                         "for staying steady enough, or repairing when you cannot."),
                  path="/resources/when-your-nervous-system-is-full",
                  art_alt="A parent and child walking a snowy path toward a small house with a signpost and bench."),
-            dict(label="Guide, reviewed Aug 2026", title="Planning for adulthood and for when you&rsquo;re gone",
+            dict(label="Planning ahead", title="Planning for adulthood and for when you&rsquo;re gone",
                  blurb=("Trusts, ABLE accounts, letters of intent, decision-making supports: the questions "
                         "nobody else answers."),
                  path="/resources/life-planning", cta="Read the planning guide",
@@ -260,12 +275,12 @@ ISSUES = [
         ),
         library_title="From the library",
         guides=[
-            dict(label="Guide, reviewed Aug 2026", title="IEPs, 504s, and how to get one",
+            dict(label="School", title="IEPs, 504s, and how to get one",
                  blurb=("The Tennessee timelines, your rights, a sample SAT meeting request, and the free "
                         "advocates who&rsquo;ll walk in with you."),
                  path="/resources/iep-504",
                  art_alt="A snowy school and a covered table where a parent meets with a teacher."),
-            dict(label="Guide, reviewed Aug 2026", title="The DDA Family Support Program",
+            dict(label="Paying for care", title="The DDA Family Support Program",
                  blurb=("Up to $6,000 a year from Tennessee&rsquo;s Department of Disability and Aging for respite, "
                         "equipment, and home modifications."),
                  path="/resources/funding/family-support", cta="Read the Family Support guide",
@@ -326,11 +341,11 @@ ISSUES = [
         ),
         library_title="From the library",
         guides=[
-            dict(label="Guide, reviewed Aug 2026", title="Sensory processing, explained",
+            dict(label="Sensory", title="Sensory processing, explained",
                  blurb="All eight senses in plain language, and how to meet the need instead of fighting the behavior.",
                  path="/resources/sensory-processing",
                  art_alt="A snowy therapy clinic and porch where a child plays with sensory tools beside an adult."),
-            dict(label="Guide, reviewed Sept 2026", title="When childproofing isn&rsquo;t enough",
+            dict(label="Safety", title="When childproofing isn&rsquo;t enough",
                  blurb=("A layered home-safety plan for children who open, climb over, copy, or dismantle "
                         "ordinary safeguards."),
                  path="/resources/safety-elopement", cta="Read the safety guide",
@@ -362,8 +377,8 @@ ISSUES = [
 # ---------------------------------------------------------------------------- dated items
 # Verified Sept 28, 2026 against the official pages in research-notes-nov-2026-feb-2027.md.
 
-RCS = ("https://www.rcschools.net/o/rcs/page/rcs-academic-calendars", "RCS")
-MCS = ("https://www.cityschools.net/calendar", "MCS")
+RCS = ("https://www.rcschools.net/o/rcs/page/rcs-academic-calendars", "Rutherford County Schools calendar")
+MCS = ("https://www.cityschools.net/calendar", "Murfreesboro City Schools calendar")
 HC = ("https://www.healthcare.gov/quick-guide/dates-and-deadlines/", "HealthCare.gov dates")
 MEDICARE = ("https://www.medicare.gov/health-drug-plans/open-enrollment", "Medicare.gov")
 ACT_DATES = "https://www.act.org/content/act/en/products-and-services/the-act/registration/test-dates.html"
@@ -389,13 +404,13 @@ NOV.update(
     deadlines_meta="Dates confirmed Sept 28, 2026. Teen, college, and insurance items live here so the email can stay short.",
     three_things=[
         dict(chip=("Tue", "3", "Nov"), items=[dict(
-            title="Election Day, Tue Nov 3: no school in RCS or MCS",
-            body=("Both districts are closed to students. MCS holds parent-teacher conferences and sends report "
-                  "cards that day; RCS progress reports go home Nov 4 to 6. Ask for IEP progress data."),
+            title="Election Day, Tue Nov 3: no school in either district",
+            body=("Rutherford County Schools and Murfreesboro City Schools are both closed to students. Murfreesboro City Schools holds parent-teacher conferences and sends report "
+                  "cards that day; Rutherford County progress reports go home Nov 4 to 6. Ask for IEP progress data."),
             links=[RCS, MCS])]),
         dict(chip=("Mon", "23", "Nov"), items=[dict(
             title="Thanksgiving break, Nov 23 to 27",
-            body=("Students in both districts are out all week. If a quiet week helps, pencil in one outing and "
+            body=("Students in Rutherford County Schools and Murfreesboro City Schools are out all week. If a quiet week helps, pencil in one outing and "
                   "leave the rest open."),
             links=[RCS, MCS])]),
         dict(chip=("Nov", "1", "Jan 15"), items=[dict(
@@ -407,8 +422,8 @@ NOV.update(
     all_deadlines=[
         ("School and community", [
             ("Tue", "3", "Nov", "Election Day: no school for students",
-             f"RCS teacher admin day; MCS parent-teacher conferences and report cards. {RCS_MCS}"),
-            ("Wed", "4", "Nov 6", "RCS progress reports: Nov&nbsp;4&ndash;6", L(*RCS)),
+             f"Rutherford County Schools teacher admin day; Murfreesboro City Schools parent-teacher conferences and report cards. {RCS_MCS}"),
+            ("Wed", "4", "Nov 6", "Rutherford County Schools progress reports: Nov&nbsp;4&ndash;6", L(*RCS)),
             ("Mon", "23", "Nov 27", "Thanksgiving break: Nov&nbsp;23&ndash;27",
              f"Students out all week in both districts. {RCS_MCS}"),
         ]),
@@ -434,7 +449,7 @@ DEC.update(
     three_things=[
         dict(chip=("Fri", "18", "Dec"), items=[dict(
             title="Winter break: last day Fri Dec 18, back Tue Jan 5",
-            body=("Dec 18 is a short day in both districts. Break runs Dec 21 to Jan 1, and Mon Jan 4 is also "
+            body=("Dec 18 is a short day in Rutherford County and Murfreesboro City Schools. Break runs Dec 21 to Jan 1, and Mon Jan 4 is also "
                   "no school for students. A visual countdown can make the change in routine easier."),
             links=[RCS, MCS])]),
         dict(chip=("Tue", "15", "Dec"), items=[dict(
@@ -450,7 +465,7 @@ DEC.update(
     all_deadlines=[
         ("School", [
             ("Fri", "18", "Dec", "Short day, last day before winter break",
-             f"RCS 2-hour day ends the 2nd nine weeks; MCS half day. {RCS_MCS}"),
+             f"Rutherford County Schools 2-hour day ends the 2nd nine weeks; Murfreesboro City Schools half day. {RCS_MCS}"),
             ("Mon", "21", "Jan 1", "Winter break: Dec&nbsp;21&ndash;Jan&nbsp;1", RCS_MCS),
             ("Mon", "4", "Jan", "In-service day: no school for students", RCS_MCS),
             ("Tue", "5", "Jan", "Students return", RCS_MCS),
@@ -480,7 +495,7 @@ JAN.update(
     three_things=[
         dict(chip=("Tue", "5", "Jan"), items=[dict(
             title="Back to school Tue Jan 5 (no school Mon Jan 4)",
-            body=("Report cards come home Wed Jan 6 (MCS) and Fri Jan 8 (RCS). A good time to ask how IEP goals "
+            body=("Report cards come home Wed Jan 6 (Murfreesboro City Schools) and Fri Jan 8 (Rutherford County Schools). A good time to ask how IEP goals "
                   "are tracking before spring."),
             links=[RCS, MCS])]),
         dict(chip=("Fri", "15", "Jan"), items=[dict(
@@ -489,15 +504,15 @@ JAN.update(
             links=[HC])]),
         dict(chip=("Mon", "18", "Jan"), items=[dict(
             title="Martin Luther King Jr. Day, Mon Jan 18: no school",
-            body="Both districts are closed.",
+            body="Rutherford County Schools and Murfreesboro City Schools are both closed.",
             links=[RCS, MCS])]),
     ],
     all_deadlines=[
         ("School and community", [
             ("Mon", "4", "Jan", "In-service day: no school for students", RCS_MCS),
             ("Tue", "5", "Jan", "Students return", RCS_MCS),
-            ("Wed", "6", "Jan", "MCS report cards", L(*MCS)),
-            ("Fri", "8", "Jan", "RCS report cards, 2nd nine weeks", L(*RCS)),
+            ("Wed", "6", "Jan", "Murfreesboro City Schools report cards", L(*MCS)),
+            ("Fri", "8", "Jan", "Rutherford County Schools report cards, 2nd nine weeks", L(*RCS)),
             ("Tue", "12", "Jan", "Tennessee General Assembly convenes",
              'The legislature meets on the second Tuesday of January in odd years. '
              '<a href="https://sos.tn.gov/civics/guides/legislative-branch">TN Secretary of State</a>'),
@@ -527,7 +542,7 @@ FEB.update(
     three_things=[
         dict(chip=("Mon", "15", "Feb"), items=[dict(
             title="Presidents&rsquo; Day, Mon Feb 15: no school",
-            body="Both districts are closed. MCS students are also out Fri Feb 12, so city families get a four-day weekend.",
+            body="Rutherford County Schools and Murfreesboro City Schools are both closed. City students are also out Fri Feb 12, so city families get a four-day weekend.",
             links=[RCS, MCS])]),
         dict(chip=("Tue", "16", "Feb"), items=[dict(
             title="IEA applications projected to open Tue Feb 16",
@@ -536,16 +551,16 @@ FEB.update(
             links=[(IEA, "IEA")])]),
         dict(chip=("Thu", "11", "Mar"), items=[dict(
             title="Looking ahead: no school Thu Mar 11, clocks spring forward Sun Mar 14",
-            body=("Both districts are out Mar 11. If sleep is fragile, shift bedtime 10 to 15 minutes a night "
+            body=("Rutherford County and Murfreesboro City Schools are out Mar 11. If sleep is fragile, shift bedtime 10 to 15 minutes a night "
                   "the week before the time change."),
             links=[RCS, MCS, (NIST, "How DST works")])]),
     ],
     all_deadlines=[
         ("School and community", [
-            ("Wed", "3", "Feb 5", "RCS progress reports: Feb&nbsp;3&ndash;5", L(*RCS)),
-            ("Fri", "12", "Feb", "MCS planning day: no school for MCS students", L(*MCS)),
+            ("Wed", "3", "Feb 5", "Rutherford County Schools progress reports: Feb&nbsp;3&ndash;5", L(*RCS)),
+            ("Fri", "12", "Feb", "Murfreesboro City Schools planning day: no school for city students", L(*MCS)),
             ("Mon", "15", "Feb", "Presidents&rsquo; Day: no school", RCS_MCS),
-            ("Thu", "11", "Mar", "No school for students", f"RCS admin day; MCS parent-teacher conferences. {RCS_MCS}"),
+            ("Thu", "11", "Mar", "No school for students", f"Rutherford County Schools admin day; Murfreesboro City Schools parent-teacher conferences. {RCS_MCS}"),
             ("Sun", "14", "Mar", "Clocks spring forward", f'Daylight saving time begins at 2:00 AM. {L(NIST, "NIST")}'),
             ("Mon", "29", "Apr 2", "Spring break: Mar&nbsp;29&ndash;Apr&nbsp;2", RCS_MCS),
         ]),
@@ -570,7 +585,10 @@ NOV["events"]["featured"] = dict(
     meta="Thu Nov 12 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required",
     blurb="Smaller crowds and reduced sensory input for families of children with special needs.",
     link=(DC_URL, "Reserve your spot"),
-    art_alt="Families walking through the village in autumn, one child in a wheelchair and one with a service dog.",
+    # Real photo from the Discovery Center's own site (their homepage share image). Their site has no
+    # Fall on the Farm photo, and this environment can't download from explorethedc.org, so it is linked.
+    photo_url="https://www.explorethedc.org/wp-content/uploads/2024/03/Discovery-Center.jpg",
+    art_alt="The Discovery Center at Murfree Spring in Murfreesboro.",
 )
 NOV["events"]["list"] = [
     dict(chip=("Sat", "7", "Nov"), title="Sensory Sessions with Love Learning Music &middot; Linebaugh Library",
@@ -598,10 +616,9 @@ COMMON_TODO = [
 ]
 NOV["todo"] = [
     COMMON_TODO[0],
-    "Village Hall title is my draft (&ldquo;AAC: helping your child communicate with a speech-generating device&rdquo;). Confirm or change it with Amanda.",
+    "Kerry Hankins-Grider: add her bio and a photo (Village Hall card), and one or two intro sentences in your note.",
     "Amanda&rsquo;s role line says &ldquo;LAMP Certified Professional &middot; PRC-Saltillo&rdquo;. Add her job title if she has one.",
     "Registration: the site still says Nov 14 registration is not open. Open it before Nov 1.",
-    COMMON_TODO[2],
 ]
 DEC["todo"] = COMMON_TODO + ["Does the Thursday group meet Dec 24 and Dec 31? Add a line if not."]
 JAN["todo"] = COMMON_TODO + [

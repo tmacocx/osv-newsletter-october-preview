@@ -94,9 +94,22 @@ def img(src, alt, width=600, extra=""):
             f'text-decoration:none;border-radius:12px;{extra}">')
 
 
+def btn(href, label, on_navy=False):
+    """Small outlined pill button. Taylor's rule: buttons, never underlined text links."""
+    color = GOLD if on_navy else ACCENT
+    cls = "os-gold" if on_navy else "os-link"
+    return (f'<a class="{cls}" href="{href}" style="display:inline-block;margin:8px 8px 0 0;'
+            f'padding:7px 16px;border:1.5px solid {color};border-radius:99px;font:700 14px/18px {FONT};'
+            f'color:{color};text-decoration:none;">{label}</a>')
+
+
+def btn_row(links, margin="4px 0 0 0", on_navy=False):
+    return (f'<div class="os-btn-row" style="margin:{margin};">'
+            + "".join(btn(h, lab, on_navy) for h, lab in links) + '</div>')
+
+
 def link_line(links, size=15, lh=22, margin="8px 0 0 0", cls=""):
-    return p(" &nbsp;&middot;&nbsp; ".join(a(h, lab) for h, lab in links), size, lh, BODY, 400,
-             margin=margin, cls=cls)
+    return btn_row(links, margin=margin)
 
 
 def issue_chips(chips):
@@ -124,12 +137,20 @@ def three_things(issue):
             if ii:
                 body += (f'<div style="margin:14px 0 14px 0;border-top:1px solid {RULE};font-size:0;'
                          f'line-height:0;height:1px;">&nbsp;</div>')
-            text = it["body"]
+            body += item(it["title"], [it["body"]], featured=True)
             if it.get("links"):
-                text += " &nbsp;" + " &nbsp;&middot;&nbsp; ".join(a(h, lab) for h, lab in it["links"])
-            body += item(it["title"], [text], featured=True)
+                body += btn_row(it["links"])
         rows.append(row(chip(*g["chip"]), body, last=(gi == len(groups) - 1), featured=True))
     return rows_table(rows)
+
+
+def photo_cell(g, art):
+    if g.get("photo"):
+        return (f'<img class="os-vh-portrait" src="{art(g["photo"])}" width="88" height="115" alt="{g["photo_alt"]}" '
+                'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">')
+    return ('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="88" '
+            'style="width:88px;border-collapse:separate;border:1px dashed #b8912f;border-radius:10px;background-color:#fff1b8;">'
+            f'<tr><td align="center" style="height:113px;padding:4px;">{p(PH_OPEN + "Photo" + PH_CLOSE, 12, 16, INK, 700, extra="text-align:center;")}</td></tr></table>')
 
 
 def guest_block(g, art):
@@ -143,9 +164,8 @@ def guest_block(g, art):
             cls="os-vh-guestrole")
         + '</td></tr><tr>'
         f'<td class="os-vh-guestphoto" width="88" valign="middle" style="width:88px;padding:0 12px 0 0;vertical-align:middle;">'
-        f'<img class="os-vh-portrait" src="{art(g["photo"])}" width="88" height="115" alt="{g["photo_alt"]}" '
-        'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
-        '</td><td class="os-vh-guestblurb" valign="middle" align="left" style="padding:0;vertical-align:middle;text-align:left;">'
+        + photo_cell(g, art)
+        + '</td><td class="os-vh-guestblurb" valign="middle" align="left" style="padding:0;vertical-align:middle;text-align:left;">'
         + p(g["bio"], 13, 19, SAND, 400, extra="text-align:left;")
         + "".join(p(navy_a(h, lab, nowrap=False), 13, 18, SAND, 400, margin="8px 0 0 0" if i == 0 else "2px 0 0 0",
                     extra="text-align:left;", cls="os-vh-contact") for i, (h, lab) in enumerate(g.get("links", [])))
@@ -155,7 +175,8 @@ def guest_block(g, art):
 
 def village_hall(issue, art):
     vh = issue["village_hall"]
-    guest = guest_block(vh["guest"], art) if vh.get("guest") else (
+    guests = vh.get("guests") or ([vh["guest"]] if vh.get("guest") else [])
+    guest = "".join(guest_block(g, art) for g in guests) if guests else (
         p(vh["guest_placeholder"], 14, 21, SAND, 400, margin="0 0 16px 0"))
     panel = (
         f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" '
@@ -164,7 +185,7 @@ def village_hall(issue, art):
         + p(vh["date"], 13, 18, GOLD, 700, margin="0 0 4px 0")
         + vh_meta_icon("clock-gold", vh["time"], bottom="4px")
         + vh_meta_icon("video-gold", "Online", bottom="18px")
-        + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
+        + p("Topic and guests" if len(guests) > 1 else "Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
         + p(vh["topic"], 17, 24, CREAM, 700, margin="0 0 14px 0")
         + guest
         + p(vh["about"], 14, 21, SAND, 400, margin="0 0 16px 0")
@@ -189,24 +210,23 @@ def month_ahead(issue, art):
     ev = issue["events"]
     f = ev["featured"]
     link = f.get("link")
-    art_html = img(art("featured.jpg"), f["art_alt"], extra="")
+    art_html = img(f.get("photo_url") or art(f.get("photo", "featured.jpg")), f["art_alt"], extra="")
     if link:
         art_html = f'<a href="{link[0]}" style="display:block;text-decoration:none;border:0;outline:none;">{art_html}</a>'
     copy = (p("Featured", 13, 18, ACCENT, 700, margin="12px 0 0 0")
             + p(f["title"], 18, 25, INK, 700, margin="6px 0 0 0")
             + p(f["meta"], 16, 24, BODY, 400, margin="6px 0 0 0")
             + (p(f["blurb"], 15, 22, BODY, 400, margin="6px 0 0 0") if f.get("blurb") else "")
-            + (p(a(*link), 16, 24, BODY, 400, margin="8px 0 0 0") if link else ""))
+            + (btn_row([link]) if link else ""))
     out = [section_head("events", "The month ahead", ev.get(
         "intro", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.")),
            sp(12), padrow(card(art_html + copy, pad="12px 20px 16px 20px"))]
     if ev["list"]:
         rows = []
         for i, e in enumerate(ev["list"]):
-            lines = [e["meta"]]
+            content = item(e["title"], [e["meta"]])
             if e.get("link"):
-                lines.append(a(*e["link"]))
-            content = item(e["title"], lines)
+                content += btn_row([e["link"]])
             if e.get("disclose"):
                 content += disclose(e["disclose"])
             rows.append(row(chip(*e["chip"]), content, last=(i == len(ev["list"]) - 1), tight=True))
@@ -244,8 +264,8 @@ def library(issue, art):
                  + p(g["label"], 13, 18, ACCENT, 700, cls="os-tiny")
                  + p(g["title"], 17, 24, INK, 700, margin="6px 0 0 0")
                  + p(g["blurb"], 15, 22, BODY, 400, margin="8px 0 0 0")
-                 + p(a(f"{SITE}{g['path']}", g.get("cta", "Read the guide")), 15, 22, BODY, 400,
-                     margin="8px 0 0 0", cls="os-card-cta"))
+                 + '<div class="os-card-cta">'
+                 + btn_row([(SITE + g["path"], g.get("cta", "Read the guide"))]) + '</div>')
         cards.append(card(inner, pad="16px 16px 16px 16px"))
     return (section_head("library", issue.get("library_title", "From the library")) + sp(12)
             + padrow(O.browser_cols(*cards, gap=16)))
@@ -261,11 +281,11 @@ def question(issue):
           + p(q["short"], 16, 24, BODY, 400, margin="10px 0 12px 0")
           + steps
           + f'<div style="margin:16px 0 0 0;border-top:1px solid {RULE};font-size:0;line-height:0;height:1px;">&nbsp;</div>'
-          + link_line(q["links"], margin="12px 0 0 0")
+          + link_line(q["links"] + [(f"{SITE}/contact", "Send us your question")], margin="6px 0 0 0")
           + p(q.get("disclaimer", "Parent-to-parent guidance, not medical or legal advice."), 13, 20, MUTED, 400,
               margin="10px 0 0 0", cls="os-tiny"))
     return (section_head("question", "One question, answered",
-                         "One real question from a local parent, answered plainly. " + a(f"{SITE}/contact", "Send us yours"))
+                         "One real question from a local parent, answered plainly.")
             + sp(12) + padrow(card(qa, pad="16px 20px 14px 20px")))
 
 
@@ -376,7 +396,7 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     about_copy = ((f'<h2 class="os-ink" style="margin:0;font-family:{FONT};font-size:17px;line-height:23px;'
                    f'mso-line-height-rule:exactly;color:{INK};font-weight:700;">About Our Special Village</h2>')
                   + p(O.ABOUT, 14, 21, BODY, 400, margin="6px 0 0 0")
-                  + p(a(f"{SITE}/about", "About the Village") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/editorial-policy", "How we check information"), 14, 21, BODY, 400, margin="8px 0 0 0"))
+                  + btn_row([(f"{SITE}/about", "About the Village"), (f"{SITE}/editorial-policy", "How we check information")]))
     about_photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="160" class="os-photocell" bgcolor="{BLUSH}" '
                    f'style="width:160px;border-collapse:separate;background-color:{BLUSH};border-radius:12px;">'
                    f'<tr><td class="os-photocell" align="center" style="width:160px;vertical-align:middle;border-radius:12px;">'
@@ -405,6 +425,7 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append('</table></td></tr></table></body></html>')
     out = "\n".join(o) + "\n"
     out = out.replace(f"{PAGES}art/icons/", f"{base}icons/")  # O.meta_row / vh_meta_icon hard-code Pages
+    out = out.replace("text-decoration:underline", "text-decoration:none")  # Taylor: no underlined links
     return render_ph(out)
 
 
@@ -450,12 +471,12 @@ def build_text(issue, deadlines_url):
     w(plain(vh["time"]))
     w("Online")
     w(f"Topic and guest: {plain(vh['topic'])}")
-    if vh.get("guest"):
-        g = vh["guest"]
+    guests = vh.get("guests") or ([vh["guest"]] if vh.get("guest") else [])
+    for g in guests:
         w(f"{plain(g['name'])} - {plain(g['role'])}. {plain(g['bio'])}")
         for h, lab in g.get("links", []):
             w(f"{plain(lab)}: {h}")
-    else:
+    if not guests:
         w(plain(vh["guest_placeholder"]))
     w(plain(vh["about"]))
     w(f"{plain(vh.get('button', 'Register for Village Hall'))}: {SITE}/village-hall")
@@ -574,6 +595,10 @@ def build_deadlines(issue, back_url, back_label):
         sections.append(f"<h2>{title}</h2>\n{rows}")
     page = O.build_deadlines_page()
     head_part = page.split("<main>", 1)[0]
+    head_part = head_part.replace("</style>", (
+        f".body a{{display:inline-block;margin:8px 8px 0 0;padding:6px 14px;border:1.5px solid {ACCENT};"
+        "border-radius:999px;text-decoration:none;font-size:14px;line-height:18px;white-space:nowrap;}"
+        ".back a{text-decoration:none;}\n</style>"))
     head_part = re.sub(r"<title>.*?</title>", f"<title>{issue['month_year']} deadlines · Our Special Village</title>", head_part)
     body = (f'<main>\n<p class="back"><a href="{back_url}">&larr; {back_label}</a></p>\n'
             f"<h1>All {issue['month']} deadlines</h1>\n"
