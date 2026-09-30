@@ -14,9 +14,9 @@ T410: Free TicketsCandy registration link on Spooktacular (Details expand kept).
 Details is a native <details> expand with the on-site + sponsor copy (not a
 link-only jump to /events). Outlook/MSO gets the same copy in a conditional.
 T430: Wall of Hope returns between New in the library and One question,
-answered. Lead with Ellie's drawing win (photo + story). Under the story,
-the attribution line is locked: "✎ Taylor, Murfreesboro". No date, no
-"-Taylor". Short share invitation under the card.
+answered. Sept 30: the story is Nicole's ("His love needs no words.", from the
+site), not Taylor's. Every Wall of Hope signs off with the name, then
+Murfreesboro: "✎ Nicole, Murfreesboro". No date. Short share invitation under the card.
 T429: Calendar rows for Hickok adds that were missing from The month ahead.
 Chronological: rEcess (Sat Oct 3, before Game Day), Dollywood (Wed Oct 21),
 Gallatin HOSA Trunk or Treat (Thu Oct 22), Caleb's Friends (Sun Oct 25, after
@@ -941,7 +941,7 @@ HOPE = dict(
          "lessons, moments, experiences and perspective that others do not get the pleasure to experience. "
          "If nobody has told you today I love you, you are doing a great job, we are the village."),
     ],
-    byline="&#9998; Nicole",
+    byline="&#9998; Nicole, Murfreesboro",
 )
 
 
@@ -1498,11 +1498,11 @@ def main():
         hope_slice = doc.split('id="hope"', 1)[1].split('id="question"', 1)[0]
         for para in HOPE["paras"]:
             assert para in hope_slice
-        assert "His love needs no words." in hope_slice and "&#9998; Nicole" in hope_slice
+        assert "His love needs no words." in hope_slice and "&#9998; Nicole, Murfreesboro" in hope_slice
         assert "Ellie" not in doc and "&#9998; Taylor, Murfreesboro" not in doc
-        assert hope_slice.find("we are the village.") < hope_slice.find("&#9998; Nicole") < hope_slice.find("Borrow a little hope, or lend some")
+        assert hope_slice.find("we are the village.") < hope_slice.find("&#9998; Nicole, Murfreesboro") < hope_slice.find("Borrow a little hope, or lend some")
         assert f'href="{SITE}/hope"' in hope_slice and "Share your win" in hope_slice
-    assert "WALL OF HOPE" in txt and "His love needs no words." in txt and "✎ Nicole" in txt and "Ellie" not in txt
+    assert "WALL OF HOPE" in txt and "His love needs no words." in txt and "✎ Nicole, Murfreesboro" in txt and "Ellie" not in txt
     assert txt.find("NEW IN THE LIBRARY") < txt.find("WALL OF HOPE") < txt.find("ONE QUESTION, ANSWERED")
     # words that must survive the restyle
     for phrase in ("October in Our Special Village", "Welcome to Our Special Village!", "you do not have to figure everything out alone",

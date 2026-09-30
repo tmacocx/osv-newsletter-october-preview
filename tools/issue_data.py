@@ -20,7 +20,7 @@ VH_TIME = "9:30 to 11:00 AM Central"
 VH_ABOUT = ("A 45-minute lesson with the guest, then live parent questions. The lesson is recorded "
             "and sent to registrants; the Q&amp;A is not.")
 HOPE_QUOTE = ph("A parent&rsquo;s story from the Wall of Hope goes here: two to four sentences, shared with permission.")
-HOPE_WHO = ph("First name, town")
+HOPE_WHO = ph("First name") + ", Murfreesboro"  # Taylor: every Wall of Hope signs off name, Murfreesboro
 
 RECESS_META = ("8:00&ndash;11:45 AM &middot; Otter Creek Church, Brentwood &middot; "
                "Respite for kids with disabilities and their siblings &middot; About 40 min")
@@ -687,7 +687,7 @@ for _i in (JAN, FEB):
 
 # ---------------------------------------------------------------------------- still to do (shown on the preview page)
 COMMON_TODO = [
-    "Wall of Hope: add one parent story (two to four sentences) and a first name and town.",
+    "Wall of Hope: add one parent story (two to four sentences) and the parent&rsquo;s first name. It signs off as their name, then Murfreesboro.",
     "Village Hall: add the date, time, topic, guest name, role, photo, and a short bio.",
     "My draft of your welcome note: edit it so it sounds like you.",
 ]
