@@ -1,0 +1,52 @@
+{
+  "note": "Inputs for tools/render-decor.mjs. Paths starting with / come from the site (served locally); others are files in this repo.",
+  "shared_out": "art/decor",
+  "about_photo": "art/about-family-bowling.jpg",
+  "issues": [
+    {
+      "id": "2026-10", "out": "art", "season": "fall",
+      "hero": "/images/village/newsletter-fall.png",
+      "vh": "art/village-hall-iep.jpg", "vh_oval": true,
+      "chips": ["deadlines", "ongoing", "events", "library"],
+      "hope_photo": "/assets/hope/nicole-connor-hopeshot-2026.jpg",
+      "guests": ["art/mercedes-family-hearts-160.jpg"]
+    },
+    {
+      "id": "2026-11", "out": "issues/2026-11/art", "season": "fall",
+      "hero": "/images/village/newsletter-fall.png",
+      "vh": "/images/village/village-hall-community.png",
+      "chips": ["deadlines", "village-hall", "events", "library"],
+      "guests": ["issues/2026-11/art/amanda-rains-160.jpg"]
+    },
+    {
+      "id": "2026-12", "out": "issues/2026-12/art", "season": "winter",
+      "hero": "/images/village/newsletter-winter.png",
+      "vh": "/assets/art-pack-2026-09-clean/images/page-season-sets/public-square-winter.png", "vh_oval": true,
+      "chips": ["deadlines", "events", "library", "question"],
+      "guests": []
+    },
+    {
+      "id": "2027-01", "out": "issues/2027-01/art", "season": "winter",
+      "hero": "/images/village/newsletter-winter.png",
+      "vh": "/assets/art-pack-2026-09-clean/images/page-season-sets/public-square-winter.png", "vh_oval": true,
+      "chips": ["deadlines", "question", "events", "library"],
+      "guests": []
+    },
+    {
+      "id": "2027-02", "out": "issues/2027-02/art", "season": "winter",
+      "hero": "/images/village/newsletter-winter.png",
+      "vh": "/assets/art-pack-2026-09-clean/images/page-season-sets/public-square-winter.png", "vh_oval": true,
+      "chips": ["deadlines", "events", "library", "question"],
+      "guests": []
+    }
+  ],
+  "pictograms": {
+    "deadlines": "pictogram-wayfinder",
+    "events": "pictogram-pavilion-calendar",
+    "ongoing": "pictogram-gazebo-chairs",
+    "library": "pictogram-open-door",
+    "village-hall": "pictogram-accessible-hall",
+    "question": "pictogram-mailbox",
+    "hope": "pictogram-bridge"
+  }
+}

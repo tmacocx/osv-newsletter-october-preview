@@ -36,11 +36,11 @@ _spec.loader.exec_module(O)
 import issue_data as D  # noqa: E402  (tools/ is on sys.path when run as a script)
 
 p, b, a, navy_a, tel = O.p, O.b, O.a, O.navy_a, O.tel
-sp, major_sp, padrow, anchor, rule = O.sp, O.major_sp, O.padrow, O.anchor, O.rule
+sp, major_sp, padrow, anchor = O.sp, O.major_sp, O.padrow, O.anchor
 section_head, card, rows_table, row, chip, item = (O.section_head, O.card, O.rows_table,
                                                     O.row, O.chip, O.item)
-button, group_card, step, vh_meta_icon, price_boxes, disclose = (
-    O.button, O.group_card, O.step, O.vh_meta_icon, O.price_boxes, O.disclose)
+button, group_card, step, price_boxes, disclose = (
+    O.button, O.group_card, O.step, O.price_boxes, O.disclose)
 CREAM, WHITE, BLUSH, INK, BODY, MUTED, ACCENT, HAIR, RULE, GOLD, SAND, FONT = (
     O.CREAM, O.WHITE, O.BLUSH, O.INK, O.BODY, O.MUTED, O.ACCENT, O.HAIR, O.RULE, O.GOLD,
     O.SAND, O.FONT)
@@ -81,46 +81,20 @@ def has_ph(s):
 def head(issue):
     h = O.head()
     h = h.replace(f"<title>{O.SUBJECT}</title>", f"<title>{issue['subject']}</title>")
-    h = re.sub(r"<!-- MailerLite:.*?-->\n<!-- Built by.*?-->\n<!-- T[0-9]+:.*?-->\n",
+    h = re.sub(r"<!-- MailerLite:.*?-->\n<!-- Built by.*?-->\n",
                f"<!-- Subject \"{issue['subject']}\". Merge tags {{$url}} and {{$unsubscribe}}. "
                f"Built by tools/build-issues.py (same template as the Oct 2026 issue); edit tools/issue_data.py. -->\n",
                h, flags=re.S)
     return h
 
 
-def img(src, alt, width=600, extra=""):
-    return (f'<img class="os-card-art" src="{src}" width="{width}" alt="{alt}" '
-            f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;'
-            f'text-decoration:none;border-radius:12px;{extra}">')
+def pic(src, alt, width=600, height=None, style="border-radius:12px;", cls="os-card-art"):
+    return O.img(src, width, alt, height, style=style, cls=cls)
 
 
-def btn(href, label, on_navy=False):
-    """Small pill button (site .btn--ghost). Taylor's rule: buttons, never underlined text links."""
-    return O.pill(href, label, on_navy)
-
-
-def btn_row(links, margin="4px 0 0 0", on_navy=False):
-    return O.pill_row(links, margin=margin, on_dark=on_navy)
-
-
-def link_line(links, size=15, lh=22, margin="8px 0 0 0", cls=""):
-    return btn_row(links, margin=margin)
-
-
-def issue_chips(chips):
-    cells = []
-    for i, (href, label) in enumerate(chips):
-        if i < 2:
-            pad = "0 6px 8px 0" if i % 2 == 0 else "0 0 8px 6px"
-        else:
-            pad = "0 6px 0 0" if i % 2 == 0 else "0 0 0 6px"
-        cells.append(f'<td class="os-issue-cell" width="50%" valign="top" style="width:50%;padding:{pad};">'
-                     f'{O.issue_chip(href, label)}</td>')
-    return (p(f'<b style="color:{ACCENT};font-weight:700;">In this issue</b>', 13, 18, MUTED, 400,
-              margin="0 0 8px 0", cls="os-tiny")
-            + '<table role="presentation" class="os-issue-grid" cellpadding="0" cellspacing="0" border="0" '
-              'width="100%" style="width:100%;border-collapse:collapse;">'
-            f'<tr>{cells[0]}{cells[1]}</tr><tr>{cells[2]}{cells[3]}</tr></table>')
+def btn_row(links, margin="4px 0 0 0", kind=None):
+    """Taylor's rule: buttons, never underlined text links."""
+    return O.pill_row(links, margin=margin, kind=kind)
 
 
 def three_things(issue):
@@ -130,92 +104,59 @@ def three_things(issue):
         body = ""
         for ii, it in enumerate(g["items"]):
             if ii:
-                body += (f'<div style="margin:14px 0 14px 0;border-top:1px solid {RULE};font-size:0;'
+                body += (f'<div style="margin:14px 0 14px 0;border-top:1px solid {O.TAG_RULE};font-size:0;'
                          f'line-height:0;height:1px;">&nbsp;</div>')
             body += item(it["title"], [it["body"]], featured=True)
             if it.get("links"):
                 body += btn_row(it["links"])
-        rows.append(row(chip(*g["chip"]), body, last=(gi == len(groups) - 1), featured=True))
+        rows.append(row(chip(*g["chip"]), body, last=(gi == len(groups) - 1), featured=True, line=O.TAG_RULE))
     return rows_table(rows)
 
 
-def photo_cell(g, art):
-    if g.get("photo"):
-        return (f'<img class="os-vh-portrait" src="{art(g["photo"])}" width="88" height="115" alt="{g["photo_alt"]}" '
-                'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">')
-    return ('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="88" '
-            'style="width:88px;border-collapse:separate;border:1px dashed #b8912f;border-radius:10px;background-color:#fff1b8;">'
-            f'<tr><td align="center" style="height:113px;padding:4px;">{p(PH_OPEN + "Photo" + PH_CLOSE, 12, 16, INK, 700, extra="text-align:center;")}</td></tr></table>')
-
-
-def guest_block(g, art):
-    return (
-        '<table role="presentation" class="os-vh-guest" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">'
-        '<tr><td colspan="2" class="os-vh-guestname" align="center" '
-        'style="padding:0 0 10px 0;vertical-align:top;text-align:center;">'
-        + p(g["name"], 15, 20, GOLD, 700, margin="0 0 2px 0", extra="text-align:center;")
-        + p(g["role"], 13, 18, SAND, 700, margin="0", extra="text-align:center;white-space:nowrap;",
-            cls="os-vh-guestrole")
-        + '</td></tr><tr>'
-        f'<td class="os-vh-guestphoto" width="88" valign="middle" style="width:88px;padding:0 12px 0 0;vertical-align:middle;">'
-        + photo_cell(g, art)
-        + '</td><td class="os-vh-guestblurb" valign="middle" align="left" style="padding:0;vertical-align:middle;text-align:left;">'
-        + p(g["bio"], 13, 19, SAND, 400, extra="text-align:left;")
-        + "".join(p(navy_a(h, lab, nowrap=False), 13, 18, SAND, 400, margin="8px 0 0 0" if i == 0 else "2px 0 0 0",
-                    extra="text-align:left;", cls="os-vh-contact") for i, (h, lab) in enumerate(g.get("links", [])))
-        + '</td></tr></table>'
-    )
-
-
 def village_hall(issue, art):
+    """Same pieces as October: bunting, the hall in its landscape, fact pills, the notice board, the ticket."""
     vh = issue["village_hall"]
     guests = vh.get("guests") or ([vh["guest"]] if vh.get("guest") else [])
-    guest = "".join(guest_block(g, art) for g in guests) if guests else (
-        p(vh["guest_placeholder"], 14, 21, SAND, 400, margin="0 0 16px 0"))
-    panel = (
-        f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        f'bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:28px;box-shadow:{O.SHADOW};">'
-        f'<tr><td style="padding:0 22px;">{O.bunting()}</td></tr>'
-        '<tr><td align="left" style="padding:14px 20px 22px 20px;">'
-        + p(vh["date"], 13, 18, GOLD, 700, margin="0 0 4px 0")
-        + vh_meta_icon("clock-gold", vh["time"], bottom="4px")
-        + vh_meta_icon("video-gold", "Online", bottom="18px")
-        + p("Topic and guests" if len(guests) > 1 else "Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
-        + p(vh["topic"], 17, 24, CREAM, 700, margin="0 0 14px 0")
-        + guest
-        + p(vh["about"], 14, 21, SAND, 400, margin="0 0 16px 0")
-        + button(f"{SITE}/village-hall", vh.get("button", "Register for Village Hall"), GOLD, INK)
-          .replace('class="os-btn"', 'class="os-btn os-btn-gold"')
-        + price_boxes()
-        + '</td></tr></table>')
-    stack = (f'<div class="os-vh-stack" style="display:block;width:100%;">'
-             f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 10px 0;vertical-align:top;box-sizing:border-box;">'
-             f'{img(art("village-hall.jpg"), vh["art_alt"])}</div>'
-             f'<div class="os-browser-col" style="display:block;width:100%;margin:0;vertical-align:top;box-sizing:border-box;">{panel}</div>'
-             '</div>')
-    return (padrow(anchor("village-hall") + rule()
-                   + p("The next deep dive", 13, 18, ACCENT, 700, margin="12px 0 0 0")
-                   + O.h2("Village Hall", "6px 0 0 0")
-                   + p("One topic. One guest expert. Your questions.", 16, 24, BODY, 400, margin="6px 0 0 0"))
-            + sp(12) + padrow(stack, pad="0 34px"))
+    photo_ph = p(ph("Photo"), 13, 18, INK, 700, extra="text-align:center;")
+    if guests:
+        guests_html = "".join(
+            O.guest_block(g, art, first=(i == 0),
+                          photo_src=art(f"guest-{i + 1}-print.jpg") if g.get("photo") else None,
+                          placeholder=photo_ph)
+            for i, g in enumerate(guests))
+    else:
+        guests_html = p(vh["guest_placeholder"], 15, 23, BODY, 400)
+    out = [O.fullrow(O.img(art(O.DECOR + "bunting.png"), 600, "", style="max-width:none;")),
+           padrow(anchor("village-hall") + O.hand("The next deep dive", 22, O.GOLD_INK, "8px 0 0 0")
+                  + O.h2("Village Hall", "2px 0 0 0", 40, 44)
+                  + p("One topic. One guest expert. Your questions.", 19, 25, INK, 500, margin="6px 0 0 0",
+                      extra=f"font-family:{O.DISPLAY};")),
+           O.fullrow(O.img(art("vh-land.jpg"), 600, vh["art_alt"], style="max-width:none;")),
+           padrow(O.fact_pills(vh["date"], [vh["time"], "Online"])),
+           sp(12),
+           padrow(O.board(art, O.poster(art, "Topic and guests" if len(guests) > 1 else "Topic and guest",
+                                        vh["topic"], guests_html, vh["about"]))),
+           sp(18),
+           padrow(O.ticket(art, button(f"{SITE}/village-hall", vh.get("button", "Register for Village Hall"), GOLD, INK,
+                                       align="center"), price_boxes()))]
+    return "\n".join(out)
 
 
 def month_ahead(issue, art):
     ev = issue["events"]
     f = ev["featured"]
     link = f.get("link")
-    art_html = img(f.get("photo_url") or art(f.get("photo", "featured.jpg")), f["art_alt"], extra="")
+    art_html = pic(f.get("photo_url") or art(f.get("photo", "featured.jpg")), f["art_alt"], style="border-radius:12px;margin:0 auto;")
     if link:
-        art_html = f'<a href="{link[0]}" style="display:block;text-decoration:none;border:0;outline:none;">{art_html}</a>'
-    copy = (p("Featured", 13, 18, ACCENT, 700, margin="12px 0 0 0")
-            + p(f["title"], 18, 25, INK, 700, margin="6px 0 0 0")
+        art_html = f'<a href="{link[0]}" style="display:block;text-decoration:none;">{art_html}</a>'
+    copy = (O.hand("Featured", 21, O.GOLD_INK, "12px 0 0 0")
+            + p(f["title"], 19, 25, INK, 700, margin="4px 0 0 0")
             + p(f["meta"], 16, 24, BODY, 400, margin="6px 0 0 0")
             + (p(f["blurb"], 15, 22, BODY, 400, margin="6px 0 0 0") if f.get("blurb") else "")
-            + (btn_row([link]) if link else ""))
+            + (btn_row([link], "6px 0 0 0", kind="gold") if link else ""))
     out = [section_head("events", "The month ahead", ev.get(
         "intro", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.")),
-           sp(12), padrow(card(art_html + copy, pad="12px 20px 16px 20px"))]
+           sp(14), padrow(card(art_html + copy, pad="12px 12px 18px 12px"))]
     if ev["list"]:
         # Events on the same day share one date chip (lighter email, easier to scan).
         groups = []
@@ -235,66 +176,58 @@ def month_ahead(issue, art):
                     block += disclose(e["disclose"])
                 content += block if k == 0 else f'<div style="margin-top:14px;">{block}</div>'
             rows.append(row(chip(*ch), content, last=(i == len(groups) - 1), tight=True))
-        out += [sp(16), padrow(O.board(O.pushpin("#3c5378") + card(rows_table(rows), pad="6px 18px 6px 18px")))]
+        out += [sp(20), padrow(O.calendar_page(art, rows_table(rows)))]
     if ev.get("note"):
         out += [sp(12), padrow(p(ev["note"], 14, 21, MUTED, 400, extra="text-align:center;"))]
-    out += [sp(20), padrow(button(f"{SITE}/events", ev["calendar_label"], INK, CREAM, align="center")
-                           .replace('class="os-btn"', 'class="os-btn os-btn-navy"'))]
+    out += [sp(20), padrow(button(f"{SITE}/events", ev["calendar_label"], INK, CREAM, align="center"))]
     return "\n".join(out)
 
 
 def wall_of_hope(issue, art):
+    """A parent's words pinned to the Wall of Hope board, with the painting as the print on the note."""
     h = issue["hope"]
-    quote = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-             f'style="width:100%;border-collapse:collapse;margin:12px 0 0 0;"><tr>'
-             f'<td width="3" bgcolor="{GOLD}" style="width:3px;background-color:{GOLD};border-radius:2px;font-size:0;">&nbsp;</td>'
-             f'<td style="padding:2px 0 2px 14px;">'
-             + p(h["quote"], 17, 25, INK, 700)
-             + p(h["who"], 14, 20, MUTED, 400, margin="8px 0 0 0")
-             + '</td></tr></table>')
-    inner = (img(art("wall-of-hope.jpg"), h["art_alt"])
-             + p("From the Wall of Hope", 13, 18, ACCENT, 700, margin="12px 0 0 0")
-             + quote
-             + link_line([(f"{SITE}/hope", "Read more stories"), (f"{SITE}/hope", "Share yours")],
-                         margin="14px 0 0 0"))
+    inner = (O.hand("From the Wall of Hope")
+             + f'<div style="margin:10px 0 12px 0;">{pic(art("wall-of-hope.jpg"), h["art_alt"], style="border-radius:8px;margin:0 auto;")}</div>'
+             + p(h["quote"], 18, 27, INK, 700)
+             + O.hand(h["who"], 23, O.GOLD_INK, "12px 0 0 0")
+             + btn_row([(f"{SITE}/hope", "Read more stories"), (f"{SITE}/hope", "Share yours")], "12px 0 0 0"))
+    fold = (f'<tr><td align="right" style="padding:6px 0 0 0;font-size:0;line-height:0;">'
+            f'{O.img(art(O.DECOR + "fold.png"), 34, "", 34, fluid=False, style="display:inline-block;border-radius:0 0 6px 0;")}</td></tr>')
+    note = O.paper(inner, "4px 24px 0 24px", O.NOTE, "6px", "os-tl", top=O.pins_row(art, center=True), bottom=fold)
     return (section_head("hope", "A little hope", "Real words from local parents, shared with permission.")
-            + sp(12) + padrow(O.tape() + card(inner, pad="18px 20px 16px 20px")))
+            + sp(14) + padrow(O.board(art, note)))
 
 
 def library(issue, art):
-    cards = []
+    books = []
     for i, g in enumerate(issue["guides"], start=1):
-        inner = (img(art(f"guide-{i}.jpg"), g["art_alt"], width=490, extra="margin:0 0 12px 0;")
-                 .replace('width="490"', 'width="490" height="228"')
-                 + p(g["label"], 13, 18, ACCENT, 700, cls="os-tiny")
-                 + p(g["title"], 17, 24, INK, 700, margin="6px 0 0 0")
-                 + p(g["blurb"], 15, 22, BODY, 400, margin="8px 0 0 0")
-                 + '<div class="os-card-cta">'
-                 + btn_row([(SITE + g["path"], g.get("cta", "Read the guide"))]) + '</div>')
-        cards.append(card(inner, pad="16px 16px 16px 16px"))
-    return (section_head("library", issue.get("library_title", "From the library")) + sp(12)
-            + padrow(O.browser_cols(*cards, gap=16)))
+        books.append(O.book(
+            art, g["label"],
+            O.img(art(f"guide-{i}.jpg"), 490, g["art_alt"], 228, style="border-radius:10px;margin:0 0 12px 0;", cls="os-card-art"),
+            p(g["title"], 18, 24, INK, 700) + p(g["blurb"], 15, 22, BODY, 400, margin="8px 0 0 0")
+            + f'<div class="os-card-cta">{btn_row([(SITE + g["path"], g.get("cta", "Read the guide"))])}</div>'))
+    return (section_head("library", issue.get("library_title", "From the library")) + sp(14)
+            + padrow(O.browser_cols(*books, gap=18)))
 
 
-def question(issue):
+def question(issue, art):
     q = issue["question"]
     steps = rows_table([step(i + 1, f'{b(t)} {body.replace("{STEP}", tel("800-280-7837", "+18002807837"))}',
                              last=(i == len(q["steps"]) - 1))
                         for i, (t, body) in enumerate(q["steps"])])
-    qa = (p(f"{issue['month']}&rsquo;s question", 13, 18, ACCENT, 700, margin="0 0 6px 0")
-          + p(f"&ldquo;{q['q']}&rdquo;", 18, 25, INK, 700)
-          + p(q["short"], 16, 24, BODY, 400, margin="10px 0 12px 0")
-          + steps
-          + f'<div style="margin:16px 0 0 0;border-top:1px solid {RULE};font-size:0;line-height:0;height:1px;">&nbsp;</div>'
-          + link_line(q["links"] + [(f"{SITE}/contact", "Send us your question")], margin="6px 0 0 0")
-          + p(q.get("disclaimer", "Parent-to-parent guidance, not medical or legal advice."), 13, 20, MUTED, 400,
-              margin="10px 0 0 0", cls="os-tiny"))
+    q_head = (f'<table {O.T} width="100%" style="width:100%;"><tr><td valign="top">'
+              + O.hand(f"{issue['month']}&rsquo;s question") + '</td>' + O.question_mark() + '</tr></table>'
+              + p(f"&ldquo;{q['q']}&rdquo;", 20, 27, INK, 700, margin="4px 0 0 0")
+              + p(q["short"], 16, 24, BODY, 400, margin="8px 0 0 0"))
+    q_foot = (btn_row(q["links"] + [(f"{SITE}/contact", "Send us your question")], margin="0")
+              + p(q.get("disclaimer", "Parent-to-parent guidance, not medical or legal advice."), 13, 20, MUTED, 400,
+                  margin="10px 0 0 0", cls="os-tiny"))
     return (section_head("question", "One question, answered",
                          "One real question from a local parent, answered plainly.")
-            + sp(12) + padrow(card(qa, pad="16px 20px 14px 20px")))
+            + sp(14) + padrow(O.index_card(art, q_head, steps, q_foot)))
 
 
-def connect(issue):
+def connect(issue, art):
     online = group_card(
         [], "Our Special Village Online Parent Group",
         [("calendar", "Thursdays"), ("clock", "7:00&ndash;8:00 PM Central"), ("video", "Online")],
@@ -302,7 +235,7 @@ def connect(issue):
         "in a welcoming, judgment-free space.",
         ["No formal diagnosis required", issue.get("group_line", "Drop in any Thursday"),
          "Cameras are optional", "Meetings are never recorded"],
-        f"{SITE}/group", "Join the Online Group", secondary=["ONLINE", "WEEKLY", "FREE"])
+        f"{SITE}/group", "Join the Online Group", secondary=["ONLINE", "WEEKLY", "FREE"], art=art, tilt="os-tl")
     werock = group_card(
         [], "We Rock the Spectrum Parent Group",
         [("calendar", "Wednesdays at 5:00 PM"), ("pin", "We Rock the Spectrum Murfreesboro")],
@@ -311,76 +244,49 @@ def connect(issue):
         ["Led by Cari Parr", "$15 per child for kids to play",
          "Gym staff watch children during group; not appropriate for all children",
          "Discounted gym admission is available separately."],
-        O.WRTS_URL, "Plan Your Visit", secondary=["IN PERSON", "WEEKLY", "FREE"])
-    return (section_head("ongoing", "Connect with other local parents") + sp(12)
+        O.WRTS_URL, "Plan Your Visit", secondary=["IN PERSON", "WEEKLY", "FREE"], art=art, tilt="os-tr")
+    return (section_head("ongoing", "Connect with other local parents") + sp(16)
             + padrow('<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
-                     f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 16px 0;vertical-align:top;box-sizing:border-box;">{online}</div>'
+                     f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 20px 0;vertical-align:top;box-sizing:border-box;">{online}</div>'
                      f'<div class="os-browser-col" style="display:block;width:100%;margin:0;vertical-align:top;box-sizing:border-box;">{werock}</div>'
                      '</div>'))
 
 
 def build_html(issue, base, browser, deadlines_url, view_url):
-    """Mirror of O.build_html with this issue's content. Section order matches October,
-    with the Wall of Hope added between the library and the question."""
+    """Mirror of O.build_html with this issue's content: the same site-style pieces in the same
+    order, with the Wall of Hope between the library and the question."""
     art = lambda f: f"{base}{f}"
+    T = O.T
     o = [head(issue)]
-    o.append(f'<body id="os-body" class="os-bg" bgcolor="{CREAM}" style="margin:0;padding:0;background-color:{CREAM};width:100%;max-width:100%;overflow-x:hidden;">')
+    o.append(f'<body id="os-body" class="os-bg" bgcolor="{CREAM}" style="margin:0;padding:0;background-color:{CREAM};width:100%;overflow-x:hidden;">')
     o.append(f'<span style="display:none;font-size:1px;color:{CREAM};line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">{plain(issue["preheader"])}</span>')
-    o.append(f'<table role="presentation" class="os-bg" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{CREAM}" style="width:100%;border-collapse:collapse;background-color:{CREAM};">'
-             f'<tr><td align="center" style="padding:20px 12px 40px 12px;font-family:{FONT};color:{BODY};">'
-             '<table role="presentation" class="os-wrap" cellpadding="0" cellspacing="0" border="0" width="600" style="width:100%;max-width:600px;border-collapse:collapse;">')
+    o.append(f'<table {T} class="os-bg" width="100%" bgcolor="{CREAM}" style="width:100%;background-color:{CREAM};">'
+             f'<tr><td align="center" style="padding:14px 10px 40px 10px;font-family:{FONT};color:{BODY};">'
+             f'<table {T} class="os-wrap" width="600" style="width:100%;max-width:600px;">')
     view_href = view_url if browser else "{$url}"
     unsub_href = O.BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
-    o.append(padrow(p(f'<a class="os-muted os-tiny" href="{view_href}" style="color:{MUTED};text-decoration:underline;">View in browser</a>',
-                      13, 18, MUTED, 400, extra="text-align:center;", cls="os-tiny"), pad="0 34px 12px 34px"))
-    o.append(padrow(
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-        f'<td align="left" style="vertical-align:middle;">{O.masthead(art("osv-mark-80.png"))}</td>'
-        f'<td align="right" style="vertical-align:middle;">{p(issue["month_year"], 21, 24, O.GOLD_INK, 400, extra="text-align:right;font-family:" + O.HAND + ";")}</td>'
-        '</tr></table>', pad="0 34px 14px 34px"))
-    o.append('<tr><td align="left" style="padding:0;">'
-             f'<img class="os-hero" src="{art("hero.jpg")}" width="600" alt="{issue["hero_alt"]}" '
-             'style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;border-radius:16px;"></td></tr>')
-    o.append(sp(16))
 
+    # --- Opening: top bar, header, the village in its landscape, Taylor's letter, the stops ---
+    o.append(f'<tr><td style="padding:0 0 16px 0;">{O.top_bar(issue["month_year"], view_href)}</td></tr>')
+    o.append(padrow(O.masthead(art("osv-mark-80.png")), pad="0 34px 4px 34px"))
+    o.append(O.fullrow(O.img(art("hero-land.jpg"), 600, issue["hero_alt"], style="max-width:none;", cls="os-hero")))
+    hi = issue.get("note_highlight")
     paras = []
     for i, para in enumerate(issue["note"]):
-        hi = issue.get("note_highlight")
         if hi and hi in para:
-            para = para.replace(hi, f'<span style="background-color:{BLUSH};color:{INK};padding:1px 4px;border-radius:4px;">{hi}</span>')
-        paras.append(p(para, 16, 24, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0")))
-    note_copy = (f'<h1 class="os-h1 os-ink" style="margin:0 0 10px 0;font-family:{O.DISPLAY};font-size:32px;line-height:37px;'
-                 f'color:{INK};font-weight:600;letter-spacing:-0.6px;">{issue["month"]} in Our Special Village</h1>'
-                 + "".join(paras)
-                 + p("With love,", 16, 24, BODY, 400, margin="10px 0 2px 0")
-                 + f'<img class="os-sig" src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
-                   f'style="display:block;width:96px;max-width:96px;height:auto;margin:0 0 0 8px;padding:0;border:0;outline:none;'
-                   f'text-decoration:none;font-family:Georgia, Times New Roman, serif;font-size:22px;font-style:italic;color:{ACCENT};">')
-    photo = (f'<img class="os-intro-photo" src="{art("taylor-hickok-160.jpg")}" width="96" height="96" '
-             'alt="Dr. Taylor Hickok, founder of Our Special Village." '
-             'style="display:block;width:96px;max-width:96px;height:96px;margin:0 auto;padding:0;border:0;outline:none;'
-             'text-decoration:none;border-radius:50%;object-fit:cover;">')
-    photo_block = ('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">'
-                   f'<tr><td class="os-intro-photocell" align="center" style="padding:0 0 8px 0;">{photo}</td></tr>'
-                   '<tr><td class="os-intro-byline" align="center" style="padding:0;">'
-                   + p("Dr. Taylor Hickok", 15, 20, INK, 700, extra="text-align:center;")
-                   + p("Founder &middot; SLP &middot; AuDHD parent", 13, 18, MUTED, 400, margin="2px 0 0 0",
-                       extra="text-align:center;white-space:nowrap;", cls="os-tiny os-cred")
-                   + '</td></tr></table>')
-    o.append(padrow(
-        '<div class="os-browser-cols os-intro-cols" style="display:block;width:100%;">'
-        f'<div class="os-browser-col os-intro-photo-col" style="display:block;width:100%;margin:0 0 12px 0;vertical-align:top;box-sizing:border-box;">{photo_block}</div>'
-        f'<div class="os-browser-col os-intro-text-col" style="display:block;width:100%;margin:0;vertical-align:top;box-sizing:border-box;">{note_copy}</div>'
-        '</div>'))
-    o.append(sp(6))
-    o.append(padrow('<div style="margin:0;">' + issue_chips(issue["chips"]) + '</div>'))
+            para = para.replace(hi, f'<span style="background-color:{O.GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{hi}</span>')
+        paras.append(p(para, 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0")))
+    o.append(padrow(O.letter(art, f"{issue['month']} in Our Special Village", "".join(paras))))
+    o.append(sp(26))
+    o.append(padrow(O.stops_block(art, issue["chips"]), pad="0 22px"))
 
+    # --- Three things: the deadline tag ---
     o.append(major_sp())
     o.append(section_head("deadlines", "Three things to know this month"))
-    o.append(sp(12))
-    o.append(padrow(O.board(O.pushpin(ACCENT) + card(three_things(issue), pad="8px 18px 8px 18px"))))
     o.append(sp(14))
-    o.append(padrow(button(deadlines_url, "See all deadlines", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
+    o.append(padrow(O.tag_card(art, three_things(issue))))
+    o.append(sp(16))
+    o.append(padrow(button(deadlines_url, "See all deadlines", INK, CREAM)
                     + p(issue["confirmed"], 13, 20, MUTED, 400, margin="8px 0 0 0", cls="os-confirm")))
 
     o.append(major_sp())
@@ -392,43 +298,22 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(major_sp())
     o.append(wall_of_hope(issue, art))
     o.append(major_sp())
-    o.append(question(issue))
+    o.append(question(issue, art))
     o.append(major_sp())
-    o.append(connect(issue))
+    o.append(connect(issue, art))
 
-    # About, numbers, forward, footer: identical to October.
+    # --- About, numbers, forward, footer: identical to October ---
     o.append(major_sp())
-    about_copy = (O.h2("About Our Special Village", "0", 19, 24)
-                  + p(O.ABOUT, 14, 21, BODY, 400, margin="6px 0 0 0")
-                  + btn_row([(f"{SITE}/about", "About the Village"), (f"{SITE}/editorial-policy", "How we check information")]))
-    about_photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="160" class="os-photocell" bgcolor="{BLUSH}" '
-                   f'style="width:160px;border-collapse:separate;background-color:{BLUSH};border-radius:12px;">'
-                   f'<tr><td class="os-photocell" align="center" style="width:160px;vertical-align:middle;border-radius:12px;">'
-                   f'<img class="os-photo" src="{art("about-family-bowling-small.jpg")}" width="160" height="160" alt="Taylor, her husband, and their daughter at a bowling alley." '
-                   f'style="display:block;width:160px;max-width:100%;height:auto;margin:0;border:0;outline:none;text-decoration:none;border-radius:12px;font-family:{FONT};font-size:13px;line-height:18px;color:{BODY};"></td></tr></table>')
-    o.append(padrow(card(f'<div class="os-about-row" style="display:block;width:100%;">'
-                         f'<div class="os-about-photo" style="display:block;width:160px;max-width:160px;margin:0 0 16px 0;">{about_photo}</div>'
-                         f'<div class="os-about-text" style="display:block;width:100%;">{about_copy}</div></div>',
-                         pad="14px 16px 14px 16px")))
-    o.append(sp(12))
-    nums = p("Numbers worth keeping", 14, 20, ACCENT, 700, margin="0 0 4px 0") + "".join(
-        p(t, 14, 20, BODY, 400, margin="4px 0 0 0") for t in O.NUMBERS)
-    o.append(padrow(card(nums, pad="12px 16px 12px 16px")))
-    o.append(sp(16))
-    o.append(padrow(p("Know a family who could use this? Forward it along. Anyone can join at "
-                      + a(f"{SITE}/newsletter", "ourspecialvillagetn.com/newsletter", nowrap=False) + ".", 14, 21, BODY, 400, extra="text-align:center;")))
+    o.append(padrow(O.about_card(art, O.ABOUT, [(f"{SITE}/about", "About the Village"),
+                                                (f"{SITE}/editorial-policy", "How we check information")])))
     o.append(sp(20))
-    footer = (p("Our Special Village &middot; Murfreesboro and surrounding areas, Tennessee", 14, 21, INK, 700, margin="0 0 6px 0")
-              + p("Local businesses and practices help keep the Village free and ad-free. " + a(f"{SITE}/sponsors", "Sponsorship options", nowrap=False) + ".", 13, 20, BODY, 400, margin="0 0 12px 0")
-              + p("You are receiving this because you joined the newsletter list at ourspecialvillagetn.com.<br>"
-                  + a(unsub_href, "Unsubscribe in one click", nowrap=False) + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/privacy", "Privacy") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/contact", "Contact"), 13, 20, BODY, 400, margin="0 0 10px 0", cls="os-tiny")
-              + p("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC<br>1810 Ward Dr, Suite 101, Murfreesboro, TN 37129", 13, 19, BODY, 400, cls="os-tiny"))
-    o.append(padrow(O.night_footer(footer)))
+    o.append(padrow(O.numbers_card(art, O.NUMBERS)))
+    o.append(sp(22))
+    o.append(padrow(O.forward_line(SITE)))
+    o.append(sp(30))
+    o.append(O.footer_rows(art, SITE, unsub_href))
     o.append('</table></td></tr></table></body></html>')
-    out = "\n".join(o) + "\n"
-    out = out.replace(f"{PAGES}art/icons/", f"{base}icons/")  # O.meta_row / vh_meta_icon hard-code Pages
-    out = out.replace("text-decoration:underline", "text-decoration:none")  # Taylor: no underlined links
-    return render_ph(out)
+    return render_ph(O.compact("\n".join(o) + "\n"))
 
 
 # --------------------------------------------------------------------------- plain text
@@ -708,6 +593,8 @@ def main():
     for issue in D.ISSUES:
         iid = issue["id"]
         folder = os.path.join(ROOT, "issues", iid)
+        # The site's pins, tape, cork, bunting... (tools/render-decor.mjs) ride along with each issue's art.
+        shutil.copytree(os.path.join(ROOT, "art", "decor"), os.path.join(folder, "art", "decor"), dirs_exist_ok=True)
         # Preview (relative art so it works anywhere the folder is hosted)
         email = build_html(issue, "art/", False, "deadlines.html", "index.html")
         browser = build_html(issue, "art/", True, "deadlines.html", "index.html")
@@ -730,6 +617,8 @@ def main():
             s_email = build_html(issue, base, False, dl_url, "{$url}")
             s_txt = build_text(issue, f"{SITE}/newsletter/{iid}/deadlines")
             s_dl = build_deadlines(issue, "{$url}", f"{issue['month']} newsletter")
+            live_size = len(s_email.replace("{$site}", SITE).encode())
+            assert live_size < 100_000, f"{iid}: {live_size}B with full image URLs would clip in Gmail"
             nd = os.path.join(site, "newsletters", iid)
             write(os.path.join(nd, "email.html"), s_email)
             write(os.path.join(nd, "email.txt"), s_txt)
