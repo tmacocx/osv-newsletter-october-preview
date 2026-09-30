@@ -155,10 +155,11 @@ def p(text, size=16, lh=24, color=BODY, weight=400, margin="0", extra="", cls=""
         pills = re.findall(r'<a class="os-pill.*?</a>', text)
         return f'<div style="margin:{margin};">' + "".join(pills) + '</div>'
     classes = " ".join(c for c in [CLASS_FOR.get(color, ""), cls] if c)
-    font = f"font-family:{DISPLAY};" if weight == 700 and size >= 15 else ""
-    w = "font-weight:600;" if font else (f"font-weight:{weight};" if weight != 400 else "")
-    return (f'<p class="{classes}" style="margin:{margin};{font}font-size:{size}px;'
-            f'line-height:{lh}px;color:{color};{w}{extra}">{text}</p>')
+    if weight == 700 and size >= 15:   # titles: Outfit 600, one shorthand keeps the email light
+        fnt = f"font:600 {size}px/{lh}px {DISPLAY};"
+    else:
+        fnt = f"font-size:{size}px;line-height:{lh}px;" + (f"font-weight:{weight};" if weight != 400 else "")
+    return f'<p class="{classes}" style="margin:{margin};{fnt}color:{color};{extra}">{text}</p>'
 
 
 def pill(href, label, kind="ghost", margin="8px 8px 0 0", small=False, nowrap=True):
@@ -224,10 +225,10 @@ def anchor(id_):
     return f'<a id="{id_}" name="{id_}" style="display:block;height:0;line-height:0;font-size:0;">&nbsp;</a>'
 
 
-def h2(title, margin="4px 0 0 0", size=30, lh=35, align="left"):
+def h2(title, margin="4px 0 0 0", size=30, lh=35, align="left", color=INK):
     al = "" if align == "left" else f"text-align:{align};"
-    return (f'<h2 class="os-h2 os-ink" style="margin:{margin};font-family:{DISPLAY};font-size:{size}px;'
-            f'line-height:{lh}px;color:{INK};font-weight:600;letter-spacing:-0.5px;{al}">{title}</h2>')
+    return (f'<h2 class="os-h2 {CLASS_FOR.get(color, "")}" style="margin:{margin};font:600 {size}px/{lh}px {DISPLAY};'
+            f'color:{color};letter-spacing:-0.5px;{al}">{title}</h2>')
 
 
 def section_head(id_, title, intro=None, eyebrow=None):
@@ -261,8 +262,56 @@ def masthead(mark_src):
     """Site header lockup: pin mark + Outfit wordmark, centered."""
     return (f'<table {T} align="center" style="border-collapse:collapse;margin:0 auto;"><tr>'
             f'<td style="padding:0 10px 0 0;vertical-align:middle;">{img(mark_src, 40, "", 40, fluid=False)}</td>'
-            f'<td class="os-ink" style="vertical-align:middle;font:600 22px/26px {DISPLAY};color:{INK};letter-spacing:-0.2px;white-space:nowrap;">'
+            f'<td class="os-ink os-mast-word" style="vertical-align:middle;font:600 22px/26px {DISPLAY};color:{INK};letter-spacing:-0.2px;white-space:nowrap;">'
             'Our Special Village</td></tr></table>')
+
+
+def site_header(art, site):
+    """The site header: pin and wordmark on the left, the brick Urgent Help button on the right."""
+    urgent = (f'<a class="os-pill os-brick" href="{site}/crisis" style="display:inline-block;padding:6px 14px;border-radius:99px;'
+              f'background-color:{BLUSH};border:1px solid #e2bba4;color:{BRICK_INK};font:600 14px/18px {DISPLAY};text-decoration:none;">'
+              f'<span style="color:{ACCENT};font-size:10px;vertical-align:1px;">&#9679;</span>&nbsp; Urgent Help</a>')
+    return (f'<table {T} width="100%" style="width:100%;"><tr>'
+            f'<td valign="middle">{masthead(art("osv-mark-80.png"))}</td>'
+            f'<td align="right" valign="middle">{urgent}</td></tr></table>')
+
+
+SKY_FALLBACK = {"fall": "#f3e2c8", "winter": "#efe1d0"}
+
+
+def hero(art, title_html, season="fall",
+         place="Murfreesboro &amp; surrounding areas &middot; Tennessee",
+         tagline="It takes a village. Welcome to ours.",
+         land_alt="Illustration of the village in autumn: homes, neighbors walking the path, and rolling Middle Tennessee hills."):
+    """The homepage hero (home.css .home-hero): golden-hour sky, the place line between two gold
+    rules, a big title with the gold swash, the handwritten tagline, then the hills and the village."""
+    sky, bg = art("hero-sky.jpg"), SKY_FALLBACK.get(season, "#f3e2c8")
+    rule_td = f'<td class="os-rule" width="26" style="width:26px;"><div style="height:2px;background-color:{GOLD};border-radius:2px;font-size:0;line-height:0;">&nbsp;</div></td>'
+    place_row = (f'<table {T} align="center" style="margin:0 auto;"><tr>{rule_td}'
+                 f'<td class="os-place" style="padding:0 10px;font:800 12px/16px {FONT};letter-spacing:2px;text-transform:uppercase;color:{GOLD_DARK};text-align:center;">{place}</td>'
+                 f'{rule_td}</tr></table>')
+    text = (place_row
+            + f'<h1 class="os-hero-h1 os-ink" style="margin:14px 0 0 0;font:600 46px/48px {DISPLAY};color:{INK};letter-spacing:-1.4px;text-align:center;">{title_html}</h1>'
+            + f'<p class="os-hand os-ink os-tagline" style="margin:10px 0 0 0;font:400 28px/32px {HAND};color:{INK};text-align:center;">{tagline}</p>'
+            + f'<div style="margin:0 0 4px 0;line-height:0;font-size:0;text-align:center;">'
+              f'<img src="{art(DECOR + "swoosh.png")}" width="150" height="14" alt="" style="display:inline-block;width:150px;height:14px;border:0;"></div>')
+    return (f'<tr><td class="os-hero-sky os-pad" align="center" bgcolor="{bg}" background="{sky}" '
+            f"style=\"background-color:{bg};background-image:url('{sky}');background-size:100% 100%;background-position:center bottom;"
+            f'background-repeat:no-repeat;border-radius:28px 28px 0 0;padding:30px 24px 6px 24px;">{text}</td></tr>'
+            + fullrow(img(art("hero-land.jpg"), 600, land_alt, style="max-width:none;", cls="os-hero")))
+
+
+def dusk_band(art, id_, eyebrow, title, inner):
+    """The homepage's dusk (home.css .dusk): sunset over the lamp-lit village, a starry navy night
+    holding the section, and the wave back to cream."""
+    stars = art(DECOR + "stars.png")
+    return (fullrow(img(art(DECOR + "dusk-top.png"), 600, "", style="max-width:none;"))
+            + f'<tr><td class="os-navy os-pad" bgcolor="{NAVY_DEEP}" background="{stars}" '
+              f"style=\"background-color:{NAVY_DEEP};background-image:url('{stars}');background-repeat:repeat;padding:4px 34px 30px 34px;\">"
+            + anchor(id_) + hand(eyebrow, 22, GOLD, "0")
+            + h2(title, "2px 0 18px 0", color=WHITE)
+            + inner + '</td></tr>'
+            + fullrow(img(art(DECOR + "dusk-wave.png"), 600, "", style="max-width:none;")))
 
 
 def letter(art, h1_text, paras_html, name="Dr. Taylor Hickok", cred="Founder &middot; SLP &middot; AuDHD parent"):
@@ -279,9 +328,10 @@ def letter(art, h1_text, paras_html, name="Dr. Taylor Hickok", cred="Founder &mi
                 f'<td valign="middle" style="vertical-align:middle;">{byline}</td>'
                 f'<td class="os-stamp" width="112" align="right" valign="top" style="width:112px;vertical-align:top;line-height:0;">'
                 f'{img(art(DECOR + "stamp.png"), 112, "", 88, fluid=False)}</td></tr></table>')
+    title = (f'<h1 class="os-h1 os-ink" style="margin:12px 0 12px 0;font:600 34px/38px {DISPLAY};'
+             f'color:{INK};letter-spacing:-0.8px;">{h1_text}</h1>') if h1_text else '<div style="height:14px;font-size:0;line-height:0;">&nbsp;</div>'
     body = (head_row
-            + f'<h1 class="os-h1 os-ink" style="margin:12px 0 12px 0;font-family:{DISPLAY};font-size:34px;line-height:38px;'
-              f'color:{INK};font-weight:600;letter-spacing:-0.8px;">{h1_text}</h1>'
+            + title
             + paras_html
             + p("With love,", 16, 24, BODY, 400, margin="12px 0 2px 0")
             + f'<img class="os-sig" src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
@@ -393,14 +443,25 @@ def calendar_page(art, inner):
                  cls="os-cal")
 
 
-def book(art, label, art_html, rest):
-    """A library guide as the site's book: sage spine and a brick ribbon."""
-    head = (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-            f'<td valign="bottom" style="vertical-align:bottom;padding:12px 8px 8px 0;">{hand(label, 20)}</td>'
-            f'<td width="14" align="right" valign="top" style="width:14px;vertical-align:top;line-height:0;">'
-            f'{img(art(DECOR + "ribbon.png"), 14, "", 36, fluid=False)}</td></tr></table>')
-    return table(f'<tr class="os-card-body"><td class="os-cardpad" align="left" style="padding:0 16px 16px 16px;">{head}{art_html}{rest}</td></tr>',
-                 NOTE, f"border-radius:6px 16px 16px 6px;border-left:16px solid {SAGE};", "os-card os-psh")
+BOOK_COLORS = [("gold", GOLD), ("blue", "#8fa5c6"), ("brick", ACCENT), ("sage", SAGE)]
+
+
+def book(art, label, art_html, rest, n=0):
+    """A library guide as a book on the homepage shelf (home.css .book): coloured spine,
+    matching ribbon, and a wooden shelf under it."""
+    name, color = BOOK_COLORS[n % len(BOOK_COLORS)]
+    head = (f'<table {T} width="100%" style="width:100%;"><tr>'
+            f'<td valign="bottom" style="padding:12px 8px 8px 0;">{hand(label, 20)}</td>'
+            f'<td width="14" align="right" valign="top" style="width:14px;line-height:0;">'
+            f'{img(art(DECOR + f"ribbon-{name}.png"), 14, "", 34, fluid=False)}</td></tr></table>')
+    return (table(f'<tr class="os-card-body"><td class="os-cardpad" align="left" style="padding:0 16px 16px 16px;">{head}{art_html}{rest}</td></tr>',
+                  NOTE, f"border-radius:6px 16px 16px 6px;border-left:16px solid {color};", "os-card os-psh")
+            + shelf())
+
+
+def shelf():
+    return (f'<div class="os-shelf" style="margin:12px 0 0 0;height:9px;background-color:{CORK_FRAME};'
+            f'border-bottom:4px solid #9d7128;border-radius:3px;font-size:0;line-height:0;">&nbsp;</div>')
 
 
 def story_note(art, eyebrow, title, photo_html, paras_html, byline):
@@ -484,7 +545,7 @@ def format_chip_range_end(label):
 
 def chip(top, big=None, bottom=None, year=False):
     """Calendar page like the site's event pins: navy weekday band, big Outfit day, gold month."""
-    nw = "white-space:nowrap;"
+    nw = ""  # .os-chip td keeps each line on one line (see head())
     shell = (f'<table {T} class="os-chip" width="62" bgcolor="#ffffff" style="width:62px;border-collapse:separate;'
              f'background-color:#ffffff;border:2px solid {INK};border-radius:12px;">')
     band = (f'<tr><td class="os-navy" align="center" bgcolor="{INK}" style="background-color:{INK};padding:3px 2px 2px 2px;'
@@ -508,7 +569,7 @@ def item(title, lines, featured=False, label=None, first=True):
     else:
         tmargin = "0" if first else "14px 0 0 0"
     tsize, tlh = (18, 25) if featured else (16, 23)
-    out += p(title, tsize, tlh, INK, 700, margin=tmargin, extra="overflow-wrap:normal;word-break:normal;")
+    out += p(title, tsize, tlh, INK, 700, margin=tmargin, extra="")
     bsize, blh = (16, 24) if featured else (15, 22)
     for ln in lines:
         out += p(ln, bsize, blh, BODY, 400, margin="4px 0 0 0")
@@ -833,7 +894,8 @@ def head():
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
 u + #os-body a{text-decoration:none;}
-.os-pill{white-space:nowrap;}
+.os-pill,.os-chip td{white-space:nowrap;}
+.os-hl{background-image:linear-gradient(180deg,transparent 60%,#ebc97e 60%,#ebc97e 90%,transparent 90%);border-radius:4px;}
 .os-sh{box-shadow:SHADOW;}
 .os-psh{box-shadow:PAPER_SHADOW;}
 .os-tsh{box-shadow:0 30px 50px -30px rgba(20,32,58,.7);}
@@ -867,6 +929,11 @@ u + #os-body a{text-decoration:none;}
   .os-cardpad{padding-left:16px !important;padding-right:16px !important;}
   .os-boardpad{padding:18px 10px 16px 10px !important;}
   .os-h1{font-size:28px !important;line-height:32px !important;}
+  .os-hero-h1{font-size:35px !important;line-height:38px !important;letter-spacing:-0.8px !important;}
+  .os-tagline{font-size:23px !important;line-height:27px !important;}
+  .os-place{font-size:10.5px !important;letter-spacing:1.3px !important;padding:0 !important;}
+  .os-rule{display:none !important;}
+  .os-mast-word{font-size:18px !important;}
   .os-h2{font-size:25px !important;line-height:30px !important;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;padding:0 !important;}
   .os-col-photo{padding:0 0 14px 0 !important;text-align:center !important;}
@@ -964,6 +1031,10 @@ def compact(html):
             tag = tag.replace(f"vertical-align:{va.group(1)};", "")
         if m.group(1) == "td":
             tag = re.sub(r'(style=")padding:0;', r"\1", tag)
+        if m.group(1) == "table" and 'width="100%"' in tag:
+            tag = tag.replace('style="width:100%;', 'style="')
+        if "background-image" not in tag and "background-size" not in tag:
+            tag = re.sub(r"background-color:(#[0-9a-fA-F]{3,6});", r"background:\1;", tag)
         return tag.replace(' style=""', "")
     return _TAG.sub(fix, html)
 
@@ -980,21 +1051,20 @@ def build_html(base, browser=False):
     view_href = BROWSER_VIEW_URL if browser else "{$url}"
     unsub_href = BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
     # --- Opening: top bar, header, the village in its landscape, Taylor's letter ---
-    o.append(f'<tr><td style="padding:0 0 16px 0;">{top_bar("October 2026", view_href)}</td></tr>')
-    o.append(padrow(masthead(art("osv-mark-80.png")), pad="0 34px 4px 34px"))
-    o.append(fullrow(img(art("hero-land.jpg"), 600, "Illustration of the village in autumn: homes, a gazebo, shops, and neighbors walking the path.",
-                         style="max-width:none;", cls="os-hero")))
+    o.append(f'<tr><td style="padding:0 0 12px 0;">{top_bar("October 2026", view_href)}</td></tr>')
+    o.append(padrow(site_header(art, SITE), pad="0 16px 14px 16px"))
+    o.append(hero(art, 'October in Our <span class="os-hl">Special Village</span>', "fall"))
     alone_hi = f'<span style="background-color:{GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{ALONE_PHRASE}</span>'
     paras = "".join(p(para.replace(ALONE_PHRASE, alone_hi), 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0"))
                     for i, para in enumerate(NOTE_PARAS))
-    o.append(padrow(letter(art, "October in Our Special Village", paras)))
+    o.append(padrow(letter(art, None, paras)))
     o.append(sp(26))
     o.append(padrow(stops_block(art, [("#deadlines", "Fall break"), ("#ongoing", "Parent support"),
                                       ("#events", "Sensory-friendly events"), ("#library", "New resources")]), pad="0 22px"))
 
     # --- Three things: the deadline tag ---
     o.append(major_sp())
-    o.append(section_head("deadlines", "Three things to know this month"))
+    o.append(section_head("deadlines", "Three things to know this month", eyebrow="Deadline watch"))
     o.append(sp(14))
     o.append(padrow(tag_card(art, rows_table(TOP_DEADLINE_ROWS))))
     o.append(sp(16))
@@ -1032,7 +1102,8 @@ def build_html(base, browser=False):
 
     # --- The month ahead: featured night, then the calendar page ---
     o.append(major_sp())
-    o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro."))
+    o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.",
+                          eyebrow="Happening soon"))
     o.append(sp(14))
     featured_art = story_img(art("featured-monsters-museum-compact.jpg"), 600,
                              "Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones",
@@ -1058,28 +1129,29 @@ def build_html(base, browser=False):
 
     # --- New in the library: two books ---
     o.append(major_sp())
-    o.append(section_head("library", "New in the library"))
+    o.append(section_head("library", "New in the library", eyebrow="Resource Library"))
     o.append(sp(14))
-    guide = lambda f, alt, title, blurb, href, cta: book(
+    guide = lambda f, alt, title, blurb, href, cta, n: book(
         art, "New guide",
         img(art(f), 490, alt, 228, style="border-radius:10px;margin:0 0 12px 0;", cls="os-card-art"),
         p(title, 18, 24, INK, 700) + p(blurb, 15, 22, BODY, 400, margin="8px 0 0 0")
-        + f'<div class="os-card-cta">{pill_row([(href, cta)], margin="4px 0 0 0")}</div>')
+        + f'<div class="os-card-cta">{pill_row([(href, cta)], margin="4px 0 0 0")}</div>', n)
     o.append(padrow(browser_cols(
         guide("guide-therapy-styles-landscape-compact.jpg", "Adult and child sharing a calm sensory play tray in a warm playroom",
               "Therapy styles: play, structure, and compliance",
               "Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like.",
-              f"{SITE}/resources/therapy-styles", "Read the guide"),
+              f"{SITE}/resources/therapy-styles", "Read the guide", 0),
         guide("guide-grief-landscape-compact.jpg", "Parent on a porch in autumn while a child plays nearby in leaves - quiet and hopeful",
               "Grief and disability: the loss nobody sends a card for",
               "This kind of grief rarely has an occasion attached. It shows up at a birthday, a missed milestone, or in the parking lot after an evaluation.",
-              f"{SITE}/resources/grieving-the-life-you-imagined", "Read the grief guide"),
+              f"{SITE}/resources/grieving-the-life-you-imagined", "Read the grief guide", 1),
         gap=18)))
 
     # --- Wall of Hope: Nicole's story pinned to the board, and a note to add yours ---
     o.append(major_sp())
-    o.append(section_head("hope", "Wall of Hope"))
-    o.append(sp(14))
+    o.append(section_head("hope", "Wall of Hope", eyebrow="One hopeful story"))
+    o.append(sp(8))
+    o.append(padrow(img(art(DECOR + "garland.png"), 532, "")))
     hope_photo = img(art(HOPE["photo"]), 250, HOPE["alt"], style="margin:0 auto;", cls="os-hope-photo")
     hope_paras = "".join(p(t, 16, 26, BODY, 400, margin=("0" if i == 0 else "12px 0 0 0")) for i, t in enumerate(HOPE["paras"]))
     story = story_note(art, HOPE["eyebrow"], HOPE["title"], hope_photo, hope_paras, HOPE["byline"])
@@ -1090,7 +1162,8 @@ def build_html(base, browser=False):
 
     # --- One question, answered: the index card ---
     o.append(major_sp())
-    o.append(section_head("question", "One question, answered", "One real question from a local parent, answered plainly."))
+    o.append(section_head("question", "One question, answered", "One real question from a local parent, answered plainly.",
+                          eyebrow="Parent to parent"))
     o.append(sp(14))
     steps = rows_table([
         step(1, f'{b("Put it in writing.")} Email the case manager and copy the principal: name what is missing, quote the IEP, ask for a fix by a date, and request service logs.'),
@@ -1109,9 +1182,7 @@ def build_html(base, browser=False):
     o.append(padrow(index_card(art, q_head, steps, q_foot)))
 
     # --- Connect with other local parents: two taped notes ---
-    o.append(major_sp())
-    o.append(section_head("ongoing", "Connect with other local parents"))
-    o.append(sp(16))
+    o.append(sp(34))
     online_card = group_card(
         [], "Our Special Village Online Parent Group",
         [("calendar", "Thursdays"), ("clock", "7:00&ndash;8:00 PM Central"), ("video", "Online")],
@@ -1126,9 +1197,10 @@ def build_html(base, browser=False):
         ["Led by Cari Parr", "$15 per child for kids to play",
          "Gym staff watch children during group; not appropriate for all children", "Discounted gym admission is available separately."],
         WRTS_URL, "Plan Your Visit", secondary=["IN PERSON", "WEEKLY", "FREE"], art=art, tilt="os-tr")
-    o.append(padrow('<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
-                    f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 20px 0;vertical-align:top;box-sizing:border-box;">{online_card}</div>'
-                    f'<div class="os-browser-col" style="display:block;width:100%;margin:0;vertical-align:top;box-sizing:border-box;">{werock_card}</div></div>'))
+    o.append(dusk_band(art, "ongoing", "The heart of the village", "Connect with other local parents",
+                       '<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
+                       f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 20px 0;box-sizing:border-box;">{online_card}</div>'
+                       f'<div class="os-browser-col" style="display:block;width:100%;margin:0;box-sizing:border-box;">{werock_card}</div></div>'))
 
     # --- About, numbers, forward, footer ---
     o.append(major_sp())
@@ -1483,7 +1555,7 @@ def main():
         assert re.search(r"\bRCS\b|\bMCS\b|\bTDOE\b", re.sub(r"<[^>]+>", " ", doc)) is None, "spell out abbreviations"
         # the site pictures
         for f in ("decor/bunting.png", "decor/stamp.png", "decor/airmail-top.png", "decor/calendar-top.png",
-                  "decor/tag-eyelet.png", "decor/ribbon.png", "decor/cork.png", "decor/ruled.png", "decor/foot-hills.png",
+                  "decor/tag-eyelet.png", "decor/ribbon-gold.png", "decor/ribbon-blue.png", "decor/garland.png", "decor/dusk-top.png", "decor/stars.png", "decor/dusk-wave.png", "hero-sky.jpg", "decor/swoosh.png", "decor/cork.png", "decor/ruled.png", "decor/foot-hills.png",
                   "decor/pin-brick.png", "decor/notch-l.png", "hero-land.jpg", "vh-land.jpg", "stop-1.png", "stop-4.png",
                   "guest-1-print.jpg", "hope-print.jpg", "decor/about-print.jpg", "signature-taylor.png",
                   "featured-monsters-museum-compact.jpg", "guide-therapy-styles-landscape-compact.jpg", "guide-grief-landscape-compact.jpg"):
@@ -1522,7 +1594,7 @@ def main():
                    "6050 Dana Way, Antioch, TN", EVERGREEN_BLURB, "Touch-A-Truck after treats.", "700 Dan P. Herron Drive, Gallatin",
                    "1257 Broad Street, Murfreesboro", "5019 WalkUp Road, Pegram, TN", "About 4 hours 15 min", "(931) 265-5376",
                    SPOOK_ON_SITE, SPOOK_THANKS):
-        assert phrase in html, phrase
+        assert phrase in html.replace('<span class="os-hl">', "").replace("Special Village</span>", "Special Village"), phrase
     for href in (ACCESS_URL, f"mailto:{ACCESS_EMAIL}", SPOOK_REG_URL, GALLATIN_FLYER, CALEB_FLYER, PEGRAM_FLYER, DOLLYWOOD_URL,
                  RECESS_MAIL, EVERGREEN_URL, MONSTERS_URL, RCS_CAL, MCS_CAL, DST_URL, "tel:988", "tel:+18002807837",
                  f"{SITE}/village-hall", f"{SITE}/group", WRTS_URL, f"{SITE}/sponsors", f"{SITE}/privacy", f"{SITE}/contact"):

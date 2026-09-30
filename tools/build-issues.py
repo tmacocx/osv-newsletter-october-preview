@@ -155,7 +155,7 @@ def month_ahead(issue, art):
             + (p(f["blurb"], 15, 22, BODY, 400, margin="6px 0 0 0") if f.get("blurb") else "")
             + (btn_row([link], "6px 0 0 0", kind="gold") if link else ""))
     out = [section_head("events", "The month ahead", ev.get(
-        "intro", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.")),
+        "intro", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro."), eyebrow="Happening soon"),
            sp(14), padrow(card(art_html + copy, pad="12px 12px 18px 12px"))]
     if ev["list"]:
         # Events on the same day share one date chip (lighter email, easier to scan).
@@ -194,8 +194,8 @@ def wall_of_hope(issue, art):
     fold = (f'<tr><td align="right" style="padding:6px 0 0 0;font-size:0;line-height:0;">'
             f'{O.img(art(O.DECOR + "fold.png"), 34, "", 34, fluid=False, style="display:inline-block;border-radius:0 0 6px 0;")}</td></tr>')
     note = O.paper(inner, "4px 24px 0 24px", O.NOTE, "6px", "os-tl", top=O.pins_row(art, center=True), bottom=fold)
-    return (section_head("hope", "A little hope", "Real words from local parents, shared with permission.")
-            + sp(14) + padrow(O.board(art, note)))
+    return (section_head("hope", "A little hope", "Real words from local parents, shared with permission.", eyebrow="One hopeful story")
+            + sp(8) + padrow(O.img(art(O.DECOR + "garland.png"), 532, "")) + padrow(O.board(art, note)))
 
 
 def library(issue, art):
@@ -205,8 +205,8 @@ def library(issue, art):
             art, g["label"],
             O.img(art(f"guide-{i}.jpg"), 490, g["art_alt"], 228, style="border-radius:10px;margin:0 0 12px 0;", cls="os-card-art"),
             p(g["title"], 18, 24, INK, 700) + p(g["blurb"], 15, 22, BODY, 400, margin="8px 0 0 0")
-            + f'<div class="os-card-cta">{btn_row([(SITE + g["path"], g.get("cta", "Read the guide"))])}</div>'))
-    return (section_head("library", issue.get("library_title", "From the library")) + sp(14)
+            + f'<div class="os-card-cta">{btn_row([(SITE + g["path"], g.get("cta", "Read the guide"))])}</div>', i - 1))
+    return (section_head("library", issue.get("library_title", "From the library"), eyebrow="Resource Library") + sp(14)
             + padrow(O.browser_cols(*books, gap=18)))
 
 
@@ -223,7 +223,7 @@ def question(issue, art):
               + p(q.get("disclaimer", "Parent-to-parent guidance, not medical or legal advice."), 13, 20, MUTED, 400,
                   margin="10px 0 0 0", cls="os-tiny"))
     return (section_head("question", "One question, answered",
-                         "One real question from a local parent, answered plainly.")
+                         "One real question from a local parent, answered plainly.", eyebrow="Parent to parent")
             + sp(14) + padrow(O.index_card(art, q_head, steps, q_foot)))
 
 
@@ -245,11 +245,11 @@ def connect(issue, art):
          "Gym staff watch children during group; not appropriate for all children",
          "Discounted gym admission is available separately."],
         O.WRTS_URL, "Plan Your Visit", secondary=["IN PERSON", "WEEKLY", "FREE"], art=art, tilt="os-tr")
-    return (section_head("ongoing", "Connect with other local parents") + sp(16)
-            + padrow('<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
-                     f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 20px 0;vertical-align:top;box-sizing:border-box;">{online}</div>'
-                     f'<div class="os-browser-col" style="display:block;width:100%;margin:0;vertical-align:top;box-sizing:border-box;">{werock}</div>'
-                     '</div>'))
+    return O.dusk_band(art, "ongoing", "The heart of the village", "Connect with other local parents",
+                       '<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
+                       f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 20px 0;box-sizing:border-box;">{online}</div>'
+                       f'<div class="os-browser-col" style="display:block;width:100%;margin:0;box-sizing:border-box;">{werock}</div>'
+                       '</div>')
 
 
 def build_html(issue, base, browser, deadlines_url, view_url):
@@ -267,22 +267,23 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     unsub_href = O.BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
 
     # --- Opening: top bar, header, the village in its landscape, Taylor's letter, the stops ---
-    o.append(f'<tr><td style="padding:0 0 16px 0;">{O.top_bar(issue["month_year"], view_href)}</td></tr>')
-    o.append(padrow(O.masthead(art("osv-mark-80.png")), pad="0 34px 4px 34px"))
-    o.append(O.fullrow(O.img(art("hero-land.jpg"), 600, issue["hero_alt"], style="max-width:none;", cls="os-hero")))
+    o.append(f'<tr><td style="padding:0 0 12px 0;">{O.top_bar(issue["month_year"], view_href)}</td></tr>')
+    o.append(padrow(O.site_header(art, SITE), pad="0 16px 14px 16px"))
+    o.append(O.hero(art, f'{issue["month"]} in Our <span class="os-hl">Special Village</span>',
+                    "fall" if issue["id"] == "2026-11" else "winter", land_alt=issue["hero_alt"]))
     hi = issue.get("note_highlight")
     paras = []
     for i, para in enumerate(issue["note"]):
         if hi and hi in para:
             para = para.replace(hi, f'<span style="background-color:{O.GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{hi}</span>')
         paras.append(p(para, 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0")))
-    o.append(padrow(O.letter(art, f"{issue['month']} in Our Special Village", "".join(paras))))
+    o.append(padrow(O.letter(art, None, "".join(paras))))
     o.append(sp(26))
     o.append(padrow(O.stops_block(art, issue["chips"]), pad="0 22px"))
 
     # --- Three things: the deadline tag ---
     o.append(major_sp())
-    o.append(section_head("deadlines", "Three things to know this month"))
+    o.append(section_head("deadlines", "Three things to know this month", eyebrow="Deadline watch"))
     o.append(sp(14))
     o.append(padrow(O.tag_card(art, three_things(issue))))
     o.append(sp(16))
@@ -299,7 +300,7 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(wall_of_hope(issue, art))
     o.append(major_sp())
     o.append(question(issue, art))
-    o.append(major_sp())
+    o.append(sp(34))
     o.append(connect(issue, art))
 
     # --- About, numbers, forward, footer: identical to October ---
@@ -506,7 +507,7 @@ def check(issue, email, browser, txt, deadlines):
     assert "tmacocx.github.io/osv-newsletter-october-preview/art/" not in email
     assert "Three things to know this month" in email and "See all deadlines" in email
     assert email.count("Register for Village Hall") <= 1
-    assert f"{issue['month']} in Our Special Village" in email
+    assert f'{issue["month"]} in Our <span class="os-hl">Special Village</span>' in email
     assert 'href="tel:988"' in email
     order = ["id=\"deadlines\"", "id=\"village-hall\"", "id=\"events\"", "id=\"library\"",
              "id=\"hope\"", "id=\"question\"", "id=\"ongoing\""]

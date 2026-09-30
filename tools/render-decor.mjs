@@ -30,7 +30,8 @@ const C = { navy: '#1d2c4c', navyDeep: '#14203a', cream: '#f7f1e2', paper: '#fff
 
 const font = (f) => 'data:font/woff2;base64,' + fs.readFileSync(path.join(FONTS, f)).toString('base64');
 const FONT_CSS = `@font-face{font-family:Outfit;src:url(${font('outfit-var.woff2')}) format('woff2');font-weight:100 900}
-@font-face{font-family:Mulish;src:url(${font('mulish-var.woff2')}) format('woff2');font-weight:200 1000}`;
+@font-face{font-family:Mulish;src:url(${font('mulish-var.woff2')}) format('woff2');font-weight:200 1000}
+@font-face{font-family:'Patrick Hand';src:url(${font('patrick-hand-latin.woff2')}) format('woff2')}`;
 
 // Local files become data URLs (the page is served from the site's origin).
 function src(p) {
@@ -103,8 +104,6 @@ await shot(`<div id="shot" style="width:40px;height:56px"><span class="eye"></sp
 .eye{position:absolute;left:12px;top:34px;width:16px;height:16px;border-radius:50%;background:${C.paper};box-shadow:0 0 0 3px #d8a88c}
 .eye::after{content:"";position:absolute;left:7px;top:-34px;width:2px;height:40px;background:#9d7128;rotate:24deg;transform-origin:bottom}` });
 
-// ---------- library book ribbon (newsletter.css .nl-item--book::after) ----------
-await shot(`<div id="shot" style="width:13px;height:34px;background:${C.brick};clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%)"></div>`, path.join(shared, 'ribbon.png'));
 
 // ---------- folded-up corner (hope.css .hope-story::after) ----------
 await shot(`<div id="shot" style="width:34px;height:34px;background:linear-gradient(135deg,#efe3c4 50%,${C.cork} 50%);border-radius:0 0 6px 0;box-shadow:-2px -2px 3px rgba(60,40,10,.08)"></div>`,
@@ -152,6 +151,77 @@ async function polaroid(photo, out, { width, pad, rot, tape, bg, aspect }) {
 }
 await polaroid(cfg.about_photo, path.join(shared, 'about-print.jpg'), { width: 150, pad: '8px 8px 26px', rot: '-2deg', tape: [70, 22, '4deg'], bg: C.paper, aspect: '1/1' });
 
+// ---------- homepage pieces (index.html + css/home.css), drawn at the email's 600px ----------
+// Only the site's own shapes: the dusk sky with its moon and lamp-lit houses, the wave back to
+// cream, a starry night to tile behind the parent groups, the Wall of Hope string of notes,
+// coloured book ribbons, and the gold stroke under the tagline.
+const HOME = `${SITE}/index.html`;
+const HIDE_CHROME = 'body > *:not(main){display:none!important} .motion-btn,.particles,.home-hero .cloud{display:none!important} *{animation-play-state:paused!important}';
+async function homePage(season) {
+  await page.setViewportSize({ width: 600, height: 900 });
+  await page.goto(`${HOME}?season=${season}`, { waitUntil: 'load' });
+  await page.addStyleTag({ content: HIDE_CHROME });
+}
+await homePage('fall');
+await page.evaluate(() => document.querySelector('.dusk').classList.add('lit'));
+await page.waitForTimeout(1200);
+await (await page.$('.dusk-sky')).screenshot({ path: path.join(shared, 'dusk-top.png') });
+await (await page.$('.dusk-wave')).screenshot({ path: path.join(shared, 'dusk-wave.png') });
+console.log('wrote dusk-top.png, dusk-wave.png');
+
+{ // stars over the dusk (home.js scatters 46 of them; seeded here so the picture never changes)
+  let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const dots = Array.from({ length: 34 }, () => `<i style="left:${(rnd() * 100).toFixed(1)}%;top:${(rnd() * 100).toFixed(1)}%;width:${rnd() < 0.2 ? 3 : 2}px;height:${rnd() < 0.2 ? 3 : 2}px;opacity:${(0.35 + rnd() * 0.45).toFixed(2)}"></i>`).join('');
+  const p1 = await (await browser.newContext({ deviceScaleFactor: 1 })).newPage();
+  await p1.setContent(`<div id="s" style="position:relative;width:600px;height:420px;background:${C.navyDeep}">${dots}</div>
+    <style>body{margin:0}#s i{position:absolute;border-radius:50%;background:#fff}</style>`);
+  await (await p1.$('#s')).screenshot({ path: path.join(shared, 'stars.png') });
+  console.log('wrote stars.png');
+}
+
+await shot(`<div id="shot" class="notes-wrap"><span class="notes"><i>first words</i><i>&#9829;</i><i>first friends</i><i>&#9829;</i><i>first jobs</i></span></div>`,
+  path.join(shared, 'garland.png'), { css: `
+.notes-wrap{width:532px;height:96px}
+.notes{position:absolute;top:0;left:0;right:0;height:92px;display:flex;justify-content:space-around;align-items:flex-start;padding:0 14px}
+.notes::before{content:"";position:absolute;left:0;right:0;top:14px;height:2px;background:#9d7128;border-radius:2px;box-shadow:0 2px 2px rgba(80,50,10,.15)}
+.notes i{position:relative;min-width:58px;padding:20px 10px 10px;margin-top:6px;border-radius:3px;font:400 18px/1.05 'Patrick Hand';font-style:normal;color:${C.navy};text-align:center;max-width:92px;box-shadow:0 8px 12px -8px rgba(60,40,10,.45)}
+.notes i::before{content:"";position:absolute;top:3px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 14%,${C.brick} 36% 100%);box-shadow:0 2px 3px rgba(0,0,0,.3)}
+.notes i:nth-child(1){background:${C.goldSoft};rotate:-5deg}
+.notes i:nth-child(2){background:#f4dccd;rotate:4deg;color:#8f4424;font-size:22px;min-width:44px}
+.notes i:nth-child(3){background:#e4e9f2;rotate:-2deg}
+.notes i:nth-child(4){background:#e1e7d2;rotate:6deg;color:#55653e;font-size:22px;min-width:44px}
+.notes i:nth-child(5){background:#f7e9c9;rotate:-4deg}` });
+
+// book ribbons in the shelf's colours (home.css .book:nth-child)
+for (const [name, color] of Object.entries({ gold: C.gold, blue: '#8fa5c6', brick: C.brick, sage: C.sage })) {
+  await shot(`<div id="shot" style="width:14px;height:34px;background:${color};clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%)"></div>`, path.join(shared, `ribbon-${name}.png`));
+}
+
+// the gold stroke under "Welcome to ours." (index.html .tagline svg)
+await shot(`<div id="shot" style="width:200px;height:16px"><svg viewBox="0 0 200 16" width="200" height="16" style="display:block;overflow:visible"><path d="M3 10c46-7 96-9 194-3" fill="none" stroke="${C.gold}" stroke-width="5" stroke-linecap="round"/></svg></div>`,
+  path.join(shared, 'swoosh.png'), { css: '#shot{padding:2px 4px}' });
+
+// The opening: the homepage hero's sky, sun and rolling hills (home.css .home-hero, golden hour),
+// with the month's painting in the panorama. Cut in two: the sky goes behind the title as a
+// background picture, the hills and village sit under it as a picture.
+async function hero(painting, season, outDir) {
+  await homePage(season);
+  await page.evaluate((p) => {
+    document.body.setAttribute('data-daypart', 'golden');
+    document.querySelector('.home-hero .hero-text').innerHTML = '<div style="height:300px"></div>';
+    const img = document.querySelector('.home-hero .panorama img');
+    img.removeAttribute('srcset'); img.src = p;
+  }, src(painting));
+  await page.evaluate(() => { const i = document.querySelector('.home-hero .panorama img'); return i.complete ? 1 : new Promise((r) => { i.onload = r; i.onerror = r; setTimeout(r, 5000); }); });
+  await page.waitForTimeout(900);
+  const hb = await (await page.$('.home-hero')).boundingBox();
+  const lb = await (await page.$('.home-hero svg.land')).boundingBox();
+  const cut = Math.round(lb.y - hb.y);
+  await page.screenshot({ path: path.join(outDir, 'hero-sky.jpg'), type: 'jpeg', quality: 84, clip: { x: hb.x, y: hb.y, width: hb.width, height: cut } });
+  await page.screenshot({ path: path.join(outDir, 'hero-land.jpg'), type: 'jpeg', quality: 80, clip: { x: hb.x, y: hb.y + cut, width: hb.width, height: hb.height - cut } });
+  console.log('wrote', path.relative(ROOT, path.join(outDir, 'hero-sky.jpg')), 'and hero-land.jpg');
+}
+
 // ---------- per issue: opening landscape, Village Hall painting, taped photos, In this issue stops ----------
 async function landscape(painting, season, out, { oval = false, maxH = 400 } = {}) {
   const url = `${SITE}/__nl_land_${path.basename(out, '.jpg')}_${Math.random().toString(36).slice(2)}.html?season=${season}`;
@@ -197,7 +267,7 @@ async function stops(chips, out) {
 
 for (const iss of cfg.issues) {
   const out = path.join(ROOT, iss.out);
-  await landscape(iss.hero, iss.season, path.join(out, 'hero-land.jpg'));
+  await hero(iss.hero, iss.season, out);
   await landscape(iss.vh, iss.season, path.join(out, 'vh-land.jpg'), { oval: !!iss.vh_oval, maxH: 250 });
   await stops(iss.chips, path.join(out, 'stops.png'));
   if (iss.hope_photo) {
