@@ -95,17 +95,12 @@ def img(src, alt, width=600, extra=""):
 
 
 def btn(href, label, on_navy=False):
-    """Small outlined pill button. Taylor's rule: buttons, never underlined text links."""
-    color = GOLD if on_navy else ACCENT
-    cls = "os-gold" if on_navy else "os-link"
-    return (f'<a class="{cls}" href="{href}" style="display:inline-block;margin:8px 8px 0 0;'
-            f'padding:7px 16px;border:1.5px solid {color};border-radius:99px;font:700 14px/18px {FONT};'
-            f'color:{color};text-decoration:none;">{label}</a>')
+    """Small pill button (site .btn--ghost). Taylor's rule: buttons, never underlined text links."""
+    return O.pill(href, label, on_navy)
 
 
 def btn_row(links, margin="4px 0 0 0", on_navy=False):
-    return (f'<div class="os-btn-row" style="margin:{margin};">'
-            + "".join(btn(h, lab, on_navy) for h, lab in links) + '</div>')
+    return O.pill_row(links, margin=margin, on_dark=on_navy)
 
 
 def link_line(links, size=15, lh=22, margin="8px 0 0 0", cls=""):
@@ -180,8 +175,9 @@ def village_hall(issue, art):
         p(vh["guest_placeholder"], 14, 21, SAND, 400, margin="0 0 16px 0"))
     panel = (
         f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        f'bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
-        '<tr><td align="left" style="padding:16px 18px 20px 18px;">'
+        f'bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:28px;box-shadow:{O.SHADOW};">'
+        f'<tr><td style="padding:0 22px;">{O.bunting()}</td></tr>'
+        '<tr><td align="left" style="padding:14px 20px 22px 20px;">'
         + p(vh["date"], 13, 18, GOLD, 700, margin="0 0 4px 0")
         + vh_meta_icon("clock-gold", vh["time"], bottom="4px")
         + vh_meta_icon("video-gold", "Online", bottom="18px")
@@ -200,8 +196,7 @@ def village_hall(issue, art):
              '</div>')
     return (padrow(anchor("village-hall") + rule()
                    + p("The next deep dive", 13, 18, ACCENT, 700, margin="12px 0 0 0")
-                   + (f'<h2 class="os-h2 os-ink" style="margin:6px 0 0 0;font-family:{FONT};font-size:21px;'
-                      f'line-height:27px;mso-line-height-rule:exactly;color:{INK};font-weight:700;">Village Hall</h2>')
+                   + O.h2("Village Hall", "6px 0 0 0")
                    + p("One topic. One guest expert. Your questions.", 16, 24, BODY, 400, margin="6px 0 0 0"))
             + sp(12) + padrow(stack, pad="0 34px"))
 
@@ -240,7 +235,7 @@ def month_ahead(issue, art):
                     block += disclose(e["disclose"])
                 content += block if k == 0 else f'<div style="margin-top:14px;">{block}</div>'
             rows.append(row(chip(*ch), content, last=(i == len(groups) - 1), tight=True))
-        out += [sp(16), padrow(card(rows_table(rows), pad="6px 20px 6px 20px"))]
+        out += [sp(16), padrow(O.board(O.pushpin("#3c5378") + card(rows_table(rows), pad="6px 18px 6px 18px")))]
     if ev.get("note"):
         out += [sp(12), padrow(p(ev["note"], 14, 21, MUTED, 400, extra="text-align:center;"))]
     out += [sp(20), padrow(button(f"{SITE}/events", ev["calendar_label"], INK, CREAM, align="center")
@@ -263,7 +258,7 @@ def wall_of_hope(issue, art):
              + link_line([(f"{SITE}/hope", "Read more stories"), (f"{SITE}/hope", "Share yours")],
                          margin="14px 0 0 0"))
     return (section_head("hope", "A little hope", "Real words from local parents, shared with permission.")
-            + sp(12) + padrow(card(inner, pad="12px 20px 16px 20px")))
+            + sp(12) + padrow(O.tape() + card(inner, pad="18px 20px 16px 20px")))
 
 
 def library(issue, art):
@@ -332,7 +327,7 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(f'<body id="os-body" class="os-bg" bgcolor="{CREAM}" style="margin:0;padding:0;background-color:{CREAM};width:100%;max-width:100%;overflow-x:hidden;">')
     o.append(f'<span style="display:none;font-size:1px;color:{CREAM};line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">{plain(issue["preheader"])}</span>')
     o.append(f'<table role="presentation" class="os-bg" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{CREAM}" style="width:100%;border-collapse:collapse;background-color:{CREAM};">'
-             '<tr><td align="center" style="padding:20px 12px 40px 12px;">'
+             f'<tr><td align="center" style="padding:20px 12px 40px 12px;font-family:{FONT};color:{BODY};">'
              '<table role="presentation" class="os-wrap" cellpadding="0" cellspacing="0" border="0" width="600" style="width:100%;max-width:600px;border-collapse:collapse;">')
     view_href = view_url if browser else "{$url}"
     unsub_href = O.BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
@@ -340,8 +335,8 @@ def build_html(issue, base, browser, deadlines_url, view_url):
                       13, 18, MUTED, 400, extra="text-align:center;", cls="os-tiny"), pad="0 34px 12px 34px"))
     o.append(padrow(
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-        f'<td align="left" style="vertical-align:middle;">{p("Our Special Village", 12, 16, ACCENT, 700, extra="letter-spacing:1.6px;text-transform:uppercase;")}</td>'
-        f'<td align="right" style="vertical-align:middle;">{p(issue["month_year"], 13, 16, MUTED, 700, extra="text-align:right;")}</td>'
+        f'<td align="left" style="vertical-align:middle;">{O.masthead(art("osv-mark-80.png"))}</td>'
+        f'<td align="right" style="vertical-align:middle;">{p(issue["month_year"], 21, 24, O.GOLD_INK, 400, extra="text-align:right;font-family:" + O.HAND + ";")}</td>'
         '</tr></table>', pad="0 34px 14px 34px"))
     o.append('<tr><td align="left" style="padding:0;">'
              f'<img class="os-hero" src="{art("hero.jpg")}" width="600" alt="{issue["hero_alt"]}" '
@@ -354,8 +349,8 @@ def build_html(issue, base, browser, deadlines_url, view_url):
         if hi and hi in para:
             para = para.replace(hi, f'<span style="background-color:{BLUSH};color:{INK};padding:1px 4px;border-radius:4px;">{hi}</span>')
         paras.append(p(para, 16, 24, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0")))
-    note_copy = (f'<h1 class="os-h1 os-ink" style="margin:0 0 10px 0;font-family:{FONT};font-size:30px;line-height:36px;'
-                 f'mso-line-height-rule:exactly;color:{INK};font-weight:700;letter-spacing:-0.3px;">{issue["month"]} in Our Special Village</h1>'
+    note_copy = (f'<h1 class="os-h1 os-ink" style="margin:0 0 10px 0;font-family:{O.DISPLAY};font-size:32px;line-height:37px;'
+                 f'color:{INK};font-weight:600;letter-spacing:-0.6px;">{issue["month"]} in Our Special Village</h1>'
                  + "".join(paras)
                  + p("With love,", 16, 24, BODY, 400, margin="10px 0 2px 0")
                  + f'<img class="os-sig" src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
@@ -383,7 +378,7 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(major_sp())
     o.append(section_head("deadlines", "Three things to know this month"))
     o.append(sp(12))
-    o.append(padrow(card(three_things(issue), pad="8px 20px 8px 20px")))
+    o.append(padrow(O.board(O.pushpin(ACCENT) + card(three_things(issue), pad="8px 18px 8px 18px"))))
     o.append(sp(14))
     o.append(padrow(button(deadlines_url, "See all deadlines", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
                     + p(issue["confirmed"], 13, 20, MUTED, 400, margin="8px 0 0 0", cls="os-confirm")))
@@ -403,8 +398,7 @@ def build_html(issue, base, browser, deadlines_url, view_url):
 
     # About, numbers, forward, footer: identical to October.
     o.append(major_sp())
-    about_copy = ((f'<h2 class="os-ink" style="margin:0;font-family:{FONT};font-size:17px;line-height:23px;'
-                   f'mso-line-height-rule:exactly;color:{INK};font-weight:700;">About Our Special Village</h2>')
+    about_copy = (O.h2("About Our Special Village", "0", 19, 24)
                   + p(O.ABOUT, 14, 21, BODY, 400, margin="6px 0 0 0")
                   + btn_row([(f"{SITE}/about", "About the Village"), (f"{SITE}/editorial-policy", "How we check information")]))
     about_photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="160" class="os-photocell" bgcolor="{BLUSH}" '
@@ -424,20 +418,16 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(padrow(p("Know a family who could use this? Forward it along. Anyone can join at "
                       + a(f"{SITE}/newsletter", "ourspecialvillagetn.com/newsletter", nowrap=False) + ".", 14, 21, BODY, 400, extra="text-align:center;")))
     o.append(sp(20))
-    o.append(f'<tr><td class="os-pad" style="padding:0 34px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr><td class="os-rule" style="border-top:1px solid {HAIR};font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table></td></tr>')
-    o.append(sp(14))
     footer = (p("Our Special Village &middot; Murfreesboro and surrounding areas, Tennessee", 14, 21, INK, 700, margin="0 0 6px 0")
               + p("Local businesses and practices help keep the Village free and ad-free. " + a(f"{SITE}/sponsors", "Sponsorship options", nowrap=False) + ".", 13, 20, BODY, 400, margin="0 0 12px 0")
               + p("You are receiving this because you joined the newsletter list at ourspecialvillagetn.com.<br>"
                   + a(unsub_href, "Unsubscribe in one click", nowrap=False) + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/privacy", "Privacy") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/contact", "Contact"), 13, 20, BODY, 400, margin="0 0 10px 0", cls="os-tiny")
               + p("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC<br>1810 Ward Dr, Suite 101, Murfreesboro, TN 37129", 13, 19, BODY, 400, cls="os-tiny"))
-    o.append(padrow('<div class="os-footer">' + footer + '</div>'))
+    o.append(padrow(O.night_footer(footer)))
     o.append('</table></td></tr></table></body></html>')
     out = "\n".join(o) + "\n"
     out = out.replace(f"{PAGES}art/icons/", f"{base}icons/")  # O.meta_row / vh_meta_icon hard-code Pages
     out = out.replace("text-decoration:underline", "text-decoration:none")  # Taylor: no underlined links
-    # Same font stack without spaces: identical rendering, ~700 bytes lighter (keeps November under Gmail's clip).
-    out = out.replace("Figtree, 'Segoe UI', Helvetica, Arial, sans-serif", "Figtree,'Segoe UI',Helvetica,Arial,sans-serif")
     return render_ph(out)
 
 
@@ -607,10 +597,6 @@ def build_deadlines(issue, back_url, back_label):
         sections.append(f"<h2>{title}</h2>\n{rows}")
     page = O.build_deadlines_page()
     head_part = page.split("<main>", 1)[0]
-    head_part = head_part.replace("</style>", (
-        f".body a{{display:inline-block;margin:8px 8px 0 0;padding:6px 14px;border:1.5px solid {ACCENT};"
-        "border-radius:999px;text-decoration:none;font-size:14px;line-height:18px;white-space:nowrap;}"
-        ".back a{text-decoration:none;}\n</style>"))
     head_part = re.sub(r"<title>.*?</title>", f"<title>{issue['month_year']} deadlines · Our Special Village</title>", head_part)
     body = (f'<main>\n<p class="back"><a href="{back_url}">&larr; {back_label}</a></p>\n'
             f"<h1>All {issue['month']} deadlines</h1>\n"

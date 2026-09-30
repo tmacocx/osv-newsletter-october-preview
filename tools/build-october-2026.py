@@ -63,19 +63,32 @@ ACCESS_URL = "https://www.accessyouredu.com/"
 ACCESS_EMAIL = "access.your.education@gmail.com"
 MERCEDES_PHOTO = "mercedes-family-hearts-160.jpg"
 
+# Site look (Sept 30, 2026 redesign, public/css/shell.css + home.css on ourspecialvillagetn.com):
+# navy + cream + gold, paper cards with soft shadows, Outfit headings, Mulish body,
+# Patrick Hand notes, pill buttons sitting on a darker edge, cork-board event cards.
 CREAM = "#f7f1e2"
-WHITE = "#ffffff"
-BLUSH = "#f6e4d6"
-INK = "#1b2340"
-BODY = "#4a5169"
-MUTED = "#6b6250"
-ACCENT = "#964720"
-HAIR = "#e6dcc6"
-RULE = "#ece3cf"
-GOLD = "#d4ac4d"
-SAND = "#ded7c4"
+WHITE = "#fffcf5"      # paper
+BLUSH = "#f4dccd"      # brick-soft (highlights, audience tags)
+INK = "#1d2c4c"        # navy
+BODY = "#3a4760"
+MUTED = "#56637a"
+ACCENT = "#a9542f"     # brick
+HAIR = "#eadfc8"
+RULE = "#eee4cf"
+GOLD = "#d7a43e"
+GOLD_DEEP = "#b4861f"  # button edge
+GOLD_INK = "#8e6614"   # handwritten notes on paper
+SAND = "#efe9da"       # on-dark text
+NAVY_DEEP = "#14203a"
+CORK = "#ecd9ae"
+CORK_FRAME = "#c99a45"
+SAGE_SOFT = "#e1e7d2"
+SAGE_INK = "#55653e"
+SHADOW = "0 1px 2px rgba(29,44,76,.05),0 12px 28px -16px rgba(29,44,76,.30)"
 
-FONT = "Figtree, 'Segoe UI', Helvetica, Arial, sans-serif"
+FONT = "Mulish,'Segoe UI',Helvetica,Arial,sans-serif"
+DISPLAY = "Outfit,Mulish,'Segoe UI',Helvetica,Arial,sans-serif"
+HAND = "'Patrick Hand','Segoe Print','Bradley Hand',cursive"
 
 CLASS_FOR = {INK: "os-ink", BODY: "os-body", MUTED: "os-muted", ACCENT: "os-accent",
              GOLD: "os-gold", SAND: "os-sand", CREAM: "os-cream", WHITE: "os-white"}
@@ -85,11 +98,43 @@ PREHEADER = ("Fall break starts Oct 5. Three things to know this month, a featur
              "two new guides, and one IEP question answered.")
 
 
+_ONLY_LINKS = re.compile(r'^(?:\s|&nbsp;|&middot;)*(?:<a class="os-link" href="[^"]*"[^>]*>.*?</a>(?:\s|&nbsp;|&middot;)*)+$')
+
+
 def p(text, size=16, lh=24, color=BODY, weight=400, margin="0", extra="", cls=""):
+    """Paragraph. Body copy inherits Mulish from the wrapper cell (lighter email).
+
+    Site look: bold titles (16px+) are Outfit 600; small bold brick/gold labels
+    ("Featured", "The next deep dive") are Patrick Hand notes, like the site's
+    eyebrows; a line that is only links becomes a row of pill buttons.
+    """
+    if weight == 700 and size <= 14 and color in (ACCENT, GOLD) and "<" not in text and "text-align:center" not in extra:
+        color = GOLD_INK if color == ACCENT else GOLD
+        return (f'<p class="{CLASS_FOR.get(color, "")} os-hand {cls}" style="margin:{margin};font-family:{HAND};'
+                f'font-size:21px;line-height:24px;color:{color};{extra}">{text}</p>')
+    if _ONLY_LINKS.match(text):
+        links = re.findall(r'<a class="os-link" href="([^"]*)"[^>]*>(?:<span[^>]*>)?(.*?)(?:</span>)?</a>', text)
+        return pill_row(links, margin=margin)
     classes = " ".join(c for c in [CLASS_FOR.get(color, ""), cls] if c)
-    w = f"font-weight:{weight};" if weight != 400 else ""
-    return (f'<p class="{classes}" style="margin:{margin};font-family:{FONT};font-size:{size}px;'
-            f'line-height:{lh}px;mso-line-height-rule:exactly;color:{color};{w}{extra}">{text}</p>')
+    font = f"font-family:{DISPLAY};" if weight == 700 and size >= 15 else ""
+    w = "font-weight:600;" if font else (f"font-weight:{weight};" if weight != 400 else "")
+    return (f'<p class="{classes}" style="margin:{margin};{font}font-size:{size}px;'
+            f'line-height:{lh}px;color:{color};{w}{extra}">{text}</p>')
+
+
+def pill(href, label, on_dark=False):
+    """Small pill button like the site's .btn--ghost: paper, navy outline, navy edge."""
+    if on_dark:
+        return (f'<a class="os-gold" href="{href}" style="display:inline-block;margin:8px 8px 0 0;padding:6px 15px;'
+                f'border:2px solid {GOLD};border-radius:99px;font:600 14px/18px {DISPLAY};color:{GOLD};'
+                f'text-decoration:none;">{label}</a>')
+    return (f'<a class="os-ink" href="{href}" style="display:inline-block;margin:8px 8px 0 0;padding:6px 15px;'
+            f'background-color:{WHITE};border:2px solid {INK};border-bottom-width:4px;border-radius:99px;'
+            f'font:600 14px/18px {DISPLAY};color:{INK};text-decoration:none;">{label}</a>')
+
+
+def pill_row(links, margin="4px 0 0 0", on_dark=False):
+    return (f'<div style="margin:{margin};">' + "".join(pill(h, lab, on_dark) for h, lab in links) + '</div>')
 
 
 def b(text, color=INK):
@@ -99,16 +144,14 @@ def b(text, color=INK):
 def a(href, label, nowrap=True):
     nowrap_css = "white-space:nowrap;" if nowrap else ""
     return (f'<a class="os-link" href="{href}" style="color:{ACCENT};font-weight:700;'
-            f'text-decoration:underline;{nowrap_css}">'
-            f'<span class="os-link" style="color:{ACCENT};">{label}</span></a>')
+            f'text-decoration:none;{nowrap_css}">{label}</a>')
 
 
 def navy_a(href, label, nowrap=True):
     """Gold link for copy sitting on the Village Hall navy card."""
     nowrap_css = "white-space:nowrap;" if nowrap else ""
     return (f'<a class="os-gold" href="{href}" style="color:{GOLD};font-weight:700;'
-            f'text-decoration:underline;{nowrap_css}">'
-            f'<span class="os-gold" style="color:{GOLD};">{label}</span></a>')
+            f'text-decoration:none;{nowrap_css}">{label}</a>')
 
 
 def tel(number_display, number_tel):
@@ -116,12 +159,12 @@ def tel(number_display, number_tel):
 
 
 def sp(h):
-    return f'<tr><td style="font-size:0;line-height:0;height:{h}px;mso-line-height-rule:exactly;">&nbsp;</td></tr>'
+    return f'<tr><td style="font-size:0;line-height:0;height:{h}px;">&nbsp;</td></tr>'
 
 
 def major_sp():
     """48px desktop / 36px mobile before major sections (.os-sec)."""
-    return ('<tr><td class="os-sec" style="font-size:0;line-height:48px;height:48px;mso-line-height-rule:exactly;">&nbsp;</td></tr>')
+    return ('<tr><td class="os-sec" style="font-size:0;line-height:48px;height:48px;">&nbsp;</td></tr>')
 
 
 def padrow(inner, pad="0 34px"):
@@ -134,16 +177,20 @@ def anchor(id_):
 
 def rule():
     return ('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="40" '
-            'style="width:40px;border-collapse:collapse;"><tr>'
-            f'<td height="3" bgcolor="{ACCENT}" class="os-rulebar" style="height:3px;font-size:1px;line-height:3px;'
-            f'mso-line-height-rule:exactly;background-color:{ACCENT};">&nbsp;</td></tr></table>')
+            'style="width:40px;border-collapse:separate;"><tr>'
+            f'<td height="4" bgcolor="{GOLD}" class="os-rulebar" style="height:4px;font-size:1px;line-height:4px;'
+            f'background-color:{GOLD};border-radius:2px;">&nbsp;</td></tr></table>')
+
+
+def h2(title, margin="12px 0 0 0", size=25, lh=30):
+    return (f'<h2 class="os-h2 os-ink" style="margin:{margin};font-family:{DISPLAY};font-size:{size}px;'
+            f'line-height:{lh}px;color:{INK};font-weight:600;letter-spacing:-0.3px;">{title}</h2>')
 
 
 def section_head(id_, title, intro=None):
     """Consistent major-section chrome: rule + 12px + h2 + 6–8px intro."""
     out = anchor(id_) + rule()
-    out += (f'<h2 class="os-h2 os-ink" style="margin:12px 0 0 0;font-family:{FONT};font-size:21px;'
-            f'line-height:27px;mso-line-height-rule:exactly;color:{INK};font-weight:700;">{title}</h2>')
+    out += h2(title, "12px 0 0 0")
     if intro:
         out += p(intro, 16, 24, BODY, 400, margin="6px 0 0 0")
     return padrow(out)
@@ -152,8 +199,58 @@ def section_head(id_, title, intro=None):
 def card(inner, pad="16px 20px 16px 20px"):
     return (f'<table role="presentation" class="os-card" cellpadding="0" cellspacing="0" border="0" width="100%" '
             f'bgcolor="{WHITE}" style="width:100%;border-collapse:separate;background-color:{WHITE};'
-            f'border:1px solid {HAIR};border-radius:16px;box-shadow:0 1px 3px rgba(27,35,64,0.06);">'
+            f'border:1px solid {HAIR};border-radius:20px;box-shadow:{SHADOW};">'
             f'<tr class="os-card-body"><td class="os-cardpad" align="left" style="padding:{pad};">{inner}</td></tr></table>')
+
+
+def masthead(mark_src):
+    """Site header lockup: pin mark + Outfit wordmark."""
+    return ('<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>'
+            f'<td style="padding:0 10px 0 0;vertical-align:middle;"><img src="{mark_src}" width="40" height="40" alt="" '
+            'style="display:block;width:40px;height:40px;border:0;"></td>'
+            f'<td style="vertical-align:middle;font:600 21px/24px {DISPLAY};color:{INK};letter-spacing:-0.2px;white-space:nowrap;">'
+            'Our Special Village</td></tr></table>')
+
+
+def bunting():
+    """Flag string across the top of a card (site Village Hall card), as email-safe cells."""
+    colors = [GOLD, "#8fa5c6", ACCENT, "#7d8f63", "#f3e5c0", GOLD, "#8fa5c6", ACCENT, "#7d8f63", "#f3e5c0"]
+    gap = '<td width="5" style="width:5px;font-size:0;line-height:0;">&nbsp;</td>'
+    cells = gap.join(f'<td height="14" style="height:14px;background-color:{c};border-radius:0 0 14px 14px;'
+                     f'font-size:0;line-height:0;">&nbsp;</td>' for c in colors)
+    return ('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
+            f'style="width:100%;border-collapse:separate;table-layout:fixed;"><tr>{cells}</tr></table>')
+
+
+def night_footer(inner):
+    """Navy footer band like the site's footer under its dusk hills: cream text, gold links."""
+    inner = (inner.replace(f"color:{ACCENT}", f"color:{GOLD}").replace('class="os-link"', 'class="os-gold"')
+             .replace(f"color:{INK}", "color:#ffffff").replace(f"color:{BODY}", "color:#b9c4d8")
+             .replace('class="os-ink', 'class="os-white').replace('class="os-body', 'class="os-footnote'))
+    return (f'<table role="presentation" class="os-navy os-footer" cellpadding="0" cellspacing="0" border="0" width="100%" '
+            f'bgcolor="{NAVY_DEEP}" style="width:100%;border-collapse:separate;background-color:{NAVY_DEEP};'
+            f'border-radius:28px;"><tr><td style="padding:22px 22px 20px 22px;">{inner}</td></tr></table>')
+
+
+def board(inner, pad="18px 14px 14px 14px"):
+    """Cork bulletin board with a gold frame (site home.css .board). Cards sit on it like pinned notes."""
+    return (f'<table role="presentation" class="os-board" cellpadding="0" cellspacing="0" border="0" width="100%" '
+            f'bgcolor="{CORK}" style="width:100%;border-collapse:separate;background-color:{CORK};'
+            'background-image:radial-gradient(rgba(122,91,19,.17) 1.2px,transparent 1.7px);background-size:14px 14px;'
+            f'border:6px solid {CORK_FRAME};border-radius:28px;box-shadow:{SHADOW};">'
+            f'<tr><td class="os-boardpad" align="left" style="padding:{pad};">{inner}</td></tr></table>')
+
+
+def pushpin(color=ACCENT):
+    """Round pushpin centered over a pinned card."""
+    return (f'<div style="width:18px;height:18px;margin:0 auto -9px auto;border-radius:50%;background-color:{color};'
+            f'border:3px solid {WHITE};box-shadow:0 4px 5px -2px rgba(0,0,0,.35);position:relative;z-index:2;"></div>')
+
+
+def tape():
+    """Strip of paper tape across the top of a note (site hope and newsletter pages)."""
+    return (f'<div style="width:96px;height:22px;margin:0 auto -12px auto;background-color:#eadcb0;opacity:.85;'
+            f'border-radius:2px;position:relative;z-index:2;transform:rotate(-2deg);"></div>')
 
 
 def rows_table(rows_html):
@@ -204,22 +301,26 @@ def format_chip_range_end(label):
 
 
 def chip(top, big=None, bottom=None, year=False):
-    """Date square. Bottom range labels stay on one line (nowrap; shorten 'to …')."""
-    nowrap = "text-align:center;white-space:nowrap;word-break:normal;overflow-wrap:normal;"
-    shell_open = (f'<table role="presentation" class="os-chip" cellpadding="0" cellspacing="0" border="0" width="62" '
-                  f'bgcolor="{BLUSH}" style="width:62px;border-collapse:separate;background-color:{BLUSH};border-radius:10px;">'
-                  '<tr><td align="center" style="padding:{pad};">')
-    shell_close = '</td></tr></table>'
+    """Calendar page like the site's event pins: navy weekday band, big Outfit day, gold month.
+
+    Bottom range labels stay on one line (nowrap; shorten 'to …')."""
+    nw = "text-align:center;white-space:nowrap;"
+    shell = (f'<table role="presentation" class="os-chip" cellpadding="0" cellspacing="0" border="0" width="62" '
+             f'bgcolor="#ffffff" style="width:62px;border-collapse:separate;background-color:#ffffff;'
+             f'border:2px solid {INK};border-radius:12px;overflow:hidden;">')
+    band = (f'<tr><td class="os-navy" align="center" bgcolor="{INK}" style="background-color:{INK};padding:3px 2px 2px 2px;'
+            f'border-radius:9px 9px 0 0;font:600 11px/14px {DISPLAY};letter-spacing:1px;text-transform:uppercase;'
+            f'color:{GOLD};{nw}">{{}}</td></tr>')
     if big is None:
-        inner = (p(top, 13, 17, INK, 700, extra=nowrap) +
-                 p(bottom, 13, 17, INK, 700, extra=nowrap))
-        return shell_open.format(pad="17px 3px 17px 3px") + inner + shell_close
+        return (shell + band.format(top) +
+                f'<tr><td align="center" style="padding:8px 2px 9px 2px;font:600 13px/17px {DISPLAY};color:{INK};{nw}">'
+                f'{bottom}</td></tr></table>')
     bottom = format_chip_range_end(bottom)
-    bottom_size = 11 if "&ndash;" in (bottom or "") or "&nbsp;" in (bottom or "") else 12
-    inner = (p(top, 12, 14, ACCENT, 700, extra=nowrap) +
-             p(big, 22, 26, INK, 700, margin="1px 0 0 0", extra=nowrap) +
-             p(bottom, bottom_size, 14, BODY, 700, extra=nowrap))
-    return shell_open.format(pad="7px 3px 7px 3px") + inner + shell_close
+    bottom_size = 10 if "&ndash;" in (bottom or "") or "&nbsp;" in (bottom or "") else 11
+    return (shell + band.format(top) +
+            f'<tr><td align="center" style="padding:3px 2px 0 2px;font:600 24px/27px {DISPLAY};color:{INK};{nw}">{big}</td></tr>'
+            f'<tr><td align="center" style="padding:0 2px 5px 2px;font:600 {bottom_size}px/14px {DISPLAY};'
+            f'letter-spacing:.8px;text-transform:uppercase;color:#7a5b13;{nw}">{bottom}</td></tr></table>')
 
 
 def item(title, lines, featured=False, label=None, first=True):
@@ -243,12 +344,13 @@ def item(title, lines, featured=False, label=None, first=True):
 def button(href, label, fill, text_color, align="left"):
     align_attr = f' align="{align}"' if align != "left" else ""
     margin = "margin:0 auto;" if align == "center" else ""
+    edge = GOLD_DEEP if fill == GOLD else NAVY_DEEP
     return (f'<table role="presentation" class="os-btn" cellpadding="0" cellspacing="0" border="0"{align_attr} '
-            f'bgcolor="{fill}" style="border-collapse:separate;background-color:{fill};border-radius:999px;{margin}">'
-            f'<tr><td align="center" style="padding:13px 26px;">'
-            f'<a href="{href}" style="display:block;font-family:{FONT};font-size:16px;line-height:20px;'
-            f'color:{text_color};font-weight:700;text-decoration:none;">'
-            f'<span style="color:{text_color};">{label}</span></a></td></tr></table>')
+            f'bgcolor="{fill}" style="border-collapse:separate;background-color:{fill};border-radius:999px;'
+            f'border-bottom:4px solid {edge};{margin}">'
+            f'<tr><td align="center" style="padding:13px 28px 12px 28px;">'
+            f'<a href="{href}" style="display:block;font:600 17px/20px {DISPLAY};'
+            f'color:{text_color};text-decoration:none;">{label}</a></td></tr></table>')
 
 
 def badge(label, nowrap=True):
@@ -256,10 +358,10 @@ def badge(label, nowrap=True):
     ws = "white-space:nowrap;" if nowrap else "white-space:normal;"
     return (
         f'<td style="padding:0 6px 6px 0;vertical-align:middle;">'
-        f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" bgcolor="{BLUSH}" '
-        f'style="border-collapse:separate;background-color:{BLUSH};border-radius:999px;">'
+        f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" bgcolor="{SAGE_SOFT}" '
+        f'style="border-collapse:separate;background-color:{SAGE_SOFT};border-radius:6px;">'
         f'<tr><td align="center" style="padding:4px 10px;">'
-        f'<span style="font-family:{FONT};font-size:11px;line-height:14px;color:{INK};'
+        f'<span style="font-size:11px;line-height:14px;color:{INK};'
         f'font-weight:700;letter-spacing:0.6px;text-transform:uppercase;{ws}">{label}</span>'
         f'</td></tr></table></td>'
     )
@@ -280,7 +382,7 @@ def audience_tag(label):
         f'bgcolor="{BLUSH}" style="width:100%;border-collapse:separate;background-color:{BLUSH};'
         f'border-radius:10px;margin:0 0 8px 0;">'
         f'<tr><td align="left" style="padding:8px 12px;">'
-        f'<span style="font-family:{FONT};font-size:12px;line-height:16px;color:{INK};'
+        f'<span style="font-size:12px;line-height:16px;color:{INK};'
         f'font-weight:700;letter-spacing:0.7px;text-transform:uppercase;">{label}</span>'
         f'</td></tr></table>'
     )
@@ -289,11 +391,12 @@ def audience_tag(label):
 def secondary_tags_text(parts):
     """Smaller secondary tag row: IN PERSON · WEEKLY."""
     joined = " &middot; ".join(
-        f'<span style="font-family:{FONT};font-size:11px;line-height:14px;color:{MUTED};'
-        f'font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">{p}</span>'
+        f'<span style="font-size:11px;line-height:14px;color:{SAGE_INK};'
+        f'font-weight:800;letter-spacing:0.8px;text-transform:uppercase;">{p}</span>'
         for p in parts
     )
-    return f'<p class="os-muted" style="margin:0 0 8px 0;font-family:{FONT};font-size:11px;line-height:14px;color:{MUTED};">{joined}</p>'
+    return (f'<p style="margin:0 0 8px 0;"><span style="display:inline-block;padding:3px 9px;border-radius:6px;'
+            f'background-color:{SAGE_SOFT};font-size:11px;line-height:14px;color:{SAGE_INK};">{joined}</span></p>')
 
 
 
@@ -325,8 +428,8 @@ def good_to_know(items):
         bot = "0" if i == len(items) - 1 else "8px"
         rows.append(
             f'<tr><td valign="top" style="padding:0 8px {bot} 0;width:18px;">'
-            f'<span style="font-family:{FONT};font-size:15px;line-height:22px;color:{ACCENT};'
-            'font-weight:700;">&#10003;</span>'
+            f'<span style="font-size:15px;line-height:22px;color:{SAGE_INK};'
+            'font-weight:800;">&#10003;</span>'
             f'</td><td valign="top" style="padding:0 0 {bot} 0;">'
             + p(t, 15, 22, BODY, 400)
             + '</td></tr>'
@@ -348,11 +451,11 @@ def group_cta(href, label):
     return (
         f'<table role="presentation" class="os-btn os-btn-navy" cellpadding="0" cellspacing="0" '
         f'border="0" width="100%" bgcolor="{INK}" '
-        f'style="width:100%;border-collapse:separate;background-color:{INK};border-radius:12px;">'
-        f'<tr><td align="center" style="padding:14px 18px;">'
-        f'<a href="{href}" style="display:block;font-family:{FONT};font-size:16px;line-height:20px;'
-        f'color:{CREAM};font-weight:700;text-decoration:none;text-align:center;">'
-        f'<span style="color:{CREAM};">{label}</span></a></td></tr></table>'
+        f'style="width:100%;border-collapse:separate;background-color:{INK};border-radius:999px;'
+        f'border-bottom:4px solid {NAVY_DEEP};">'
+        f'<tr><td align="center" style="padding:13px 18px 12px 18px;">'
+        f'<a href="{href}" style="display:block;font:600 17px/20px {DISPLAY};'
+        f'color:{CREAM};text-decoration:none;text-align:center;">{label}</a></td></tr></table>'
     )
 
 
@@ -412,9 +515,9 @@ def issue_chip(href, label):
         f'<a href="{href}" style="display:block;text-decoration:none;border:0;outline:none;">'
         f'<table role="presentation" class="os-issue-chip" cellpadding="0" cellspacing="0" border="0" width="100%" '
         f'bgcolor="{WHITE}" style="width:100%;border-collapse:separate;background-color:{WHITE};'
-        f'border:1px solid {HAIR};border-radius:12px;box-shadow:0 1px 2px rgba(27,35,64,0.05);">'
-        f'<tr><td align="center" style="padding:12px 10px;">'
-        f'<span style="font-family:{FONT};font-size:14px;line-height:18px;color:{INK};font-weight:700;'
+        f'border:1px solid {HAIR};border-top:4px solid {GOLD};border-radius:10px;box-shadow:{SHADOW};">'
+        f'<tr><td align="center" style="padding:11px 10px 12px 10px;">'
+        f'<span style="font:600 15px/19px {DISPLAY};color:{INK};'
         f'text-align:center;">{label}</span>'
         f'</td></tr></table></a>'
     )
@@ -461,9 +564,9 @@ def step(n, text, last=False):
     return (f'<tr><td style="padding:{pad};">'
             '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
             '<td width="30" style="width:30px;vertical-align:top;padding:0 10px 0 0;">'
-            f'<table role="presentation" class="os-stepbg" cellpadding="0" cellspacing="0" border="0" width="26" bgcolor="{INK}" '
-            f'style="width:26px;border-collapse:separate;background-color:{INK};border-radius:13px;"><tr>'
-            f'<td align="center" style="padding:0;height:26px;">{p(str(n), 13, 26, WHITE, 700, extra="text-align:center;", cls="os-step")}</td></tr></table></td>'
+            f'<table role="presentation" class="os-stepbg" cellpadding="0" cellspacing="0" border="0" width="26" bgcolor="{GOLD}" '
+            f'style="width:26px;border-collapse:separate;background-color:{GOLD};border-radius:13px;"><tr>'
+            f'<td align="center" style="padding:0;height:26px;font:600 14px/26px {DISPLAY};color:{INK};">{n}</td></tr></table></td>'
             f'<td style="vertical-align:top;">{p(text, 16, 24, BODY, 400)}</td></tr></table></td></tr>')
 
 
@@ -552,10 +655,9 @@ def disclose(lines, label="Details"):
     body = "".join(p(ln, 15, 22, BODY, 400, margin="4px 0 0 0") for ln in lines)
     summary = (
         f'<summary class="os-disclose-sum os-link" style="cursor:pointer;display:inline;'
-        f'font-family:{FONT};font-size:15px;line-height:22px;mso-line-height-rule:exactly;'
-        f'color:{ACCENT};font-weight:700;text-decoration:underline;white-space:nowrap;'
-        f'list-style:none;">'
-        f'<span class="os-link" style="color:{ACCENT};">{label}</span></summary>'
+        f'font:600 14px/18px {DISPLAY};margin:8px 0 0 0;padding:6px 15px;border:2px solid {INK};border-radius:99px;'
+        f'color:{INK};background-color:{WHITE};white-space:nowrap;list-style:none;display:inline-block;">'
+        f'{label} &#9662;</summary>'
     )
     return (
         f'<!--[if !mso]><!-->'
@@ -717,10 +819,11 @@ NUMBERS = [
 
 def head():
     css = """
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&family=Outfit:wght@500;600&family=Patrick+Hand&display=swap');
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
-u + #os-body a{color:ACCENT;text-decoration:underline;}
+u + #os-body a{color:ACCENT;text-decoration:none;}
+.os-hand{transform:rotate(-2deg);transform-origin:left bottom;}
 /* T394: title row above photo+bio; T388 desktop title left; T385 mobile title centered; T379 + T375 + T373 */
 .os-cred{white-space:nowrap !important;}
 .os-vh-guestname{text-align:center;}
@@ -853,7 +956,7 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
 <!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
 <!-- T430: Wall of Hope after the library (Ellie story, then invitation). T429: Oct calendar adds (rEcess, Dollywood, Gallatin HOSA, Caleb's Friends, Pegram) and Evergreen street + blurb. T404: Three things items all 18/16. T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + expand Details. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&amp;family=Outfit:wght@500;600&amp;family=Patrick+Hand&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
 {dark}
@@ -871,7 +974,7 @@ def build_html(base, browser=False):
     o.append(f'<body id="os-body" class="os-bg" bgcolor="{CREAM}" style="margin:0;padding:0;background-color:{CREAM};width:100%;max-width:100%;overflow-x:hidden;">')
     o.append(f'<span style="display:none;font-size:1px;color:{CREAM};line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">{PREHEADER}</span>')
     o.append(f'<table role="presentation" class="os-bg" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{CREAM}" style="width:100%;border-collapse:collapse;background-color:{CREAM};">'
-             '<tr><td align="center" style="padding:20px 12px 40px 12px;">'
+             f'<tr><td align="center" style="padding:20px 12px 40px 12px;font-family:{FONT};color:{BODY};">'
              '<table role="presentation" class="os-wrap" cellpadding="0" cellspacing="0" border="0" width="600" style="width:100%;max-width:600px;border-collapse:collapse;">')
 
     view_href = BROWSER_VIEW_URL if browser else "{$url}"
@@ -881,8 +984,8 @@ def build_html(base, browser=False):
 
     o.append(padrow(
         '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-        f'<td align="left" style="vertical-align:middle;">{p("Our Special Village", 12, 16, ACCENT, 700, extra="letter-spacing:1.6px;text-transform:uppercase;")}</td>'
-        f'<td align="right" style="vertical-align:middle;">{p("October 2026", 13, 16, MUTED, 700, extra="text-align:right;")}</td>'
+        f'<td align="left" style="vertical-align:middle;">{masthead(art("osv-mark-80.png"))}</td>'
+        f'<td align="right" style="vertical-align:middle;">{p("October 2026", 21, 24, GOLD_INK, 400, extra="text-align:right;font-family:" + HAND + ";")}</td>'
         '</tr></table>', pad="0 34px 14px 34px"))
 
     o.append('<tr><td align="left" style="padding:0;">'
@@ -902,8 +1005,8 @@ def build_html(base, browser=False):
             p(html_para, 16, 24, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0"), cls=cls)
         )
     note_copy = (
-        f'<h1 class="os-h1 os-ink" style="margin:0 0 10px 0;font-family:{FONT};font-size:30px;line-height:36px;'
-        f'mso-line-height-rule:exactly;color:{INK};font-weight:700;letter-spacing:-0.3px;">October in Our Special Village</h1>'
+        f'<h1 class="os-h1 os-ink" style="margin:0 0 10px 0;font-family:{DISPLAY};font-size:32px;line-height:37px;'
+        f'color:{INK};font-weight:600;letter-spacing:-0.6px;">October in Our Special Village</h1>'
         + "".join(note_paras_html)
         + p("With love,", 16, 24, BODY, 400, margin="10px 0 2px 0")
         + (
@@ -950,7 +1053,7 @@ def build_html(base, browser=False):
     o.append(major_sp())
     o.append(section_head("deadlines", "Three things to know this month"))
     o.append(sp(12))
-    o.append(padrow(card(rows_table(TOP_DEADLINE_ROWS), pad="8px 20px 8px 20px")))
+    o.append(padrow(board(pushpin(ACCENT) + card(rows_table(TOP_DEADLINE_ROWS), pad="8px 18px 8px 18px"))))
     o.append(sp(14))  # T373: 12–14px between deadline card and See all deadlines
     o.append(padrow(
         button(DEADLINES_URL, "See all deadlines", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
@@ -963,8 +1066,7 @@ def build_html(base, browser=False):
         anchor("village-hall")
         + rule()
         + p("The next deep dive", 13, 18, ACCENT, 700, margin="12px 0 0 0")
-        + (f'<h2 class="os-h2 os-ink" style="margin:6px 0 0 0;font-family:{FONT};font-size:21px;'
-           f'line-height:27px;mso-line-height-rule:exactly;color:{INK};font-weight:700;">Village Hall</h2>')
+        + h2("Village Hall", "6px 0 0 0")
         + p("One topic. One guest expert. Your questions.", 16, 24, BODY, 400, margin="6px 0 0 0")
     ))
     o.append(sp(12))
@@ -1007,8 +1109,9 @@ def build_html(base, browser=False):
         + '</td></tr></table>'
     )
     # T375 icons + T394 guest layout: date → time/online → Topic → title → name/role → photo|bio
-    vh_panel = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
-          '<tr><td align="left" style="padding:16px 18px 20px 18px;">'
+    vh_panel = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:28px;box-shadow:{SHADOW};">'
+          f'<tr><td style="padding:0 22px;">{bunting()}</td></tr>'
+          '<tr><td align="left" style="padding:14px 20px 22px 20px;">'
           + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 4px 0")
           + vh_meta_icon("clock-gold", "9:30 to 11:00 AM Central", bottom="4px")
           + vh_meta_icon("video-gold", "Online", bottom="18px")
@@ -1058,7 +1161,7 @@ def build_html(base, browser=False):
         if e.get("disclose"):
             content += disclose(e["disclose"])
         ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
-    o.append(padrow(card(rows_table(ev_rows), pad="6px 20px 6px 20px")))
+    o.append(padrow(board(pushpin("#3c5378") + card(rows_table(ev_rows), pad="6px 18px 6px 18px"))))
     o.append(sp(20))
     o.append(padrow(button(EVENTS_CAL_URL, "View the full October events calendar", INK, CREAM, align="center").replace('class="os-btn"', 'class="os-btn os-btn-navy"')))
 
@@ -1126,7 +1229,7 @@ def build_html(base, browser=False):
         f'<td class="os-col" valign="top" style="vertical-align:top;">{hope_copy}</td>'
         '</tr></table>'
     )
-    o.append(padrow(card(hope_table, pad="16px 16px 16px 16px")))
+    o.append(padrow(tape() + card(hope_table, pad="20px 16px 16px 16px")))
     o.append(sp(12))
     invite = (
         p("Borrow a little hope, or lend some", 17, 24, INK, 700, margin="0")
@@ -1209,8 +1312,7 @@ def build_html(base, browser=False):
     ))
 
     o.append(major_sp())
-    about_copy = ((f'<h2 class="os-ink" style="margin:0;font-family:{FONT};font-size:17px;line-height:23px;'
-                   f'mso-line-height-rule:exactly;color:{INK};font-weight:700;">About Our Special Village</h2>')
+    about_copy = (h2("About Our Special Village", "0", 19, 24)
                   + p(ABOUT, 14, 21, BODY, 400, margin="6px 0 0 0")
                   + p(a(f"{SITE}/about", "About the Village") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/editorial-policy", "How we check information"), 14, 21, BODY, 400, margin="8px 0 0 0"))
     photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="160" class="os-photocell" bgcolor="{BLUSH}" '
@@ -1237,14 +1339,12 @@ def build_html(base, browser=False):
                       + a(f"{SITE}/newsletter", "ourspecialvillagetn.com/newsletter", nowrap=False) + ".", 14, 21, BODY, 400, extra="text-align:center;")))
 
     o.append(sp(20))
-    o.append(f'<tr><td class="os-pad" style="padding:0 34px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr><td class="os-rule" style="border-top:1px solid {HAIR};font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table></td></tr>')
-    o.append(sp(14))
     footer = (p("Our Special Village &middot; Murfreesboro and surrounding areas, Tennessee", 14, 21, INK, 700, margin="0 0 6px 0")
               + p("Local businesses and practices help keep the Village free and ad-free. " + a(f"{SITE}/sponsors", "Sponsorship options", nowrap=False) + ".", 13, 20, BODY, 400, margin="0 0 12px 0")
               + p("You are receiving this because you joined the newsletter list at ourspecialvillagetn.com.<br>"
                   + a(unsub_href, "Unsubscribe in one click", nowrap=False) + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/privacy", "Privacy") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/contact", "Contact"), 13, 20, BODY, 400, margin="0 0 10px 0", cls="os-tiny")
               + p("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC<br>1810 Ward Dr, Suite 101, Murfreesboro, TN 37129", 13, 19, BODY, 400, cls="os-tiny"))
-    o.append(padrow('<div class="os-footer">' + footer + '</div>'))
+    o.append(padrow(night_footer(footer)))
 
     o.append('</table></td></tr></table></body></html>')
     return "\n".join(o) + "\n"
@@ -1507,23 +1607,25 @@ def build_deadlines_page():
     return f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>October 2026 deadlines · Our Special Village</title>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&amp;family=Outfit:wght@500;600&amp;family=Patrick+Hand&amp;display=swap" rel="stylesheet">
 <style>
 body{{margin:0;padding:24px 16px 48px;background:{CREAM};color:{BODY};font-family:{FONT};line-height:1.5;}}
 main{{max-width:640px;margin:0 auto;}}
-h1{{color:{INK};font-size:28px;margin:0 0 8px;}}
-h2{{color:{INK};font-size:18px;margin:28px 0 10px;}}
+h1{{color:{INK};font-family:{DISPLAY};font-weight:600;letter-spacing:-.02em;font-size:32px;line-height:1.15;margin:0 0 8px;}}
+h2{{color:{INK};font-family:{DISPLAY};font-weight:600;font-size:21px;margin:30px 0 12px;}}
 .meta{{color:{MUTED};font-size:14px;margin:0 0 24px;}}
-.item{{display:flex;gap:14px;align-items:flex-start;background:{WHITE};border:1px solid {HAIR};border-radius:12px;padding:14px 16px;margin:0 0 10px;}}
-.chip{{flex:0 0 62px;width:62px;background:{BLUSH};border-radius:10px;text-align:center;padding:7px 3px;box-sizing:border-box;}}
+.item{{display:flex;gap:14px;align-items:flex-start;background:{WHITE};border:1px solid {HAIR};border-radius:16px;padding:14px 16px;margin:0 0 12px;box-shadow:{SHADOW};}}
+.chip{{flex:0 0 62px;width:62px;background:#fff;border:2px solid {INK};border-radius:12px;overflow:hidden;text-align:center;padding:0 0 5px;box-sizing:border-box;font-family:{DISPLAY};font-weight:600;}}
 .chip .dow,.chip .dom,.chip .moy{{white-space:nowrap;overflow-wrap:normal;word-break:normal;}}
-.chip .dow{{color:{ACCENT};font-size:12px;line-height:14px;font-weight:700;}}
-.chip .dom{{color:{INK};font-size:22px;line-height:26px;font-weight:700;margin:1px 0 0;}}
-.chip .moy{{color:{BODY};font-size:11px;line-height:14px;font-weight:700;}}
+.chip .dow{{background:{INK};color:{GOLD};font-size:11px;line-height:14px;padding:3px 0 2px;letter-spacing:1px;text-transform:uppercase;}}
+.chip .dom{{color:{INK};font-size:24px;line-height:27px;margin:3px 0 0;}}
+.chip .moy{{color:#7a5b13;font-size:11px;line-height:14px;letter-spacing:.8px;text-transform:uppercase;}}
 .body{{flex:1;min-width:0;}}
-.body strong{{color:{INK};display:block;margin-bottom:4px;font-size:16px;overflow-wrap:normal;word-break:normal;}}
-a{{color:{ACCENT};font-weight:700;}}
+.body strong{{color:{INK};font-family:{DISPLAY};font-weight:600;display:block;margin-bottom:4px;font-size:17px;overflow-wrap:normal;word-break:normal;}}
+a{{color:{ACCENT};font-weight:700;text-decoration:none;}}
+.body a{{display:inline-block;margin:8px 8px 0 0;padding:5px 14px;background:{WHITE};border:2px solid {INK};border-bottom-width:4px;border-radius:999px;color:{INK};font:600 14px/18px {DISPLAY};white-space:nowrap;}}
 .back{{margin:0 0 20px;font-size:14px;}}
+.back a{{font-family:{DISPLAY};font-weight:600;}}
 </style></head><body><main>
 <p class="back"><a href="{PAGES}">&larr; October newsletter preview</a></p>
 <h1>All October deadlines</h1>
@@ -1600,7 +1702,7 @@ def main():
     for doc in (html, html_browser):
         three = doc.split("Three things to know this month", 1)[1].split("See all deadlines", 1)[0]
         heading = doc.split('id="deadlines"', 1)[1].split("</h2>", 1)[0]
-        assert "font-size:21px" in heading
+        assert "font-size:25px" in heading  # site-style section heads
         for title in three_titles:
             i = three.find(title)
             assert i != -1, title
@@ -1683,11 +1785,11 @@ def main():
     assert SECONDARY_EVENTS[spook_i]["disclose"] == SPOOK_DETAILS
     month = html.split("The month ahead", 1)[1].split("New in the library", 1)[0]
     assert month.find("Sensory Spooktacular") < month.find("Evergreen Trunk or Treat")
-    assert month.find(">25</p>") < month.find(">31</p>")
+    assert month.find(">25</td>") < month.find(">31</td>")
     assert month.find("Sensory Spooktacular") < month.find("View the full October events calendar")
     spook_row = month[month.find("Sensory Spooktacular"):month.find("Evergreen Trunk or Treat")]
     assert "<details" in spook_row and "<summary" in spook_row
-    assert ">Details</span>" in spook_row
+    assert "Details &#9662;</summary>" in spook_row
     assert SPOOK_ON_SITE in spook_row
     assert SPOOK_THANKS in spook_row
     assert f'href="{SPOOK_REG_URL}"' in spook_row
@@ -1724,7 +1826,7 @@ def main():
             i = doc.find(name)
             assert i > pos, f"{doc_name} order: {name}"
             pos = i
-    assert month.count(">25</p>") >= 2
+    assert month.count(">25</td>") >= 2
     assert "6050 Dana Way, Antioch, TN" in html and "6050 Dana Way, Antioch, TN" in txt
     assert EVERGREEN_BLURB in html and EVERGREEN_BLURB in txt
     assert "Touch-A-Truck after treats." in html and "Touch-A-Truck after treats." in txt
@@ -1754,7 +1856,7 @@ def main():
     assert "I&rsquo;m neurodivergent myself" not in html
     assert "Join the Online Group" in html
     assert "Plan Your Visit" in html
-    assert "border-radius:12px" in html  # T364 full-width support CTAs
+    assert "os-btn-navy" in html  # T364 full-width support CTAs (site-style navy pills)
     assert "Contact We Rock the Spectrum" not in html
     assert "Led by Cari Parr" in html
     assert "$15 per child for kids to play" in html
@@ -1853,7 +1955,7 @@ def main():
     # before a non-October month. Body mid-range dashes (5:00–9:00, Oct 15–Dec 7) stay.
     for month in _NON_OCT_MONTHS:
         assert not re.search(
-            rf'overflow-wrap:normal;">(?:&ndash;|&mdash;|–|—|-){month}', html)
+            rf'white-space:nowrap;">(?:&ndash;|&mdash;|–|—|-){month}', html)
         assert f'class="moy">&ndash;{month}' not in deadlines
         assert f'class="moy">–{month}' not in deadlines
         assert f'class="moy">-{month}' not in deadlines

@@ -58,7 +58,7 @@ ISSUE_ART = {
 }
 
 # Shared October assets reused as-is in every issue.
-SHARED = ["signature-taylor.png", "taylor-hickok-160.jpg", "about-family-bowling-small.jpg",
+SHARED = ["signature-taylor.png", "osv-mark-80.png", "taylor-hickok-160.jpg", "about-family-bowling-small.jpg",
           "icons/calendar.png", "icons/clock.png", "icons/clock-gold.png", "icons/video.png",
           "icons/video-gold.png", "icons/pin.png"]
 
