@@ -81,7 +81,7 @@ def has_ph(s):
 def head(issue):
     h = O.head()
     h = h.replace(f"<title>{O.SUBJECT}</title>", f"<title>{issue['subject']}</title>")
-    h = re.sub(r"<!-- MailerLite:.*?-->\n<!-- Built by.*?-->\n<!-- T404:.*?-->\n",
+    h = re.sub(r"<!-- MailerLite:.*?-->\n<!-- Built by.*?-->\n<!-- T[0-9]+:.*?-->\n",
                f"<!-- Subject \"{issue['subject']}\". Merge tags {{$url}} and {{$unsubscribe}}. "
                f"Built by tools/build-issues.py (same template as the Oct 2026 issue); edit tools/issue_data.py. -->\n",
                h, flags=re.S)
