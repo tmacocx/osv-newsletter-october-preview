@@ -12,8 +12,9 @@ T400: Sensory Spooktacular sits in chronological order in The month ahead
 (Sun Oct 25 before Sat Oct 31 Evergreen; Little Luminaries and Cultivate Play).
 T410: Free TicketsCandy registration link on Spooktacular. Oct 1: its on-site +
 sponsor copy shows openly above the button (expanders don't open in Outlook or Gmail).
-Oct 1 (Taylor): this first Village Hall is free, so the ticket says "Free for every
-family" instead of the pay-what-you-can boxes. tools/outlook-copy.py makes the
+Oct 1 (Taylor): Village Hall is free every time (people usually pay what they can), so
+October's ticket says "Free for every family" instead of the pay-what-you-can boxes, and
+nothing says "first one is free" or "free this time". tools/outlook-copy.py makes the
 send-it-yourself Outlook copy. Later Oct 1 (Taylor): We Rock's Trick&Treat&Play joins
 The month ahead (Sat Oct 31, morning, before Evergreen). The Frist's Sensory Sunday Hour
 (Sun Oct 11) is gone: its event page is 404 and the Frist's own calendar, which runs into
@@ -672,9 +673,10 @@ def step(n, text, last=False, ruled=True):
 
 
 def free_note():
-    """October's Village Hall is free (Taylor, Oct 1): no pay-what-you-can boxes."""
+    """October's ticket has no pay-what-you-can boxes (registration is by hand). Taylor, Oct 1: Village Hall
+    is free every time, so never "first one is free" or "free this time"."""
     heading = p("Free for every family", 17, 22, WHITE, 700, extra="text-align:center;")
-    support = p("Our first Village Hall is free. Register to save your seat.",
+    support = p("Village Hall is always free to attend. Register to save your seat.",
                 13, 19, SAND, 400, margin="6px 0 0 0", extra="text-align:center;", cls="os-pay-note")
     note = p("The meeting link is emailed to registrants.", 12, 18, ON_DARK_MUTED, 400, margin="12px 0 0 0", extra="text-align:center;")
     return heading + support + note
@@ -1314,7 +1316,7 @@ def build_text():
     w(f"Email: {ACCESS_EMAIL}")
     w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
     w(f"Register for Village Hall: {SITE}/village-hall")
-    w("Free for every family. Our first Village Hall is free. Register to save your seat.")
+    w("Free for every family. Village Hall is always free to attend. Register to save your seat.")
     w("The meeting link is emailed to registrants.")
     w("")
     w("----------------------------------------")
@@ -1628,7 +1630,7 @@ def main():
                    "See all deadlines", "Dates confirmed Sept 14", "The next deep dive", "One topic. One guest expert. Your questions.",
                    "Saturday, October 10, 2026", "9:30 to 11:00 AM Central", "Topic and guest", "The IEP process and navigating the school system",
                    "Mercedes Lawson, M.S. Ed.", "two neurodivergent children", "Advocacy &amp; Consultation Center for Educational Student Supports",
-                   "45-minute lesson", "Register for Village Hall", "Free for every family", "Our first Village Hall is free.",
+                   "45-minute lesson", "Register for Village Hall", "Free for every family", "Village Hall is always free to attend.",
                    "The meeting link is emailed to registrants.", "The month ahead", "View the full October events calendar",
                    "Sensory Spooktacular", "sensory-sensitive hour 1:00&ndash;2:00 PM", "Little Luminaries and Cultivate Play", "tickets limited",
                    "New in the library", "Therapy styles: play, structure, and compliance", "Grief and disability: the loss nobody sends a card for",
