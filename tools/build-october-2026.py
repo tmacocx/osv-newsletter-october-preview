@@ -10,13 +10,15 @@ body 16px (Fall break, voter, clocks). Item 3 was 16/15 because CLOCKS
 omitted featured=True. Section heading (21px) and date chips unchanged.
 T400: Sensory Spooktacular sits in chronological order in The month ahead
 (Sun Oct 25 before Sat Oct 31 Evergreen; Little Luminaries and Cultivate Play).
-T410: Free TicketsCandy registration link on Spooktacular (Details expand kept).
-Details is a native <details> expand with the on-site + sponsor copy (not a
-link-only jump to /events). Outlook/MSO gets the same copy in a conditional.
+T410: Free TicketsCandy registration link on Spooktacular. Oct 1: its on-site +
+sponsor copy shows openly above the button (expanders don't open in Outlook or Gmail).
+Oct 1 (Taylor): this first Village Hall is free, so the ticket says "Free for every
+family" instead of the pay-what-you-can boxes. tools/outlook-copy.py makes the
+send-it-yourself Outlook copy.
 T430: Wall of Hope returns between New in the library and One question,
-answered. Lead with Ellie's drawing win (photo + story). Under the story,
-the attribution line is locked: "✎ Taylor, Murfreesboro". No date, no
-"-Taylor". Short share invitation under the card.
+answered. Sept 30: the story is Nicole's ("His love needs no words.", from the
+site), not Taylor's. Every Wall of Hope signs off with the name, then
+Murfreesboro: "✎ Nicole, Murfreesboro". No date. Short share invitation under the card.
 T429: Calendar rows for Hickok adds that were missing from The month ahead.
 Chronological: rEcess (Sat Oct 3, before Game Day), Dollywood (Wed Oct 21),
 Gallatin HOSA Trunk or Treat (Thu Oct 22), Caleb's Friends (Sun Oct 25, after
@@ -63,33 +65,126 @@ ACCESS_URL = "https://www.accessyouredu.com/"
 ACCESS_EMAIL = "access.your.education@gmail.com"
 MERCEDES_PHOTO = "mercedes-family-hearts-160.jpg"
 
+# Site look (ourspecialvillagetn.com, rebuilt 2026-09-29): navy, cream and gold; Outfit headings,
+# Mulish body, Patrick Hand notes; paper cards, pins, tape and cork. Each section wears the costume
+# the site's newsletter page promises for it ("What's inside"): the deadlines are a tag on a string,
+# the month ahead is a calendar page, library guides are books with a ribbon, the hopeful story is
+# a note pinned to the Wall of Hope board, the question is an index card and Village Hall is the
+# hall's own bunting, notice board and ticket. Decorations Gmail can't draw from CSS (bunting,
+# pins, tape, stamp, hills, taped photos) are the site's own CSS drawn to pictures by
+# tools/render-decor.mjs into art/decor/ and each issue's art/ folder.
+# Taylor's rule: no word links. a(), tel() and navy_a() all draw buttons.
 CREAM = "#f7f1e2"
-WHITE = "#ffffff"
-BLUSH = "#f6e4d6"
-INK = "#1b2340"
-BODY = "#4a5169"
-MUTED = "#6b6250"
-ACCENT = "#964720"
-HAIR = "#e6dcc6"
-RULE = "#ece3cf"
-GOLD = "#d4ac4d"
-SAND = "#ded7c4"
+WHITE = "#fffcf5"      # paper
+NOTE = "#fffdf7"       # letter / note paper
+BLUSH = "#f4dccd"      # brick-soft
+INK = "#1d2c4c"        # navy
+BODY = "#3a4760"
+MUTED = "#56637a"
+ACCENT = "#a9542f"     # brick
+BRICK_INK = "#8f4424"
+HAIR = "#eadfc8"
+RULE = "#eee4cf"
+GOLD = "#d7a43e"
+GOLD_DEEP = "#b4861f"  # button edge
+GOLD_INK = "#8e6614"   # handwritten notes on paper
+GOLD_SOFT = "#f3e5c0"
+GOLD_DARK = "#7a5b13"
+SAND = "#efe9da"       # on-dark text
+ON_DARK_MUTED = "#b9c4d8"
+NAVY_DEEP = "#14203a"
+BLUE_INK = "#3c5378"
+BLUE_SOFT = "#e4e9f2"
+CORK = "#ecd9ae"
+CORK_FRAME = "#c99a45"
+CORK_EDGE = "#a67a2c"
+SAGE = "#7d8f63"
+SAGE_SOFT = "#e1e7d2"
+SAGE_INK = "#55653e"
+SHADOW = "0 1px 2px rgba(29,44,76,.05),0 12px 28px -16px rgba(29,44,76,.3)"
+PAPER_SHADOW = "0 1px 1px rgba(60,40,10,.06),0 22px 34px -22px rgba(60,40,10,.55)"
 
-FONT = "Figtree, 'Segoe UI', Helvetica, Arial, sans-serif"
+FONT = "Mulish,'Segoe UI',Helvetica,Arial,sans-serif"
+DISPLAY = "Outfit,Arial,sans-serif"
+HAND = "'Patrick Hand','Bradley Hand',cursive"
 
 CLASS_FOR = {INK: "os-ink", BODY: "os-body", MUTED: "os-muted", ACCENT: "os-accent",
-             GOLD: "os-gold", SAND: "os-sand", CREAM: "os-cream", WHITE: "os-white"}
+             GOLD: "os-gold", SAND: "os-sand", CREAM: "os-cream", WHITE: "os-white", GOLD_INK: "os-goldink"}
+T = 'role="presentation" cellpadding="0" cellspacing="0"'
 
 SUBJECT = "October: sensory-friendly events + deadlines"
 PREHEADER = ("Fall break starts Oct 5. Three things to know this month, a featured Discovery Center night, "
              "two new guides, and one IEP question answered.")
 
+DECOR = "decor/"   # under each issue's art folder
+
+
+def table(inner, bg=None, style="", cls="", width="100%", attrs=""):
+    w = f' width="{width}"' if width else ""
+    wcss = "width:100%;" if width == "100%" else (f"width:{width}px;" if width else "")
+    bga = f' bgcolor="{bg}"' if bg else ""
+    bgc = f"background-color:{bg};" if bg else ""
+    c = f' class="{cls}"' if cls else ""
+    return f'<table {T}{c}{w}{bga}{attrs} style="{wcss}{bgc}{style}">{inner}</table>'
+
+
+def img(src, width, alt="", height=None, style="", cls="", fluid=True):
+    h = f' height="{height}"' if height else ""
+    c = f' class="{cls}"' if cls else ""
+    size = f"width:100%;max-width:{width}px;height:auto;" if fluid else f"width:{width}px;height:{height}px;" if height else f"width:{width}px;"
+    return f'<img{c} src="{src}" width="{width}"{h} alt="{alt}" style="display:block;border:0;{size}{style}">'
+
+
+def hand(text, size=21, color=GOLD_INK, margin="0", align="left"):
+    """Patrick Hand note, like the site's eyebrows (tilted -2deg where the client allows)."""
+    al = "" if align == "left" else f"text-align:{align};"
+    return (f'<p class="os-hand {CLASS_FOR.get(color, "")}" style="margin:{margin};font:400 {size}px/{size + 3}px {HAND};'
+            f'color:{color};{al}">{text}</p>')
+
+
+_PILLS_ONLY = re.compile(r'^(?:\s|&nbsp;|&middot;)*(?:<a class="os-pill[^"]*" href="[^"]*"[^>]*>.*?</a>(?:\s|&nbsp;|&middot;)*)+$')
+
 
 def p(text, size=16, lh=24, color=BODY, weight=400, margin="0", extra="", cls=""):
+    """Paragraph. Body copy inherits Mulish from the wrapper cell (lighter email).
+
+    Bold titles (15px+) are Outfit 600; small bold brick/gold labels ("Featured") are
+    Patrick Hand notes; a line made only of buttons becomes a button row.
+    """
+    if weight == 700 and size <= 14 and color in (ACCENT, GOLD) and "<" not in text and "text-align:center" not in extra:
+        return hand(text, 21, GOLD_INK if color == ACCENT else GOLD, margin)
+    if _PILLS_ONLY.match(text):
+        pills = re.findall(r'<a class="os-pill.*?</a>', text)
+        return f'<div style="margin:{margin};">' + "".join(pills) + '</div>'
     classes = " ".join(c for c in [CLASS_FOR.get(color, ""), cls] if c)
-    w = f"font-weight:{weight};" if weight != 400 else ""
-    return (f'<p class="{classes}" style="margin:{margin};font-family:{FONT};font-size:{size}px;'
-            f'line-height:{lh}px;mso-line-height-rule:exactly;color:{color};{w}{extra}">{text}</p>')
+    if weight == 700 and size >= 15:   # titles: Outfit 600, one shorthand keeps the email light
+        fnt = f"font:600 {size}px/{lh}px {DISPLAY};"
+    else:
+        fnt = f"font-size:{size}px;line-height:{lh}px;" + (f"font-weight:{weight};" if weight != 400 else "")
+    return f'<p class="{classes}" style="margin:{margin};{fnt}color:{color};{extra}">{text}</p>'
+
+
+def pill(href, label, kind="ghost", margin="8px 8px 0 0", small=False, nowrap=True):
+    """Site buttons: ghost (paper, navy outline on a navy edge), gold (.btn), phone (brick-soft,
+    like Urgent Help) and dark (gold outline on navy)."""
+    pad = "3px 11px" if small else "6px 15px"
+    fs = "600 14px/18px" if not small else "600 14px/18px"
+    ws = "" if nowrap else "white-space:normal;"
+    if kind == "dark":
+        cls, st = "os-gold", f"border:2px solid {GOLD};color:{GOLD};"
+    elif kind == "gold":
+        cls, st = "os-ink", f"background-color:{GOLD};border:2px solid {GOLD};border-bottom:4px solid {GOLD_DEEP};color:{INK};"
+    elif kind == "phone":
+        cls, st = "os-brick", f"background-color:{BLUSH};border:2px solid {BLUSH};border-bottom:4px solid #e2bba4;color:{BRICK_INK};"
+    else:
+        cls, st = "os-ink", f"background-color:{WHITE};border:2px solid {INK};border-bottom-width:4px;color:{INK};"
+    return (f'<a class="os-pill {cls}" href="{href}" style="display:inline-block;margin:{margin};padding:{pad};'
+            f'border-radius:99px;font:{fs} {DISPLAY};text-decoration:none;{ws}{st}">{label}</a>')
+
+
+def pill_row(links, margin="4px 0 0 0", on_dark=False, kind=None):
+    k = kind or ("dark" if on_dark else "ghost")
+    return f'<div style="margin:{margin};">' + "".join(pill(h, lab, k) for h, lab in links) + '</div>'
 
 
 def b(text, color=INK):
@@ -97,80 +192,327 @@ def b(text, color=INK):
 
 
 def a(href, label, nowrap=True):
-    nowrap_css = "white-space:nowrap;" if nowrap else ""
-    return (f'<a class="os-link" href="{href}" style="color:{ACCENT};font-weight:700;'
-            f'text-decoration:underline;{nowrap_css}">'
-            f'<span class="os-link" style="color:{ACCENT};">{label}</span></a>')
+    """Taylor: no word links. Every link is a button, even inside a sentence."""
+    return pill(href, label, margin="2px 0", small=True, nowrap=nowrap)
 
 
 def navy_a(href, label, nowrap=True):
-    """Gold link for copy sitting on the Village Hall navy card."""
-    nowrap_css = "white-space:nowrap;" if nowrap else ""
-    return (f'<a class="os-gold" href="{href}" style="color:{GOLD};font-weight:700;'
-            f'text-decoration:underline;{nowrap_css}">'
-            f'<span class="os-gold" style="color:{GOLD};">{label}</span></a>')
+    return pill(href, label, "dark", margin="8px 8px 0 0", nowrap=nowrap)
 
 
 def tel(number_display, number_tel):
-    return a(f"tel:{number_tel}", number_display)
+    return pill(f"tel:{number_tel}", f'<span style="font-size:9px;vertical-align:1px;">&#9679;</span>&nbsp;{number_display}',
+                "phone", margin="2px 0", small=True)
 
 
 def sp(h):
-    return f'<tr><td style="font-size:0;line-height:0;height:{h}px;mso-line-height-rule:exactly;">&nbsp;</td></tr>'
+    return f'<tr><td style="font-size:0;line-height:0;height:{h}px;">&nbsp;</td></tr>'
 
 
 def major_sp():
-    """48px desktop / 36px mobile before major sections (.os-sec)."""
-    return ('<tr><td class="os-sec" style="font-size:0;line-height:48px;height:48px;mso-line-height-rule:exactly;">&nbsp;</td></tr>')
+    """52px desktop / 40px mobile between sections (.os-sec)."""
+    return '<tr><td class="os-sec" style="font-size:0;line-height:52px;height:52px;">&nbsp;</td></tr>'
 
 
 def padrow(inner, pad="0 34px"):
     return f'<tr><td class="os-pad" align="left" style="padding:{pad};">{inner}</td></tr>'
 
 
+def fullrow(inner):
+    """Edge-to-edge picture across the 600px email (bunting, landscapes, footer hills)."""
+    return f'<tr><td style="padding:0;font-size:0;line-height:0;">{inner}</td></tr>'
+
+
 def anchor(id_):
     return f'<a id="{id_}" name="{id_}" style="display:block;height:0;line-height:0;font-size:0;">&nbsp;</a>'
 
 
-def rule():
-    return ('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="40" '
-            'style="width:40px;border-collapse:collapse;"><tr>'
-            f'<td height="3" bgcolor="{ACCENT}" class="os-rulebar" style="height:3px;font-size:1px;line-height:3px;'
-            f'mso-line-height-rule:exactly;background-color:{ACCENT};">&nbsp;</td></tr></table>')
+def h2(title, margin="4px 0 0 0", size=30, lh=35, align="left", color=INK):
+    al = "" if align == "left" else f"text-align:{align};"
+    return (f'<h2 class="os-h2 {CLASS_FOR.get(color, "")}" style="margin:{margin};font:600 {size}px/{lh}px {DISPLAY};'
+            f'color:{color};letter-spacing:-0.5px;{al}">{title}</h2>')
 
 
-def section_head(id_, title, intro=None):
-    """Consistent major-section chrome: rule + 12px + h2 + 6–8px intro."""
-    out = anchor(id_) + rule()
-    out += (f'<h2 class="os-h2 os-ink" style="margin:12px 0 0 0;font-family:{FONT};font-size:21px;'
-            f'line-height:27px;mso-line-height-rule:exactly;color:{INK};font-weight:700;">{title}</h2>')
+def section_head(id_, title, intro=None, eyebrow=None):
+    out = anchor(id_) + (hand(eyebrow) if eyebrow else "") + h2(title, "2px 0 0 0" if eyebrow else "0")
     if intro:
         out += p(intro, 16, 24, BODY, 400, margin="6px 0 0 0")
     return padrow(out)
 
 
-def card(inner, pad="16px 20px 16px 20px"):
-    return (f'<table role="presentation" class="os-card" cellpadding="0" cellspacing="0" border="0" width="100%" '
-            f'bgcolor="{WHITE}" style="width:100%;border-collapse:separate;background-color:{WHITE};'
-            f'border:1px solid {HAIR};border-radius:16px;box-shadow:0 1px 3px rgba(27,35,64,0.06);">'
-            f'<tr class="os-card-body"><td class="os-cardpad" align="left" style="padding:{pad};">{inner}</td></tr></table>')
+def card(inner, pad="16px 20px 16px 20px", bg=WHITE, radius="20px", cls=""):
+    return table(f'<tr class="os-card-body"><td class="os-cardpad" align="left" style="padding:{pad};">{inner}</td></tr>',
+                 bg, f"border-radius:{radius};", f"os-card os-sh {cls}".strip())
+
+
+def paper(inner, pad="18px 22px", bg=NOTE, radius="8px", cls="", top="", bottom=""):
+    """A sheet of the site's paper (newsletter.css .nl-item): soft brown shadow, small radius."""
+    return table(top + f'<tr><td class="os-cardpad" align="left" style="padding:{pad};">{inner}</td></tr>' + bottom,
+                 bg, f"border-radius:{radius};", f"os-card os-psh {cls}".strip())
+
+
+def top_bar(label, view_href):
+    """The site's navy top bar: a line of words and one gold button."""
+    return table(f'<tr><td align="center" style="padding:9px 12px;font:600 14px/22px {DISPLAY};color:{SAND};">'
+                 f'<span class="os-sand">{label}</span>&nbsp;&nbsp; '
+                 f'<a class="os-ink" href="{view_href}" style="display:inline-block;padding:3px 14px;border-radius:99px;'
+                 f'background-color:{GOLD};color:{INK};font:600 13px/18px {DISPLAY};text-decoration:none;white-space:nowrap;">'
+                 'View in browser</a></td></tr>', INK, "border-radius:14px;", "os-navy")
+
+
+def masthead(mark_src):
+    """Site header lockup: pin mark + Outfit wordmark, centered."""
+    return (f'<table {T} align="center" style="border-collapse:collapse;margin:0 auto;"><tr>'
+            f'<td style="padding:0 10px 0 0;vertical-align:middle;">{img(mark_src, 40, "", 40, fluid=False)}</td>'
+            f'<td class="os-ink os-mast-word" style="vertical-align:middle;font:600 22px/26px {DISPLAY};color:{INK};letter-spacing:-0.2px;white-space:nowrap;">'
+            'Our Special Village</td></tr></table>')
+
+
+def site_header(art, site):
+    """The site header: pin and wordmark on the left, the brick Urgent Help button on the right."""
+    urgent = (f'<a class="os-pill os-brick" href="{site}/crisis" style="display:inline-block;padding:6px 14px;border-radius:99px;'
+              f'background-color:{BLUSH};border:1px solid #e2bba4;color:{BRICK_INK};font:600 14px/18px {DISPLAY};text-decoration:none;">'
+              f'<span style="color:{ACCENT};font-size:10px;vertical-align:1px;">&#9679;</span>&nbsp; Urgent Help</a>')
+    return (f'<table {T} width="100%" style="width:100%;"><tr>'
+            f'<td valign="middle">{masthead(art("osv-mark-80.png"))}</td>'
+            f'<td align="right" valign="middle">{urgent}</td></tr></table>')
+
+
+SKY_FALLBACK = {"fall": "#f3e2c8", "winter": "#efe1d0"}
+
+
+def hero(art, title_html, season="fall",
+         place="Murfreesboro &amp; surrounding areas &middot; Tennessee",
+         tagline="It takes a village. Welcome to ours.",
+         land_alt="Illustration of the village in autumn: homes, neighbors walking the path, and rolling Middle Tennessee hills."):
+    """The homepage hero (home.css .home-hero): golden-hour sky, the place line between two gold
+    rules, a big title with the gold swash, the handwritten tagline, then the hills and the village."""
+    sky, bg = art("hero-sky.jpg"), SKY_FALLBACK.get(season, "#f3e2c8")
+    rule_td = f'<td class="os-hrule" width="26" style="width:26px;"><div style="height:2px;background-color:{GOLD};border-radius:2px;font-size:0;line-height:0;">&nbsp;</div></td>'
+    place_row = (f'<table {T} align="center" style="margin:0 auto;"><tr>{rule_td}'
+                 f'<td class="os-place" style="padding:0 10px;font:800 12px/16px {FONT};letter-spacing:2px;text-transform:uppercase;color:{GOLD_DARK};text-align:center;">{place}</td>'
+                 f'{rule_td}</tr></table>')
+    text = (place_row
+            + f'<h1 class="os-hero-h1 os-ink" style="margin:14px 0 0 0;font:600 46px/48px {DISPLAY};color:{INK};letter-spacing:-1.4px;text-align:center;">{title_html}</h1>'
+            + f'<p class="os-hand os-ink os-tagline" style="margin:10px 0 0 0;font:400 28px/32px {HAND};color:{INK};text-align:center;">{tagline}</p>'
+            + f'<div style="margin:0 0 4px 0;line-height:0;font-size:0;text-align:center;">'
+              f'<img src="{art(DECOR + "swoosh.png")}" width="150" height="14" alt="" style="display:inline-block;width:150px;height:14px;border:0;"></div>')
+    return (f'<tr><td class="os-hero-sky os-pad" align="center" bgcolor="{bg}" background="{sky}" '
+            f"style=\"background-color:{bg};background-image:url('{sky}');background-size:100% 100%;background-position:center bottom;"
+            f'background-repeat:no-repeat;border-radius:28px 28px 0 0;padding:30px 24px 6px 24px;">{text}</td></tr>'
+            + fullrow(img(art("hero-land.jpg"), 600, land_alt, style="max-width:none;", cls="os-hero")))
+
+
+def dusk_band(art, id_, eyebrow, title, inner):
+    """The homepage's dusk (home.css .dusk): sunset over the lamp-lit village, a starry navy night
+    holding the section, and the wave back to cream."""
+    stars = art(DECOR + "stars.png")
+    return (fullrow(img(art(DECOR + "dusk-top.png"), 600, "", style="max-width:none;"))
+            + f'<tr><td class="os-navy os-pad" bgcolor="{NAVY_DEEP}" background="{stars}" '
+              f"style=\"background-color:{NAVY_DEEP};background-image:url('{stars}');background-repeat:repeat;padding:4px 34px 30px 34px;\">"
+            + anchor(id_) + hand(eyebrow, 22, GOLD, "0")
+            + h2(title, "2px 0 18px 0", color=WHITE)
+            + inner + '</td></tr>'
+            + fullrow(img(art(DECOR + "dusk-wave.png"), 600, "", style="max-width:none;")))
+
+
+def letter(art, h1_text, paras_html, name="Dr. Taylor Hickok", cred="Founder &middot; SLP &middot; AuDHD parent"):
+    """Taylor's note as the site's stamped, postmarked airmail letter (newsletter.css .nl-card)."""
+    byline = (f'<table {T} style="border-collapse:collapse;"><tr>'
+              f'<td style="padding:0 12px 0 0;vertical-align:middle;">'
+              f'<img class="os-intro-photo" src="{art("taylor-hickok-160.jpg")}" width="68" height="68" alt="Dr. Taylor Hickok, founder of Our Special Village." '
+              f'style="display:block;width:68px;height:68px;border:3px solid #ffffff;border-radius:50%;"></td>'
+              f'<td style="vertical-align:middle;">'
+              + p(name, 16, 20, INK, 700)
+              + p(cred, 13, 18, MUTED, 400, margin="2px 0 0 0", extra="white-space:nowrap;", cls="os-cred")
+              + '</td></tr></table>')
+    head_row = (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+                f'<td valign="middle" style="vertical-align:middle;">{byline}</td>'
+                f'<td class="os-stamp" width="112" align="right" valign="top" style="width:112px;vertical-align:top;line-height:0;">'
+                f'{img(art(DECOR + "stamp.png"), 112, "", 88, fluid=False)}</td></tr></table>')
+    title = (f'<h1 class="os-h1 os-ink" style="margin:12px 0 12px 0;font:600 34px/38px {DISPLAY};'
+             f'color:{INK};letter-spacing:-0.8px;">{h1_text}</h1>') if h1_text else '<div style="height:14px;font-size:0;line-height:0;">&nbsp;</div>'
+    body = (head_row
+            + title
+            + paras_html
+            + p("With love,", 16, 24, BODY, 400, margin="12px 0 2px 0")
+            + f'<img class="os-sig" src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
+              f'style="display:block;width:96px;height:auto;margin:0 0 0 8px;border:0;font:italic 22px Georgia,serif;color:{ACCENT};">')
+    edge = lambda f, r: (f'<tr><td style="padding:0;font-size:0;line-height:0;">'
+                         f'{img(art(DECOR + f), 532, "", style=f"max-width:100%;border-radius:{r};")}</td></tr>')
+    return paper(body, "18px 24px 18px 24px", NOTE, "8px", top=edge("airmail-top.png", "8px 8px 0 0"),
+                 bottom=edge("airmail-bottom.png", "0 0 8px 8px"))
+
+
+def stops_block(art, chips):
+    """In this issue: the site's "Stay connected" stops, Taylor's pictograms on the painted path."""
+    cells = "".join(
+        f'<td class="os-stop" width="25%" valign="top" align="center" style="width:25%;vertical-align:top;">'
+        f'<a href="{href}" style="display:block;text-decoration:none;color:{INK};">'
+        f'{img(art(f"stop-{i + 1}.png"), 133, "", style="width:100%;max-width:none;")}'
+        f'<span class="os-stoplabel os-ink" style="display:block;padding:2px 4px 0;font:600 15px/19px {DISPLAY};color:{INK};">{label}</span></a></td>'
+        for i, (href, label) in enumerate(chips))
+    return (hand("In this issue", 22, GOLD_INK, "0 0 2px 0", "center")
+            + f'<table {T} class="os-stops" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;"><tr>{cells}</tr></table>')
+
+
+def tag_card(art, inner):
+    """Deadline watch as the site's paper tag, eyelet and string at the top."""
+    top = (f'<tr><td align="right" style="padding:0 20px 0 0;font-size:0;line-height:0;">'
+           f'{img(art(DECOR + "tag-eyelet.png"), 30, "", 42, fluid=False, style="display:inline-block;")}</td></tr>')
+    return paper(inner, "0 20px 8px 20px", BLUSH, "8px 36px 8px 8px", top=top)
+
+
+def fact_pills(first, rest):
+    """The site's hero fact pills: a navy one with a gold dot, then paper ones."""
+    base = f"display:inline-block;margin:0 6px 8px 0;padding:6px 14px;border-radius:99px;font:600 14px/18px {DISPLAY};"
+    out = (f'<span class="os-white" style="{base}background-color:{INK};color:{WHITE};border-bottom:3px solid {NAVY_DEEP};">'
+           f'<span style="color:{GOLD};font-size:10px;vertical-align:1px;">&#9679;</span>&nbsp; {first}</span>')
+    for r in rest:
+        out += f'<span class="os-ink" style="{base}background-color:{WHITE};color:{INK};border:1px solid #d6d9df;">{r}</span>'
+    return f'<div style="margin:0;">{out}</div>'
+
+
+def board(art, inner, pad="22px 16px 20px 16px"):
+    """Cork notice board with the gold frame (village-hall.css .vh-board, hope.css .hw-board)."""
+    cork = art(DECOR + "cork.png")
+    inside = table(f'<tr><td class="os-boardpad" align="left" style="padding:{pad};">{inner}</td></tr>', CORK,
+                   f"background-image:url('{cork}');border-radius:20px;", "os-board", attrs=f' background="{cork}"')
+    return table(f'<tr><td style="padding:9px;">{inside}</td></tr>', CORK_FRAME,
+                 f"border:3px solid {CORK_EDGE};border-radius:30px;", "os-sh")
+
+
+def pins_row(art, left="pin-brick.png", right=None, center=False):
+    if center:
+        return (f'<tr><td align="center" style="padding:8px 0 0 0;font-size:0;line-height:0;">'
+                f'{img(art(DECOR + left), 32, "", 34, fluid=False, style="display:inline-block;")}</td></tr>')
+    r = (f'<td align="right">{img(art(DECOR + right), 32, "", 34, fluid=False, style="display:inline-block;")}</td>' if right else "")
+    return (f'<tr><td style="padding:6px 12px 0 12px;font-size:0;line-height:0;"><table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+            f'<td align="left">{img(art(DECOR + left), 32, "", 34, fluid=False, style="display:inline-block;")}</td>{r}</tr></table></td></tr>')
+
+
+def dashed(margin="16px 0 14px 0", color="#eadcb4"):
+    return f'<div style="margin:{margin};border-top:2px dashed {color};font-size:0;line-height:0;height:0;"></div>'
+
+
+def guest_block(g, art, first=True, photo_src=None, placeholder=None):
+    """One guest on the Village Hall poster: name, organisation, taped photo, bio, buttons."""
+    if photo_src:
+        photo = img(photo_src, 170, g.get("photo_alt", ""), style="margin:0 auto;", cls="os-guestphoto")
+    else:
+        photo = table(f'<tr><td align="center" valign="middle" style="height:190px;padding:6px;">'
+                      f'{placeholder or ""}</td></tr>', "#fff1b8", "border:1px dashed #b8912f;border-radius:6px;",
+                      width="150", attrs=' align="center"')
+    links = g.get("links") or []
+    return ((dashed("18px 0 16px 0") if not first else "")
+            + f'<p class="os-ink os-vh-guestname" style="margin:0;font:600 25px/29px {DISPLAY};color:{INK};letter-spacing:-0.4px;">{g["name"]}</p>'
+            + f'<p class="os-vh-guestrole" style="margin:4px 0 12px 0;font:500 16px/21px {DISPLAY};color:{BLUE_INK};">{g["role"]}</p>'
+            + f'<table {T} class="os-vh-guest" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+            f'<td class="os-col os-col-photo" width="170" valign="top" style="width:170px;vertical-align:top;padding:0 14px 0 0;">{photo}</td>'
+            f'<td class="os-col os-vh-guestblurb" valign="top" style="vertical-align:top;">'
+            + p(g["bio"], 15, 23, BODY, 400)
+            + (f'<div class="os-vh-contact" style="margin:6px 0 0 0;">' + "".join(pill(h, lab, nowrap=False) for h, lab in links) + '</div>' if links else "")
+            + '</td></tr></table>')
+
+
+def poster(art, eyebrow, topic, guests_html, about):
+    """This month's guest pinned to the notice board (village-hall.css .vh-poster)."""
+    inner = (hand(eyebrow)
+             + table(f'<tr><td class="os-ink" style="padding:12px 16px;font:600 19px/25px {DISPLAY};color:{INK};">{topic}</td></tr>',
+                     GOLD_SOFT, "border-radius:12px;margin:6px 0 18px 0;")
+             + guests_html
+             + dashed()
+             + p(about, 15, 23, INK, 700, extra="font-family:inherit;font-weight:700;"))
+    return paper(inner, "0 22px 22px 22px", WHITE, "6px", "os-tl", top=pins_row(art, "pin-brick.png", "pin-gold.png"))
+
+
+def ticket(art, button_html, bottom_html):
+    """Register and pay as the site's evening ticket (group.css .grp-ticket): notches and a tear line."""
+    notch = lambda f: (f'<td width="16" style="width:16px;font-size:0;line-height:0;">'
+                       f'{img(art(DECOR + f), 16, "", 32, fluid=False)}</td>')
+    tear = (f'<tr>{notch("notch-l.png")}<td valign="middle" style="vertical-align:middle;padding:0 6px;">'
+            f'<div style="border-top:3px dashed #666e7e;height:0;font-size:0;line-height:0;"></div></td>{notch("notch-r.png")}</tr>')
+    return table(f'<tr><td colspan="3" align="center" style="padding:24px 22px 18px 22px;">{button_html}</td></tr>'
+                 + tear
+                 + f'<tr><td colspan="3" class="os-cardpad" style="padding:16px 22px 22px 22px;">{bottom_html}</td></tr>',
+                 INK, "border-radius:26px;", "os-navy os-tsh")
+
+
+def calendar_page(art, inner):
+    """The month ahead as the site's calendar page: navy band with gold binding rings."""
+    return table(f'<tr><td style="padding:0;font-size:0;line-height:0;">{img(art(DECOR + "calendar-top.png"), 532, "", style="max-width:100%;")}</td></tr>'
+                 f'<tr><td class="os-cardpad os-psh" bgcolor="{NOTE}" style="background-color:{NOTE};border-radius:0 0 8px 8px;padding:2px 18px 6px 18px;">{inner}</td></tr>',
+                 cls="os-cal")
+
+
+BOOK_COLORS = [("gold", GOLD), ("blue", "#8fa5c6"), ("brick", ACCENT), ("sage", SAGE)]
+
+
+def book(art, label, art_html, rest, n=0):
+    """A library guide as a book on the homepage shelf (home.css .book): coloured spine,
+    matching ribbon, and a wooden shelf under it."""
+    name, color = BOOK_COLORS[n % len(BOOK_COLORS)]
+    head = (f'<table {T} width="100%" style="width:100%;"><tr>'
+            f'<td valign="bottom" style="padding:12px 8px 8px 0;">{hand(label, 20)}</td>'
+            f'<td width="14" align="right" valign="top" style="width:14px;line-height:0;">'
+            f'{img(art(DECOR + f"ribbon-{name}.png"), 14, "", 34, fluid=False)}</td></tr></table>')
+    return (table(f'<tr class="os-card-body"><td class="os-cardpad" align="left" style="padding:0 16px 16px 16px;">{head}{art_html}{rest}</td></tr>',
+                  NOTE, f"border-radius:6px 16px 16px 6px;border-left:16px solid {color};", "os-card os-psh")
+            + shelf())
+
+
+def shelf():
+    return (f'<div class="os-shelf" style="margin:12px 0 0 0;height:9px;background-color:{CORK_FRAME};'
+            f'border-bottom:4px solid #9d7128;border-radius:3px;font-size:0;line-height:0;">&nbsp;</div>')
+
+
+def story_note(art, eyebrow, title, photo_html, paras_html, byline):
+    """The hopeful story pinned to the Wall of Hope board (hope.css .hope-story)."""
+    inner = (hand(eyebrow)
+             + f'<p class="os-ink" style="margin:2px 0 0 0;font:600 27px/32px {DISPLAY};color:{INK};letter-spacing:-0.5px;">{title}</p>'
+             + (f'<div style="margin:14px 0 8px 0;text-align:center;">{photo_html}</div>' if photo_html else "")
+             + paras_html
+             + hand(byline, 25, GOLD_INK, "14px 0 0 0"))
+    fold = (f'<tr><td align="right" style="padding:6px 0 0 0;font-size:0;line-height:0;">'
+            f'{img(art(DECOR + "fold.png"), 34, "", 34, fluid=False, style="display:inline-block;border-radius:0 0 6px 0;")}</td></tr>')
+    return paper(inner, "4px 24px 0 24px", NOTE, "6px", "os-tl", top=pins_row(art, center=True), bottom=fold)
+
+
+def share_note(title, text, button_html):
+    """The dashed "add yours" note from the Wall of Hope board."""
+    plus = table(f'<tr><td align="center" class="os-white" style="height:32px;font:700 22px/32px {DISPLAY};color:#ffffff;">+</td></tr>',
+                 GOLD_DEEP, "border-radius:16px;", width="32", attrs=' align="center"')
+    inner = table(f'<tr><td align="center" style="padding:16px 16px 18px 16px;text-align:center;">'
+                  + plus + hand(title, 24, INK, "8px 0 0 0", "center")
+                  + p(text, 15, 22, BODY, 400, margin="6px 0 0 0", extra="text-align:center;")
+                  + f'<div style="margin:6px 0 0 0;">{button_html}</div></td></tr>', None,
+                  "border:2px dashed #c8b07a;border-radius:4px;")
+    return paper(inner, "8px", NOTE, "4px", "os-tr")
+
+
+def index_card(art, head_html, ruled_html, foot_html):
+    """One question, answered as the site's index card: red header line, blue rules, a "?"."""
+    ruled = art(DECOR + "ruled.png")
+    return table(f'<tr><td class="os-cardpad" style="padding:18px 22px 14px 22px;">{head_html}</td></tr>'
+                 f'<tr><td class="os-cardpad os-ruled" bgcolor="{NOTE}" background="{ruled}" '
+                 f"style=\"background-color:{NOTE};background-image:url('{ruled}');border-top:2px solid #d8b19d;padding:0 22px 0 22px;\">{ruled_html}</td></tr>"
+                 f'<tr><td class="os-cardpad" style="padding:14px 22px 16px 22px;">{foot_html}</td></tr>',
+                 NOTE, "border-radius:8px;", "os-card os-psh")
+
+
+def question_mark():
+    return (f'<td width="30" align="right" valign="top" class="os-tr os-blue" style="width:30px;vertical-align:top;'
+            f'font:400 40px/40px {HAND};color:{BLUE_INK};">?</td>')
 
 
 def rows_table(rows_html):
-    return ('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-            'style="width:100%;border-collapse:collapse;">' + "".join(rows_html) + '</table>')
+    return (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;">' + "".join(rows_html) + '</table>')
 
 
-def row(chip_html, content_html, last=False, featured=False, tight=False):
-    if featured:
-        pad = "14px 0 14px 0"
-    elif tight:
-        pad = "14px 0 14px 0"
-    else:
-        pad = "14px 0 14px 0"
-    border = "" if last else f"border-bottom:1px solid {RULE};"
-    return (f'<tr><td class="os-rule" style="padding:{pad};{border}">'
-            '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">'
+def row(chip_html, content_html, last=False, featured=False, tight=False, line=RULE):
+    border = "" if last else f"border-bottom:1px solid {line};"
+    return (f'<tr><td class="os-rule" style="padding:14px 0;{border}">'
+            f'<table {T} width="100%" style="width:100%;border-collapse:collapse;">'
             f'<tr><td width="62" style="width:62px;vertical-align:top;padding:0 12px 0 0;">{chip_html}</td>'
             f'<td style="vertical-align:top;">{content_html}</td></tr></table></td></tr>')
 
@@ -204,22 +546,21 @@ def format_chip_range_end(label):
 
 
 def chip(top, big=None, bottom=None, year=False):
-    """Date square. Bottom range labels stay on one line (nowrap; shorten 'to …')."""
-    nowrap = "text-align:center;white-space:nowrap;word-break:normal;overflow-wrap:normal;"
-    shell_open = (f'<table role="presentation" class="os-chip" cellpadding="0" cellspacing="0" border="0" width="62" '
-                  f'bgcolor="{BLUSH}" style="width:62px;border-collapse:separate;background-color:{BLUSH};border-radius:10px;">'
-                  '<tr><td align="center" style="padding:{pad};">')
-    shell_close = '</td></tr></table>'
+    """Calendar page like the site's event pins: navy weekday band, big Outfit day, gold month."""
+    nw = ""  # .os-chip td keeps each line on one line (see head())
+    shell = (f'<table {T} class="os-chip" width="62" bgcolor="#ffffff" style="width:62px;border-collapse:separate;'
+             f'background-color:#ffffff;border:2px solid {INK};border-radius:12px;">')
+    band = (f'<tr><td class="os-navy" align="center" bgcolor="{INK}" style="background-color:{INK};padding:3px 2px 2px 2px;'
+            f'border-radius:9px 9px 0 0;font:600 11px/14px {DISPLAY};letter-spacing:1px;text-transform:uppercase;color:{GOLD};{nw}">{top}</td></tr>')
     if big is None:
-        inner = (p(top, 13, 17, INK, 700, extra=nowrap) +
-                 p(bottom, 13, 17, INK, 700, extra=nowrap))
-        return shell_open.format(pad="17px 3px 17px 3px") + inner + shell_close
+        return (shell + band + f'<tr><td align="center" style="padding:8px 2px 9px 2px;font:600 13px/17px {DISPLAY};color:{INK};{nw}">'
+                f'{bottom}</td></tr></table>')
     bottom = format_chip_range_end(bottom)
-    bottom_size = 11 if "&ndash;" in (bottom or "") or "&nbsp;" in (bottom or "") else 12
-    inner = (p(top, 12, 14, ACCENT, 700, extra=nowrap) +
-             p(big, 22, 26, INK, 700, margin="1px 0 0 0", extra=nowrap) +
-             p(bottom, bottom_size, 14, BODY, 700, extra=nowrap))
-    return shell_open.format(pad="7px 3px 7px 3px") + inner + shell_close
+    bs = 10 if "&ndash;" in (bottom or "") or "&nbsp;" in (bottom or "") else 11
+    return (shell + band
+            + f'<tr><td align="center" style="padding:3px 2px 0 2px;font:600 24px/27px {DISPLAY};color:{INK};{nw}">{big}</td></tr>'
+            f'<tr><td align="center" style="padding:0 2px 5px 2px;font:600 {bs}px/14px {DISPLAY};letter-spacing:.8px;'
+            f'text-transform:uppercase;color:{GOLD_DARK};{nw}">{bottom}</td></tr></table>')
 
 
 def item(title, lines, featured=False, label=None, first=True):
@@ -229,11 +570,8 @@ def item(title, lines, featured=False, label=None, first=True):
         tmargin = "0"
     else:
         tmargin = "0" if first else "14px 0 0 0"
-    # featured=True: 18/25 title + 16/24 body (Three things card). Else 16/23 + 15/22.
     tsize, tlh = (18, 25) if featured else (16, 23)
-    # Keep date headers readable: no mid-number breaks from mobile word-break CSS
-    title_extra = "overflow-wrap:normal;word-break:normal;"
-    out += p(title, tsize, tlh, INK, 700, margin=tmargin, extra=title_extra)
+    out += p(title, tsize, tlh, INK, 700, margin=tmargin, extra="")
     bsize, blh = (16, 24) if featured else (15, 22)
     for ln in lines:
         out += p(ln, bsize, blh, BODY, 400, margin="4px 0 0 0")
@@ -241,330 +579,166 @@ def item(title, lines, featured=False, label=None, first=True):
 
 
 def button(href, label, fill, text_color, align="left"):
+    """The site's .btn: a pill sitting on a darker edge."""
     align_attr = f' align="{align}"' if align != "left" else ""
     margin = "margin:0 auto;" if align == "center" else ""
-    return (f'<table role="presentation" class="os-btn" cellpadding="0" cellspacing="0" border="0"{align_attr} '
-            f'bgcolor="{fill}" style="border-collapse:separate;background-color:{fill};border-radius:999px;{margin}">'
-            f'<tr><td align="center" style="padding:13px 26px;">'
-            f'<a href="{href}" style="display:block;font-family:{FONT};font-size:16px;line-height:20px;'
-            f'color:{text_color};font-weight:700;text-decoration:none;">'
-            f'<span style="color:{text_color};">{label}</span></a></td></tr></table>')
-
-
-def badge(label, nowrap=True):
-    """Compact ONLINE / IN PERSON / FREE / WEEKLY pill."""
-    ws = "white-space:nowrap;" if nowrap else "white-space:normal;"
-    return (
-        f'<td style="padding:0 6px 6px 0;vertical-align:middle;">'
-        f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" bgcolor="{BLUSH}" '
-        f'style="border-collapse:separate;background-color:{BLUSH};border-radius:999px;">'
-        f'<tr><td align="center" style="padding:4px 10px;">'
-        f'<span style="font-family:{FONT};font-size:11px;line-height:14px;color:{INK};'
-        f'font-weight:700;letter-spacing:0.6px;text-transform:uppercase;{ws}">{label}</span>'
-        f'</td></tr></table></td>'
-    )
-
-
-def badges_row(labels):
-    cells = "".join(badge(lab) for lab in labels)
-    return (
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" '
-        f'style="border-collapse:collapse;margin:0 0 8px 0;"><tr>{cells}</tr></table>'
-    )
-
-
-def audience_tag(label):
-    """Prominent full-width audience tag (own row; We Rock)."""
-    return (
-        '<table role="presentation" class="os-audience" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        f'bgcolor="{BLUSH}" style="width:100%;border-collapse:separate;background-color:{BLUSH};'
-        f'border-radius:10px;margin:0 0 8px 0;">'
-        f'<tr><td align="left" style="padding:8px 12px;">'
-        f'<span style="font-family:{FONT};font-size:12px;line-height:16px;color:{INK};'
-        f'font-weight:700;letter-spacing:0.7px;text-transform:uppercase;">{label}</span>'
-        f'</td></tr></table>'
-    )
+    edge = GOLD_DEEP if fill == GOLD else NAVY_DEEP
+    kind = "os-btn-gold" if fill == GOLD else "os-btn-navy"
+    return (f'<table {T} class="os-btn {kind}"{align_attr} bgcolor="{fill}" style="border-collapse:separate;background-color:{fill};'
+            f'border-radius:999px;border-bottom:4px solid {edge};{margin}">'
+            f'<tr><td align="center" style="padding:13px 28px 12px 28px;">'
+            f'<a href="{href}" style="display:block;font:600 17px/20px {DISPLAY};color:{text_color};text-decoration:none;">{label}</a></td></tr></table>')
 
 
 def secondary_tags_text(parts):
-    """Smaller secondary tag row: IN PERSON · WEEKLY."""
-    joined = " &middot; ".join(
-        f'<span style="font-family:{FONT};font-size:11px;line-height:14px;color:{MUTED};'
-        f'font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">{p}</span>'
-        for p in parts
-    )
-    return f'<p class="os-muted" style="margin:0 0 8px 0;font-family:{FONT};font-size:11px;line-height:14px;color:{MUTED};">{joined}</p>'
-
-
-
-def meta_row(icon_name, label, first=False, title_gap=False):
-    """Icon + label meta row (T364 mockup; T373: 10px after title when title_gap)."""
-    if title_gap:
-        top = "10px"
-    elif first:
-        top = "6px"
-    else:
-        top = "2px"
-    src = f"{PAGES}art/icons/{icon_name}.png"
-    return (
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        f'style="width:100%;border-collapse:collapse;margin:{top} 0 0 0;"><tr>'
-        '<td width="22" valign="middle" style="width:22px;padding:0 8px 0 0;vertical-align:middle;">'
-        f'<img src="{src}" width="16" height="16" alt="" '
-        'style="display:block;width:16px;height:16px;border:0;outline:none;text-decoration:none;">'
-        '</td><td valign="middle" style="padding:0;vertical-align:middle;">'
-        + p(label, 15, 22, BODY, 400)
-        + '</td></tr></table>'
-    )
+    """Small sage tag: ONLINE · WEEKLY · FREE."""
+    return (f'<p style="margin:0 0 8px 0;"><span style="display:inline-block;padding:3px 9px;border-radius:6px;'
+            f'background-color:{SAGE_SOFT};font-size:11px;line-height:14px;color:{SAGE_INK};font-weight:800;letter-spacing:0.8px;">'
+            + " &middot; ".join(parts) + '</span></p>')
 
 
 def good_to_know(items):
-    """T364 mockup checklist under a hairline divider (T373: 16px before, 8–10px items)."""
-    rows = []
-    for i, t in enumerate(items):
-        bot = "0" if i == len(items) - 1 else "8px"
-        rows.append(
-            f'<tr><td valign="top" style="padding:0 8px {bot} 0;width:18px;">'
-            f'<span style="font-family:{FONT};font-size:15px;line-height:22px;color:{ACCENT};'
-            'font-weight:700;">&#10003;</span>'
-            f'</td><td valign="top" style="padding:0 0 {bot} 0;">'
-            + p(t, 15, 22, BODY, 400)
-            + '</td></tr>'
-        )
-    return (
-        f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        f'style="width:100%;border-collapse:collapse;margin:16px 0 0 0;border-top:1px solid {RULE};">'
-        f'<tr><td style="padding:12px 0 0 0;">'
-        + p("Good to know", 15, 22, INK, 700, margin="0 0 8px 0")
-        + '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;">'
-        + "".join(rows)
-        + '</table></td></tr></table>'
-    )
+    """Checklist with the site's round check marks."""
+    rows = "".join(
+        f'<tr><td valign="top" style="width:26px;padding:1px 8px {"0" if i == len(items) - 1 else "8px"} 0;vertical-align:top;">'
+        f'<span style="display:inline-block;width:18px;height:18px;border-radius:9px;background-color:{SAGE_SOFT};color:{SAGE_INK};'
+        f'font:800 11px/18px Arial,sans-serif;text-align:center;">&#10003;</span></td>'
+        f'<td valign="top" style="padding:0 0 {"0" if i == len(items) - 1 else "8px"} 0;vertical-align:top;">{p(t, 15, 22, BODY, 400)}</td></tr>'
+        for i, t in enumerate(items))
+    return (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;margin:14px 0 0 0;">'
+            f'<tr><td style="padding:12px 0 0 0;border-top:2px dashed #eadcb4;">'
+            + p("Good to know", 15, 22, INK, 700, margin="0 0 8px 0")
+            + f'<table {T} width="100%" style="width:100%;border-collapse:collapse;">{rows}</table></td></tr></table>')
 
 
 def group_cta(href, label):
-    """Full-width navy CTA matching T364 mockup (rounded rect, not pill)."""
-    return (
-        f'<table role="presentation" class="os-btn os-btn-navy" cellpadding="0" cellspacing="0" '
-        f'border="0" width="100%" bgcolor="{INK}" '
-        f'style="width:100%;border-collapse:separate;background-color:{INK};border-radius:12px;">'
-        f'<tr><td align="center" style="padding:14px 18px;">'
-        f'<a href="{href}" style="display:block;font-family:{FONT};font-size:16px;line-height:20px;'
-        f'color:{CREAM};font-weight:700;text-decoration:none;text-align:center;">'
-        f'<span style="color:{CREAM};">{label}</span></a></td></tr></table>'
-    )
+    """Full-width navy button (site .btn in navy)."""
+    return (f'<table {T} class="os-btn os-btn-navy" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;'
+            f'background-color:{INK};border-radius:999px;border-bottom:4px solid {NAVY_DEEP};">'
+            f'<tr><td align="center" style="padding:13px 18px 12px 18px;">'
+            f'<a href="{href}" style="display:block;font:600 17px/20px {DISPLAY};color:{CREAM};text-decoration:none;text-align:center;">{label}</a></td></tr></table>')
 
 
 def group_card(badges, name, meta_pairs, blurb, good_items, btn_href, btn_label,
-              audience=None, secondary=None, cost_note=None):
-    """Support-group card: audience → metadata → title → schedule → blurb → GTK → CTA (T373)."""
-    # T373: 10px between title and first schedule row
-    metas = "".join(
-        meta_row(icon, label, first=(i == 0), title_gap=(i == 0))
-        for i, (icon, label) in enumerate(meta_pairs)
-    )
-    head = ""
-    if audience:
-        head += audience_tag(audience)
-    if secondary:
-        head += secondary_tags_text(secondary)
-    elif badges:
-        head += badges_row(badges)
-    if cost_note:
-        head += p(cost_note, 13, 18, ACCENT, 700, margin="0 0 8px 0", cls="os-tiny")
-    # 8px audience→meta already in audience_tag; 8px meta→title in secondary_tags_text
-    inner = (
-        head
-        + p(name, 17, 23, INK, 700, margin="0")
-        + metas
-        + p(blurb, 15, 22, BODY, 400, margin="12px 0 0 0")
-        + good_to_know(good_items)
-        + '<div class="os-card-cta os-sg-cta" style="margin:20px 0 0 0;">'
-        + group_cta(btn_href, btn_label)
-        + '</div>'
-    )
-    return card(inner, pad="16px 16px 16px 16px")
-
+               audience=None, secondary=None, cost_note=None, art=None, tilt="os-tl"):
+    """Support group as a taped note: tag, name, the site's fact pills, blurb, checklist, button."""
+    head = secondary_tags_text(secondary) if secondary else ""
+    labels = [lab for _, lab in meta_pairs]
+    inner = (head
+             + p(name, 19, 25, INK, 700, margin="0 0 10px 0")
+             + fact_pills(labels[0], labels[1:])
+             + p(blurb, 15, 23, BODY, 400, margin="6px 0 0 0")
+             + good_to_know(good_items)
+             + '<div class="os-card-cta os-sg-cta" style="margin:20px 0 0 0;">' + group_cta(btn_href, btn_label) + '</div>')
+    top = (f'<tr><td align="center" style="padding:0;font-size:0;line-height:0;">'
+           f'{img(art(DECOR + "tape-cream.png"), 100, "", 35, fluid=False, style="display:inline-block;")}</td></tr>') if art else ""
+    return paper(inner, "4px 18px 18px 18px", NOTE, "8px", tilt, top=top)
 
 
 def browser_cols(*pieces, gap=16):
-    """Stacked by default (email + mobile); side-by-side only on wide browser screens.
-
-    Single DOM (no MSO duplicate) so email word-count and CTAs stay once. Outlook
-    ignores flex and keeps the stacked block layout matching the 600px email.
-    """
-    items = []
-    for i, piece in enumerate(pieces):
-        margin = "0" if i == len(pieces) - 1 else f"0 0 {gap}px 0"
-        items.append(
-            f'<div class="os-browser-col" style="display:block;width:100%;margin:{margin};'
-            f'vertical-align:top;box-sizing:border-box;">{piece}</div>'
-        )
-    return (
-        f'<div class="os-browser-cols" style="display:block;width:100%;">{"".join(items)}</div>'
-    )
-
-
-def issue_chip(href, label):
-    """Clickable In this issue chip/card."""
-    return (
-        f'<a href="{href}" style="display:block;text-decoration:none;border:0;outline:none;">'
-        f'<table role="presentation" class="os-issue-chip" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        f'bgcolor="{WHITE}" style="width:100%;border-collapse:separate;background-color:{WHITE};'
-        f'border:1px solid {HAIR};border-radius:12px;box-shadow:0 1px 2px rgba(27,35,64,0.05);">'
-        f'<tr><td align="center" style="padding:12px 10px;">'
-        f'<span style="font-family:{FONT};font-size:14px;line-height:18px;color:{INK};font-weight:700;'
-        f'text-align:center;">{label}</span>'
-        f'</td></tr></table></a>'
-    )
-
-
-def issue_chips_block():
-    chips = [
-        ("#deadlines", "Fall break"),
-        ("#ongoing", "Parent support"),
-        ("#events", "Sensory-friendly events"),
-        ("#library", "New resources"),
-    ]
-    # 2x2 when width permits; .os-issue-cell stacks at very narrow with 8px gap
-    cells = []
-    for i, (href, label) in enumerate(chips):
-        if i < 2:
-            pad = "0 6px 8px 0" if i % 2 == 0 else "0 0 8px 6px"
-        else:
-            pad = "0 6px 0 0" if i % 2 == 0 else "0 0 0 6px"
-        cells.append(
-            f'<td class="os-issue-cell" width="50%" valign="top" style="width:50%;padding:{pad};">'
-            f'{issue_chip(href, label)}</td>'
-        )
-    return (
-        p(f'<b style="color:{ACCENT};font-weight:700;">In this issue</b>', 13, 18, MUTED, 400, margin="0 0 8px 0", cls="os-tiny")
-        + '<table role="presentation" class="os-issue-grid" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;">'
-        f'<tr>{cells[0]}{cells[1]}</tr><tr>{cells[2]}{cells[3]}</tr></table>'
-    )
+    """Stacked in email and on phones; side by side only in the wide browser view."""
+    items = "".join(
+        f'<div class="os-browser-col" style="display:block;width:100%;margin:{"0" if i == len(pieces) - 1 else f"0 0 {gap}px 0"};'
+        f'vertical-align:top;box-sizing:border-box;">{piece}</div>' for i, piece in enumerate(pieces))
+    return f'<div class="os-browser-cols" style="display:block;width:100%;">{items}</div>'
 
 
 def story_img(src, width, alt, radius=12, link=None, extra_style=""):
-    img = (f'<img src="{src}" width="{width}" alt="{alt}" '
-           f'style="display:block;width:100%;max-width:{width}px;height:auto;border:0;outline:none;'
-           f'text-decoration:none;border-radius:{radius}px;{extra_style}">')
-    if link:
-        return (f'<a href="{link}" style="display:block;text-decoration:none;border:0;outline:none;">'
-                f'{img}</a>')
-    return img
+    im = img(src, width, alt, style=f"border-radius:{radius}px;{extra_style}")
+    return f'<a href="{link}" style="display:block;text-decoration:none;">{im}</a>' if link else im
 
 
-def step(n, text, last=False):
-    pad = "0" if last else "0 0 12px 0"
-    return (f'<tr><td style="padding:{pad};">'
-            '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-            '<td width="30" style="width:30px;vertical-align:top;padding:0 10px 0 0;">'
-            f'<table role="presentation" class="os-stepbg" cellpadding="0" cellspacing="0" border="0" width="26" bgcolor="{INK}" '
-            f'style="width:26px;border-collapse:separate;background-color:{INK};border-radius:13px;"><tr>'
-            f'<td align="center" style="padding:0;height:26px;">{p(str(n), 13, 26, WHITE, 700, extra="text-align:center;", cls="os-step")}</td></tr></table></td>'
-            f'<td style="vertical-align:top;">{p(text, 16, 24, BODY, 400)}</td></tr></table></td></tr>')
+def step(n, text, last=False, ruled=True):
+    """Numbered step. On the index card each line sits on a 28px ruled line."""
+    pad = "0" if (last or ruled) else "0 0 12px 0"
+    lh = 28 if ruled else 24
+    return (f'<tr><td style="padding:{pad};"><table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+            f'<td width="30" style="width:30px;vertical-align:top;padding:1px 10px 0 0;">'
+            f'<table {T} class="os-stepbg" width="26" bgcolor="{GOLD}" style="width:26px;border-collapse:separate;background-color:{GOLD};border-radius:13px;"><tr>'
+            f'<td align="center" style="padding:0;height:26px;font:600 14px/26px {DISPLAY};color:{INK};">{n}</td></tr></table></td>'
+            f'<td style="vertical-align:top;">{p(text, 16, lh, BODY, 400)}</td></tr></table></td></tr>')
 
 
-
-def vh_meta_icon(icon_name, label, bottom="4px"):
-    """Gold icon + sand label row for Village Hall (T375)."""
-    src_url = f"{PAGES}art/icons/{icon_name}.png"
-    return (
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        f'style="width:100%;border-collapse:collapse;margin:0 0 {bottom} 0;"><tr>'
-        '<td width="22" valign="middle" style="width:22px;padding:0 8px 0 0;vertical-align:middle;">'
-        f'<img src="{src_url}" width="16" height="16" alt="" aria-hidden="true" '
-        'style="display:block;width:16px;height:16px;border:0;outline:none;text-decoration:none;">'
-        '</td><td valign="middle" style="padding:0;vertical-align:middle;">'
-        + p(label, 15, 20, SAND, 400)
-        + '</td></tr></table>'
-    )
+def free_note():
+    """October's Village Hall is free (Taylor, Oct 1): no pay-what-you-can boxes."""
+    heading = p("Free for every family", 17, 22, WHITE, 700, extra="text-align:center;")
+    support = p("Our first Village Hall is free. Register to save your seat.",
+                13, 19, SAND, 400, margin="6px 0 0 0", extra="text-align:center;", cls="os-pay-note")
+    note = p("The meeting link is emailed to registrants.", 12, 18, ON_DARK_MUTED, 400, margin="12px 0 0 0", extra="text-align:center;")
+    return heading + support + note
 
 
 def price_boxes():
-    """VH contribution grid (T375/T379): Choose what you can pay → note → 4 equal boxes.
-
-    Shorter cards (Welcome / Helps / Suggested / Pay it forward). Mobile 2×2 with
-    amounts vertically centered in each rectangle (T379).
-    """
-    boxes = [
-        ("$0", "Welcome"),
-        ("$10", "Helps"),
-        ("$20", "Suggested"),
-        ("$35", "Pay it forward"),
-    ]
+    """Choose what you can pay: four boxes (2x2 on phones)."""
+    boxes = [("$0", "Welcome"), ("$10", "Helps"), ("$20", "Suggested"), ("$35", "Pay it forward")]
     cells = []
-    n = len(boxes)
     for i, (amt, label) in enumerate(boxes):
-        if i == 0:
-            pad = "0 5px 0 0"
-        elif i == n - 1:
-            pad = "0 0 0 5px"
-        else:
-            pad = "0 5px 0 5px"
-        inner = (
-            f'<table role="presentation" class="os-paybox" cellpadding="0" cellspacing="0" border="0" width="100%" '
-            f'bgcolor="#e4e9f2" style="width:100%;min-height:52px;height:100%;border-collapse:separate;'
-            f'background-color:#e4e9f2;border-radius:10px;">'
-            f'<tr><td class="os-paybox" align="center" valign="middle" height="100%" '
-            f'style="padding:6px 4px;min-height:40px;height:100%;vertical-align:middle;">'
-            + p(amt, 17, 20, INK, 700, extra="text-align:center;")
-            + p(label, 11, 14, BODY, 400, margin="2px 0 0 0", extra="text-align:center;")
-            + '</td></tr></table>'
-        )
-        cells.append(
-            f'<td class="os-paycell os-stack" width="25%" valign="middle" '
-            f'style="width:25%;padding:{pad};vertical-align:middle;">{inner}</td>'
-        )
-    heading = p("Choose what you can pay", 14, 20, SAND, 700, margin="16px 0 0 0",
-                extra="text-align:left;letter-spacing:0.2px;")
-    support = p(
-        "Every family is welcome&ndash;choose $0, or give more to help cover another seat.",
-        13, 18, SAND, 400, margin="6px 0 0 0", extra="text-align:left;opacity:0.95;",
-        cls="os-pay-note",
-    )
-    grid = (
-        '<table role="presentation" class="os-paygrid" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:separate;margin:8px 0 0 0;table-layout:fixed;"><tr>'
-        + "".join(cells)
-        + '</tr></table>'
-    )
-    note = p("The meeting link is emailed to registrants.", 12, 18, SAND, 400,
-             margin="12px 0 0 0", extra="opacity:0.92;")
+        pad = "0 5px 0 0" if i == 0 else ("0 0 0 5px" if i == 3 else "0 5px")
+        inner = table(f'<tr><td class="os-paybox" align="center" valign="middle" style="padding:7px 4px;vertical-align:middle;">'
+                      + p(amt, 18, 21, INK, 700, extra="text-align:center;")
+                      + p(label, 11, 14, BODY, 400, margin="2px 0 0 0", extra="text-align:center;")
+                      + '</td></tr>', BLUE_SOFT, "border-radius:10px;border-bottom:3px solid #b9c4d8;", "os-paybox")
+        cells.append(f'<td class="os-paycell" width="25%" valign="middle" style="width:25%;padding:{pad};vertical-align:middle;">{inner}</td>')
+    heading = p("Choose what you can pay", 17, 22, WHITE, 700, extra="text-align:center;")
+    support = p("Every family is welcome&ndash;choose $0, or give more to help cover another seat.",
+                13, 19, SAND, 400, margin="6px 0 0 0", extra="text-align:center;", cls="os-pay-note")
+    grid = (f'<table {T} class="os-paygrid" width="100%" style="width:100%;border-collapse:separate;margin:12px 0 0 0;table-layout:fixed;"><tr>'
+            + "".join(cells) + '</tr></table>')
+    note = p("The meeting link is emailed to registrants.", 12, 18, ON_DARK_MUTED, 400, margin="12px 0 0 0", extra="text-align:center;")
     return f'<div class="os-pay-wrap" style="width:100%;">{heading}{support}{grid}</div>' + note
 
 
-def sensory(text, link_html):
-    """Legacy helper — T299 feedback: do not emit Sensory: lines; link only."""
-    return link_html
+def disclose(lines):
+    """Extra event lines, always shown: expanders don't open in Outlook or Gmail."""
+    return list(lines)
 
 
-def disclose(lines, label="Details"):
-    """Native expand/collapse for preview readers who stay on the page.
+def about_card(art, about_text, links):
+    """About the Village: a taped family snapshot beside the words."""
+    photo = img(art(DECOR + "about-print.jpg"), 190, "Taylor, her husband, and their daughter at a bowling alley.",
+                style="margin:0 auto;", cls="os-aboutphoto")
+    words = (h2("About Our Special Village", "0", 22, 27)
+             + p(about_text, 15, 23, BODY, 400, margin="8px 0 0 0")
+             + pill_row(links, margin="6px 0 0 0"))
+    body = (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+            f'<td class="os-col os-col-photo" width="190" valign="middle" style="width:190px;vertical-align:middle;padding:0 12px 0 0;">{photo}</td>'
+            f'<td class="os-col" valign="middle" style="vertical-align:middle;">{words}</td></tr></table>')
+    return paper(body, "8px 20px 18px 12px", WHITE, "20px")
 
-    Supporting clients get <details><summary> styled like sibling Details links
-    (terracotta/gold underline). Outlook/MSO does not hide the body: the same
-    copy is emitted in an MSO conditional so it stays readable when <details>
-    is unsupported.
-    """
-    body = "".join(p(ln, 15, 22, BODY, 400, margin="4px 0 0 0") for ln in lines)
-    summary = (
-        f'<summary class="os-disclose-sum os-link" style="cursor:pointer;display:inline;'
-        f'font-family:{FONT};font-size:15px;line-height:22px;mso-line-height-rule:exactly;'
-        f'color:{ACCENT};font-weight:700;text-decoration:underline;white-space:nowrap;'
-        f'list-style:none;">'
-        f'<span class="os-link" style="color:{ACCENT};">{label}</span></summary>'
-    )
-    return (
-        f'<!--[if !mso]><!-->'
-        f'<details class="os-disclose" style="margin:4px 0 0 0;">'
-        f'{summary}{body}'
-        f'</details>'
-        f'<!--<![endif]-->'
-        f'<!--[if mso]>{body}<![endif]-->'
-    )
+
+def numbers_card(art, lines):
+    """Numbers worth keeping on a pinned note (hope.css .nl-item--note colour)."""
+    inner = hand("Numbers worth keeping", 23, GOLD_INK, "0 0 6px 0") + "".join(p(t, 15, 26, BODY, 400, margin="6px 0 0 0") for t in lines)
+    return paper(inner, "2px 22px 18px 22px", "#fbf0cf", "4px", "os-tr", top=pins_row(art, "pin-blue.png", center=True))
+
+
+def forward_line(site):
+    return (p("Know a family who could use this? Forward it along. Anyone can join at", 15, 22, BODY, 400,
+              extra="text-align:center;")
+            + f'<div style="margin:6px 0 0 0;text-align:center;">{pill(f"{site}/newsletter", "ourspecialvillagetn.com/newsletter", "gold", "4px 0 0 0")}</div>')
+
+
+def footer_rows(art, site, unsub_href):
+    """The site's footer under its dusk hills: navy, the pin in a paper circle, gold buttons."""
+    brand = (f'<table {T} style="border-collapse:collapse;"><tr>'
+             f'<td style="padding:0 10px 0 0;vertical-align:middle;">'
+             f'<img src="{art("osv-mark-80.png")}" width="44" height="44" alt="" style="display:block;width:44px;height:44px;border:0;'
+             f'border-radius:22px;background-color:{WHITE};"></td>'
+             f'<td class="os-white" style="vertical-align:middle;font:600 21px/24px {DISPLAY};color:{WHITE};white-space:nowrap;">Our Special Village</td></tr></table>')
+    inner = (brand
+             + p("Our Special Village &middot; Murfreesboro and surrounding areas, Tennessee", 14, 21, WHITE, 700, margin="14px 0 6px 0",
+                 extra="font-family:inherit;font-weight:700;")
+             + p("Local businesses and practices help keep the Village free and ad-free.", 13, 20, ON_DARK_MUTED, 400, cls="os-footnote")
+             + pill_row([(f"{site}/sponsors", "Sponsorship options")], "2px 0 14px 0", on_dark=True)
+             + p("You are receiving this because you joined the newsletter list at ourspecialvillagetn.com.", 13, 20, ON_DARK_MUTED, 400,
+                 cls="os-footnote")
+             + pill_row([(unsub_href, "Unsubscribe in one click"), (f"{site}/privacy", "Privacy"), (f"{site}/contact", "Contact")],
+                        "2px 0 14px 0", on_dark=True)
+             + p("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC<br>1810 Ward Dr, Suite 101, Murfreesboro, TN 37129",
+                 13, 19, ON_DARK_MUTED, 400, cls="os-footnote"))
+    return (fullrow(img(art(DECOR + "foot-hills.png"), 600, "", style="max-width:none;"))
+            + f'<tr><td class="os-navy os-pad os-footer" bgcolor="{NAVY_DEEP}" style="background-color:{NAVY_DEEP};'
+              f'border-radius:0 0 28px 28px;padding:10px 34px 30px 34px;">{inner}</td></tr>')
 
 
 SPOOK_ON_SITE = (
@@ -656,34 +830,41 @@ MONSTERS_URL = "https://www.explorethedc.org/event/monsters-in-the-museum/"
 DEADLINES_URL = f"{PAGES}deadlines-october-2026.html"
 EVENTS_CAL_URL = f"{SITE}/events"
 
+RCS_CAL = "https://www.rcschools.net/o/rcs/page/rcs-academic-calendars"
+MCS_CAL = "https://www.cityschools.net/calendar"
+DST_URL = "https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst"
+# Taylor's rule: spell out RCS / MCS, and buttons instead of word links.
 FALL_BREAK = item(
     "Fall break, Oct 5 to 9: Rutherford County and Murfreesboro City Schools",
-    ["Both districts are closed all week. RCS conferences Tue Oct 20; MCS conferences Tue Nov 3 (no school). Ask for IEP progress data then. &nbsp;"
-     + a("https://www.rcschools.net/o/rcs/page/rcs-academic-calendars", "RCS") + " &nbsp;&middot;&nbsp; "
-     + a("https://www.cityschools.net/calendar", "MCS")], featured=True)
+    ["Both districts are closed all week. Rutherford County Schools conferences Tue Oct 20; Murfreesboro City "
+     "Schools conferences Tue Nov 3 (no school). Ask for IEP progress data then."], featured=True) + pill_row(
+    [(RCS_CAL, "Rutherford County Schools calendar"), (MCS_CAL, "Murfreesboro City Schools calendar")])
 VOTER = item(
     "Voter registration deadline: Mon&nbsp;Oct&nbsp;5",
-    ["For the Nov 3 election. Register or update your address at GoVoteTN.gov by Mon Oct 5. Early voting Oct 14 to 29. Voters with a disability can request a mail ballot by Sat Oct 24. &nbsp;"
-     + a("https://govotetn.gov/", "GoVoteTN")], featured=True, first=True)
+    ["For the Nov 3 election. Register or update your address at GoVoteTN.gov by Mon Oct 5. Early voting Oct 14 to 29. "
+     "Voters with a disability can request a mail ballot by Sat Oct 24."], featured=True, first=True) + pill_row(
+    [("https://govotetn.gov/", "GoVoteTN")])
 # T404: same 18/16 title/body as Fall break + voter (featured=True).
 CLOCKS = item(
     "Clocks fall back one hour on Sun Nov 1",
-    ["Daylight saving time ends at 2:00 AM. If sleep is fragile at your house, shift bedtime 10 to 15 minutes a night the week before. &nbsp;"
-     + a("https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst", "How DST works")],
-    featured=True)
+    ["Daylight saving time ends at 2:00 AM. If sleep is fragile at your house, shift bedtime 10 to 15 minutes a night the week before."],
+    featured=True) + pill_row([(DST_URL, "How daylight saving time works")])
+
+TAG_RULE = "#e6c3ae"
+
 
 def deadlines_oct5_block():
     """Fall break + voter under one date tile, separated by 14px + hairline."""
     return (
         FALL_BREAK
-        + f'<div style="margin:14px 0 14px 0;border-top:1px solid {RULE};font-size:0;line-height:0;height:1px;">&nbsp;</div>'
+        + f'<div style="margin:14px 0 14px 0;border-top:1px solid {TAG_RULE};font-size:0;line-height:0;height:1px;">&nbsp;</div>'
         + VOTER.replace('margin="14px 0 0 0"', 'margin="0"').replace("14px 0 4px 0", "0")
     )
 
 
 TOP_DEADLINE_ROWS = [
-    row(chip("Mon", "5", "Oct"), deadlines_oct5_block(), featured=True),
-    row(chip("Sun", "1", "Nov"), CLOCKS, last=True),
+    row(chip("Mon", "5", "Oct"), deadlines_oct5_block(), featured=True, line=TAG_RULE),
+    row(chip("Sun", "1", "Nov"), CLOCKS, last=True, line=TAG_RULE),
 ]
 
 # T355: her "October in Our Special Village" intro (audience = parents/caregivers of ND children).
@@ -699,7 +880,7 @@ NOTE_PARAS = [
      "opportunities to connect with other families. I hope it saves you a little time &ndash; and "
      "reminds you that you do not have to figure everything out alone."),
 ]
-NOTE = " ".join(NOTE_PARAS)  # plain-text export
+NOTE_TEXT = " ".join(NOTE_PARAS)  # plain-text export
 ALONE_PHRASE = "you do not have to figure everything out alone"
 IN_THIS_ISSUE = "Fall break &middot; Parent support &middot; Sensory-friendly events &middot; New resources"
 
@@ -708,142 +889,82 @@ ABOUT = ("A village for families like ours in Murfreesboro and surrounding areas
          "to every kind of difference and disability.")
 
 NUMBERS = [
-    (b(tel("988", "988") + " Suicide &amp; Crisis Lifeline") + " &middot; Call or text any hour."),
-    (b("STEP TN") + " (IEP help): " + tel("800-280-7837", "+18002807837")
-     + " / Espa&ntilde;ol " + tel("800-975-2919", "+18009752919") + "."),
-    (b("Disability Rights TN:") + " " + tel("800-342-1660", "+18003421660") + "."),
+    f'{tel("988", "988")} {b("Suicide &amp; Crisis Lifeline")} &middot; Call or text any hour.',
+    f'{b("STEP TN")} (IEP help): {tel("800-280-7837", "+18002807837")} / Espa&ntilde;ol {tel("800-975-2919", "+18009752919")}',
+    f'{b("Disability Rights TN:")} {tel("800-342-1660", "+18003421660")}',
 ]
 
 
 def head():
     css = """
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&display=swap');
 :root{color-scheme:light only;supported-color-schemes:light;}
 a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;}
-u + #os-body a{color:ACCENT;text-decoration:underline;}
-/* T394: title row above photo+bio; T388 desktop title left; T385 mobile title centered; T379 + T375 + T373 */
-.os-cred{white-space:nowrap !important;}
-.os-vh-guestname{text-align:center;}
-.os-vh-guestname p{text-align:center;}
-.os-vh-guestrole{white-space:nowrap;}
-.os-vh-guestblurb{text-align:left;}
-.os-sig{margin-left:8px !important;}
+u + #os-body a{text-decoration:none;}
+.os-pill,.os-chip td{white-space:nowrap;}
+.os-hl{background-image:linear-gradient(180deg,transparent 60%,#ebc97e 60%,#ebc97e 90%,transparent 90%);border-radius:4px;}
+.os-sh{box-shadow:SHADOW;}
+.os-psh{box-shadow:PAPER_SHADOW;}
+.os-tsh{box-shadow:0 30px 50px -30px rgba(20,32,58,.7);}
+.os-hand{transform:rotate(-2deg);transform-origin:left bottom;}
+.os-tl{transform:rotate(-.6deg);}
+.os-tr{transform:rotate(.8deg);}
 .os-pay-note{white-space:nowrap;}
-.os-sg-cta{margin-top:20px !important;}
-.os-sec{height:48px !important;line-height:48px !important;font-size:0 !important;}
-.os-disclose{margin:4px 0 0 0;display:block;}
-.os-disclose-sum{cursor:pointer;list-style:none;display:inline;}
-.os-disclose-sum::-webkit-details-marker{display:none;}
-.os-disclose-sum::marker{content:none;}
+.os-sec{height:52px !important;line-height:52px !important;font-size:0 !important;}
 @media only screen and (min-width:700px){
   .os-wrap{max-width:880px !important;width:100% !important;}
-  .os-hero{max-width:880px !important;}
   .os-browser-cols{display:flex !important;flex-direction:row !important;gap:16px !important;align-items:stretch !important;width:100% !important;}
-  .os-browser-col{flex:1 1 0 !important;width:auto !important;max-width:none !important;margin:0 !important;display:flex !important;flex-direction:column !important;}
+  .os-browser-col{flex:1 1 0 !important;width:auto !important;margin:0 !important;display:flex !important;flex-direction:column !important;}
   .os-browser-col > table.os-card{flex:1 1 auto !important;height:100% !important;}
   .os-browser-col > table.os-card > tbody{height:100% !important;}
   .os-browser-col > table.os-card > tbody > tr.os-card-body{height:100% !important;}
   .os-browser-col > table.os-card td.os-cardpad{height:100% !important;vertical-align:top !important;display:flex !important;flex-direction:column !important;box-sizing:border-box !important;}
-  .os-card-cta{margin-top:auto !important;}
-  .os-equal-pair .os-sg-cta{margin-top:auto !important;padding-top:20px !important;}
-  .os-pay-note{white-space:nowrap !important;}
-  /* T379: clean desktop intro - photo + byline as one centered unit beside letter */
-  .os-intro-cols{align-items:flex-start !important;gap:24px !important;}
-  .os-intro-photo-col{flex:0 0 200px !important;max-width:200px !important;width:200px !important;display:block !important;text-align:center !important;}
-  .os-intro-text-col{flex:1 1 auto !important;min-width:0 !important;}
-  .os-intro-photo{width:160px !important;max-width:160px !important;height:160px !important;margin:0 auto !important;}
-  .os-intro-photocell{width:200px !important;text-align:center !important;padding:0 0 8px 0 !important;}
-  .os-intro-byline{text-align:center !important;}
-  .os-intro-byline p{text-align:center !important;}
-  .os-cred{font-size:12px !important;line-height:16px !important;white-space:nowrap !important;}
-  .os-vh-stack{display:block !important;width:100% !important;}
-  .os-vh-stack > .os-browser-col{display:block !important;width:100% !important;max-width:100% !important;flex:none !important;margin:0 0 10px 0 !important;}
-  .os-vh-stack > .os-browser-col:last-child{margin-bottom:0 !important;}
-  .os-vh-stack img{max-width:100% !important;width:100% !important;}
-  .os-card-art{max-width:100% !important;width:100% !important;}
-  .os-about-row{display:flex !important;flex-direction:row !important;gap:18px !important;align-items:center !important;width:100% !important;}
-  .os-about-photo{flex:0 0 160px !important;width:160px !important;max-width:160px !important;margin:0 !important;}
-  .os-about-text{flex:1 1 auto !important;min-width:0 !important;}
-  .os-vh-portrait{width:96px !important;max-width:96px !important;}
-  /* T394/T388: desktop/browser-wide only: title left-aligned on its own row */
-  .os-vh-guestname{text-align:left !important;}
-  .os-vh-guestname p{text-align:left !important;}
-  .os-tiny,.os-tiny a,.os-footer p{font-size:14px !important;line-height:21px !important;}
-  .os-confirm{font-size:14px !important;line-height:21px !important;}
-  .os-desk-hide{display:none !important;max-height:0 !important;overflow:hidden !important;mso-hide:all;}
-  .os-desk-show{display:block !important;}
-  .os-paygrid{table-layout:fixed !important;}
+  .os-card-cta,.os-equal-pair .os-sg-cta{margin-top:auto !important;padding-top:20px !important;}
+  .os-tiny,.os-footer p{font-size:14px !important;line-height:21px !important;}
 }
 @media only screen and (max-width:699px){
-  .os-desk-show{display:none !important;max-height:0 !important;overflow:hidden !important;}
-  .os-sec{height:36px !important;line-height:36px !important;}
+  .os-sec{height:40px !important;line-height:40px !important;}
 }
 @media only screen and (max-width:620px){
-  html,body{width:100% !important;max-width:100% !important;overflow-x:hidden !important;-webkit-text-size-adjust:100% !important;}
-  .os-wrap,.os-wrap table{width:100% !important;max-width:100% !important;}
-  table[width="600"]{width:100% !important;max-width:100% !important;}
+  html,body{width:100% !important;overflow-x:hidden !important;-webkit-text-size-adjust:100% !important;}
+  .os-wrap{width:100% !important;max-width:100% !important;}
   .os-pad{padding-left:20px !important;padding-right:20px !important;}
-  .os-cardpad{padding:16px !important;}
-  .os-h1{font-size:27px !important;line-height:33px !important;}
-  .os-h2{font-size:20px !important;line-height:26px !important;}
-  .os-col{display:block !important;width:100% !important;max-width:100% !important;}
-  .os-col-photo{padding:0 0 12px 0 !important;}
-  .os-photo{width:100% !important;max-width:160px !important;height:auto !important;}
-  .os-intro-photo{width:104px !important;max-width:104px !important;height:104px !important;border-radius:50% !important;margin:0 auto !important;}
-  .os-intro-col{display:block !important;width:100% !important;max-width:100% !important;}
-  .os-intro-photocell{padding:0 0 6px 0 !important;text-align:center !important;}
-  .os-intro-photo-col{margin:0 0 10px 0 !important;text-align:center !important;}
-  .os-intro-photo-col p{text-align:center !important;}
-  .os-intro-byline{text-align:center !important;}
-  .os-cred{font-size:12px !important;line-height:16px !important;white-space:nowrap !important;}
-  .os-browser-cols{display:block !important;}
-  .os-browser-col{display:block !important;width:100% !important;margin:0 0 16px 0 !important;}
-  .os-about-photo{width:160px !important;max-width:160px !important;margin:0 auto 16px auto !important;text-align:center !important;}
-  .os-about-photo .os-photocell,.os-about-photo table{margin:0 auto !important;}
-  .os-about-photo .os-photo,.os-about-photo img{margin:0 auto !important;}
-  .os-about-row{display:block !important;text-align:left !important;}
-  .os-issue-cell{width:50% !important;max-width:50% !important;box-sizing:border-box !important;}
-  body,table,td,p,a,span{overflow-wrap:anywhere !important;word-break:break-word !important;}
-  .os-chip,.os-chip p,table[width="62"] p,td[width="62"] p{white-space:nowrap !important;overflow-wrap:normal !important;word-break:normal !important;}
-  .os-paybox,.os-paybox p{overflow-wrap:normal !important;word-break:normal !important;}
-  .os-audience span{white-space:normal !important;overflow-wrap:normal !important;word-break:normal !important;}
-  img{max-width:100% !important;height:auto !important;}
-  table[width="62"],td[width="62"]{width:62px !important;max-width:62px !important;}
-  table[width="26"],td[width="30"]{width:26px !important;max-width:30px !important;}
-  table[width="40"]{width:40px !important;max-width:40px !important;}
-  table[width="160"]{width:160px !important;max-width:160px !important;}
-  /* Village Hall pay boxes: centered 2x2; amounts vertically centered (T379) */
+  .os-cardpad{padding-left:16px !important;padding-right:16px !important;}
+  .os-boardpad{padding:18px 10px 16px 10px !important;}
+  .os-h1{font-size:28px !important;line-height:32px !important;}
+  .os-hero-h1{font-size:35px !important;line-height:38px !important;letter-spacing:-0.8px !important;}
+  .os-tagline{font-size:23px !important;line-height:27px !important;}
+  .os-place{font-size:10.5px !important;letter-spacing:1.3px !important;padding:0 !important;}
+  .os-hrule{display:none !important;}
+  .os-mast-word{font-size:18px !important;}
+  .os-h2{font-size:25px !important;line-height:30px !important;}
+  .os-col{display:block !important;width:100% !important;max-width:100% !important;padding:0 !important;}
+  .os-col-photo{padding:0 0 14px 0 !important;text-align:center !important;}
+  .os-guestphoto,.os-aboutphoto{margin:0 auto !important;}
+  .os-stoplabel{font-size:13px !important;line-height:16px !important;}
+  .os-stamp{width:80px !important;}
+  .os-stamp img{width:80px !important;height:63px !important;}
+  .os-cred{font-size:12px !important;white-space:normal !important;}
+  .os-pill{white-space:normal !important;}
+  .os-intro-photo{width:56px !important;height:56px !important;}
+  p{overflow-wrap:break-word;}
+  .os-chip td{white-space:nowrap !important;}
   .os-pay-wrap{text-align:center !important;}
-  .os-pay-note{white-space:normal !important;display:inline-block !important;text-align:center !important;}
-  .os-wrap table.os-paygrid,.os-paygrid{width:100% !important;max-width:100% !important;margin:8px auto 0 auto !important;table-layout:fixed !important;}
-  .os-paygrid tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;align-items:stretch !important;justify-content:center !important;}
-  .os-paycell{display:flex !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 4px 8px 0 !important;height:auto !important;align-items:stretch !important;}
+  .os-pay-note{white-space:normal !important;}
+  .os-paygrid tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;}
+  .os-paycell{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 4px 8px 0 !important;}
   .os-paycell:nth-child(even){padding:0 0 8px 4px !important;}
-  .os-paycell:nth-child(n+3){padding-bottom:0 !important;}
-  .os-paycell > table.os-paybox{width:100% !important;height:100% !important;min-height:64px !important;display:flex !important;flex-direction:column !important;}
-  .os-paybox{min-height:64px !important;height:100% !important;}
-  .os-paybox tbody,.os-paybox tr{display:flex !important;flex:1 1 auto !important;width:100% !important;height:100% !important;}
-  .os-paybox td{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;width:100% !important;height:100% !important;padding:6px 4px !important;vertical-align:middle !important;box-sizing:border-box !important;}
-  .os-vh-portrait{width:88px !important;max-width:88px !important;}
-  /* T394: full-width title centered so Greater Nashville stays one line; photo stays left of bio */
-  .os-vh-guestname{text-align:center !important;}
-  .os-vh-guestname p{text-align:center !important;}
-  .os-vh-guestname,.os-vh-guestname p{overflow-wrap:normal !important;word-break:normal !important;}
-  .os-vh-guestrole{white-space:nowrap !important;}
-  .os-vh-contact,.os-vh-contact a,.os-vh-contact span{overflow-wrap:anywhere !important;word-break:normal !important;}
 }
 @media only screen and (max-width:359px){
-  .os-issue-cell{display:block !important;width:100% !important;max-width:100% !important;padding:0 0 8px 0 !important;}
-  .os-cred{font-size:11px !important;line-height:15px !important;letter-spacing:0 !important;}
-  .os-vh-guestrole{font-size:12px !important;line-height:16px !important;}
+  .os-stoplabel{font-size:12px !important;}
+  .os-cred{font-size:11px !important;}
 }
-""".replace("ACCENT", ACCENT)
+""".replace("PAPER_SHADOW", PAPER_SHADOW).replace("SHADOW", SHADOW)
     dark = f"""
-[data-ogsb] .os-bg{{background-color:{CREAM} !important;}} [data-ogsb] .os-card{{background-color:{WHITE} !important;}} [data-ogsb] .os-chip{{background-color:{BLUSH} !important;}} [data-ogsb] .os-navy{{background-color:{INK} !important;}} [data-ogsb] .os-btn-navy{{background-color:{INK} !important;}} [data-ogsb] .os-btn-gold{{background-color:{GOLD} !important;}} [data-ogsb] .os-stepbg{{background-color:{INK} !important;}} [data-ogsb] .os-rulebar{{background-color:{ACCENT} !important;}} [data-ogsb] .os-photocell{{background-color:{BLUSH} !important;}}
-[data-ogsc] .os-ink{{color:{INK} !important;}} [data-ogsc] .os-body{{color:{BODY} !important;}} [data-ogsc] .os-muted{{color:{MUTED} !important;}} [data-ogsc] .os-accent,[data-ogsc] .os-link{{color:{ACCENT} !important;}} [data-ogsc] .os-gold{{color:{GOLD} !important;}} [data-ogsc] .os-sand{{color:{SAND} !important;}} [data-ogsc] .os-cream{{color:{CREAM} !important;}} [data-ogsc] .os-white,[data-ogsc] .os-step{{color:{WHITE} !important;}}
+[data-ogsb] .os-bg{{background-color:{CREAM} !important;}} [data-ogsb] .os-card{{background-color:{NOTE} !important;}} [data-ogsb] .os-navy,[data-ogsb] .os-btn-navy{{background-color:{INK} !important;}} [data-ogsb] .os-btn-gold,[data-ogsb] .os-stepbg{{background-color:{GOLD} !important;}}
+[data-ogsc] .os-ink{{color:{INK} !important;}} [data-ogsc] .os-body{{color:{BODY} !important;}} [data-ogsc] .os-muted{{color:{MUTED} !important;}} [data-ogsc] .os-accent{{color:{ACCENT} !important;}} [data-ogsc] .os-gold{{color:{GOLD} !important;}} [data-ogsc] .os-goldink{{color:{GOLD_INK} !important;}} [data-ogsc] .os-brick{{color:{BRICK_INK} !important;}} [data-ogsc] .os-sand{{color:{SAND} !important;}} [data-ogsc] .os-white{{color:{WHITE} !important;}}
 @media (prefers-color-scheme: dark){{
-  .os-bg{{background-color:{CREAM} !important;}} .os-card{{background-color:{WHITE} !important;}} .os-chip{{background-color:{BLUSH} !important;}} .os-navy{{background-color:{INK} !important;}} .os-btn-navy{{background-color:{INK} !important;}} .os-btn-gold{{background-color:{GOLD} !important;}} .os-stepbg{{background-color:{INK} !important;}} .os-rulebar{{background-color:{ACCENT} !important;}} .os-photocell{{background-color:{BLUSH} !important;}}
-  .os-ink{{color:{INK} !important;}} .os-body{{color:{BODY} !important;}} .os-muted{{color:{MUTED} !important;}} .os-accent,.os-link{{color:{ACCENT} !important;}} .os-gold{{color:{GOLD} !important;}} .os-sand{{color:{SAND} !important;}} .os-cream{{color:{CREAM} !important;}} .os-white,.os-step{{color:{WHITE} !important;}}
+  .os-bg{{background-color:{CREAM} !important;}} .os-card{{background-color:{NOTE} !important;}} .os-navy,.os-btn-navy{{background-color:{INK} !important;}} .os-btn-gold,.os-stepbg{{background-color:{GOLD} !important;}}
+  .os-ink{{color:{INK} !important;}} .os-body{{color:{BODY} !important;}} .os-muted{{color:{MUTED} !important;}} .os-accent{{color:{ACCENT} !important;}} .os-gold{{color:{GOLD} !important;}} .os-goldink{{color:{GOLD_INK} !important;}} .os-brick{{color:{BRICK_INK} !important;}} .os-sand{{color:{SAND} !important;}} .os-white{{color:{WHITE} !important;}}
 }}
 """
     return f'''<!DOCTYPE html>
@@ -851,9 +972,8 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
 <title>{SUBJECT}</title>
 <!-- MailerLite: Subject "{SUBJECT}". Merge tags {{$url}} and {{$unsubscribe}}. Plain text: newsletter-october-2026.txt. -->
-<!-- Built by tools/build-october-2026.py. Edit that file, not this one. T299 Hickok feedback pass. -->
-<!-- T430: Wall of Hope after the library (Ellie story, then invitation). T429: Oct calendar adds (rEcess, Dollywood, Gallatin HOSA, Caleb's Friends, Pegram) and Evergreen street + blurb. T404: Three things items all 18/16. T400: Sensory Spooktacular chronological (Oct 25 before Oct 31) + expand Details. T398: ACCESS website+email only. T397: mercedes-family-hearts-160.jpg. T394: VH title on its own row; photo left of bio. T388: desktop title left. T387: two ND children bio. T386: 988 is a tel: link. -->
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
+<!-- Built by tools/build-october-2026.py. Edit that file, not this one. Site pictures: tools/render-decor.mjs. -->
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&amp;family=Outfit:wght@500;600&amp;family=Patrick+Hand&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
 {dark}
@@ -864,390 +984,240 @@ u + #os-body a{color:ACCENT;text-decoration:underline;}
 </head>'''
 
 
+HOPE = dict(
+    eyebrow="Family win",
+    title="His love needs no words.",
+    photo="hope-print.jpg",
+    alt=("Nicole smiling with her arms around Connor and his brother, both in red shirts, at a birthday "
+         "celebration with a gold number 8 balloon and star balloons behind them."),
+    paras=[
+        ("My name is Nicole. I am a single mom of two amazing boys. I am also a person in recovery who has "
+         "experienced many challenging, traumatic events. Being a special needs mom has been the hardest "
+         "experience of my life."),
+        ("The most remarkable thing about this journey has been realizing that verbal communication is not "
+         "necessary to express love. Connor expresses his love in the unexpected eye contact, the couple of "
+         "tickles, the laughs, the rare interactive play."),
+        ("When he grabbed my face and put his nose to mine and gave me Eskimo kisses while he giggled. That "
+         "only happened twice but it was the most special moment."),
+        ("When you have a child with special needs life can be lonely, dark, scary and filled with anxiety "
+         "but! It is filled with moments of pure innocence, joy, love and light. Connor makes leaps and "
+         "bounds of improvement and then will regress and it ebbs and flows. Every success no matter how "
+         "&ldquo;small&rdquo; is celebrated loudly by the village. I&rsquo;m so grateful for the people that "
+         "have been walking alongside us. It truly does take a village."),
+        ("Let me leave you with a hopeshot, I know this isn&rsquo;t the life you thought you would have. I "
+         "know you don&rsquo;t hear &ldquo;I love you&rdquo; or go to baseball games. I know you sit outside "
+         "the party room while everyone else celebrates. The hopeshot is that you gain so many beautiful life "
+         "lessons, moments, experiences and perspective that others do not get the pleasure to experience. "
+         "If nobody has told you today I love you, you are doing a great job, we are the village."),
+    ],
+    byline="&#9998; Nicole, Murfreesboro",
+)
+
+
+_TAG = re.compile(r"<(td|table|th|div|p|span|a|img|b)\b[^>]*>")
+
+
+def compact(html):
+    """Trim inline CSS that the HTML attributes already say, to stay under Gmail's 102KB clip.
+
+    cellspacing="0" makes border-collapse moot, valign covers vertical-align, and
+    cellpadding="0" already zeroes cell padding.
+    """
+    def fix(m):
+        tag = m.group(0)
+        if 'style="' not in tag:
+            return tag
+        tag = tag.replace("border-collapse:collapse;", "").replace("border-collapse:separate;", "")
+        va = re.search(r'valign="(top|middle|bottom)"', tag)
+        if va:
+            tag = tag.replace(f"vertical-align:{va.group(1)};", "")
+        if m.group(1) == "td":
+            tag = re.sub(r'(style=")padding:0;', r"\1", tag)
+        if m.group(1) == "table" and 'width="100%"' in tag:
+            tag = tag.replace('style="width:100%;', 'style="')
+        if "background-image" not in tag and "background-size" not in tag:
+            tag = re.sub(r"background-color:(#[0-9a-fA-F]{3,6});", r"background:\1;", tag)
+        return tag.replace(' style=""', "")
+    return _TAG.sub(fix, html)
+
+
 def build_html(base, browser=False):
     art = lambda f: f"{base}art/{f}"
-    o = []
-    o.append(head())
-    o.append(f'<body id="os-body" class="os-bg" bgcolor="{CREAM}" style="margin:0;padding:0;background-color:{CREAM};width:100%;max-width:100%;overflow-x:hidden;">')
+    o = [head()]
+    o.append(f'<body id="os-body" class="os-bg" bgcolor="{CREAM}" style="margin:0;padding:0;background-color:{CREAM};width:100%;overflow-x:hidden;">')
     o.append(f'<span style="display:none;font-size:1px;color:{CREAM};line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">{PREHEADER}</span>')
-    o.append(f'<table role="presentation" class="os-bg" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{CREAM}" style="width:100%;border-collapse:collapse;background-color:{CREAM};">'
-             '<tr><td align="center" style="padding:20px 12px 40px 12px;">'
-             '<table role="presentation" class="os-wrap" cellpadding="0" cellspacing="0" border="0" width="600" style="width:100%;max-width:600px;border-collapse:collapse;">')
+    o.append(f'<table {T} class="os-bg" width="100%" bgcolor="{CREAM}" style="width:100%;border-collapse:collapse;background-color:{CREAM};">'
+             f'<tr><td align="center" style="padding:14px 10px 40px 10px;font-family:{FONT};color:{BODY};">'
+             f'<table {T} class="os-wrap" width="600" style="width:100%;max-width:600px;border-collapse:collapse;">')
 
     view_href = BROWSER_VIEW_URL if browser else "{$url}"
     unsub_href = BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
-    vib = ('<a class="os-muted os-tiny" href="' + view_href + '" style="color:' + MUTED + ';text-decoration:underline;">View in browser</a>')
-    o.append(padrow(p(vib, 13, 18, MUTED, 400, extra="text-align:center;", cls="os-tiny"), pad="0 34px 12px 34px"))
+    # --- Opening: top bar, header, the village in its landscape, Taylor's letter ---
+    o.append(f'<tr><td style="padding:0 0 12px 0;">{top_bar("October 2026", view_href)}</td></tr>')
+    o.append(padrow(site_header(art, SITE), pad="0 16px 14px 16px"))
+    o.append(hero(art, 'October in Our <span class="os-hl">Special Village</span>', "fall"))
+    alone_hi = f'<span style="background-color:{GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{ALONE_PHRASE}</span>'
+    paras = "".join(p(para.replace(ALONE_PHRASE, alone_hi), 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0"))
+                    for i, para in enumerate(NOTE_PARAS))
+    o.append(padrow(letter(art, None, paras)))
+    o.append(sp(26))
+    o.append(padrow(stops_block(art, [("#deadlines", "Fall break"), ("#ongoing", "Parent support"),
+                                      ("#events", "Sensory-friendly events"), ("#library", "New resources")]), pad="0 22px"))
 
-    o.append(padrow(
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-        f'<td align="left" style="vertical-align:middle;">{p("Our Special Village", 12, 16, ACCENT, 700, extra="letter-spacing:1.6px;text-transform:uppercase;")}</td>'
-        f'<td align="right" style="vertical-align:middle;">{p("October 2026", 13, 16, MUTED, 700, extra="text-align:right;")}</td>'
-        '</tr></table>', pad="0 34px 14px 34px"))
-
-    o.append('<tr><td align="left" style="padding:0;">'
-             f'<img class="os-hero" src="{art("newsletter-fall.jpg")}" width="600" alt="Illustration of the village in autumn: homes, a gazebo, shops, and neighbors walking the path." '
-             'style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;border-radius:16px;"></td></tr>')
+    # --- Three things: the deadline tag ---
+    o.append(major_sp())
+    o.append(section_head("deadlines", "Three things to know this month", eyebrow="Deadline watch"))
+    o.append(sp(14))
+    o.append(padrow(tag_card(art, rows_table(TOP_DEADLINE_ROWS))))
     o.append(sp(16))
-    # T372/T367 intro: photo left + welcome right; In this issue full-width under the row
-    alone_hi = (
-        f'<span style="background-color:{BLUSH};color:{INK};padding:1px 4px;border-radius:4px;">'
-        f'{ALONE_PHRASE}</span>'
-    )
-    note_paras_html = []
-    for i, para in enumerate(NOTE_PARAS):
-        html_para = para.replace(ALONE_PHRASE, alone_hi) if ALONE_PHRASE in para else para
-        cls = "os-desk-hide" if (browser and i == 1) else ""
-        note_paras_html.append(
-            p(html_para, 16, 24, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0"), cls=cls)
-        )
-    note_copy = (
-        f'<h1 class="os-h1 os-ink" style="margin:0 0 10px 0;font-family:{FONT};font-size:30px;line-height:36px;'
-        f'mso-line-height-rule:exactly;color:{INK};font-weight:700;letter-spacing:-0.3px;">October in Our Special Village</h1>'
-        + "".join(note_paras_html)
-        + p("With love,", 16, 24, BODY, 400, margin="10px 0 2px 0")
-        + (
-            f'<img class="os-sig" src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
-            f'style="display:block;width:96px;max-width:96px;height:auto;margin:0 0 0 8px;padding:0;border:0;outline:none;'
-            f'text-decoration:none;font-family:Georgia, Times New Roman, serif;font-size:22px;font-style:italic;color:{ACCENT};">'
-        )
-    )
-    photo = (
-        f'<img class="os-intro-photo" src="{art("taylor-hickok-160.jpg")}" width="96" height="96" '
-        f'alt="Dr. Taylor Hickok, founder of Our Special Village." '
-        f'style="display:block;width:96px;max-width:96px;height:96px;margin:0;padding:0;border:0;outline:none;'
-        f'text-decoration:none;border-radius:50%;object-fit:cover;">'
-    )
-    photo_block = (
-        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;">'
-        f'<tr><td class="os-intro-photocell" align="center" style="padding:0 0 8px 0;">'
-        + photo.replace('margin:0;', 'margin:0 auto;')
-        + '</td></tr>'
-        f'<tr><td class="os-intro-byline" align="center" style="padding:0;">'
-        + p("Dr. Taylor Hickok", 15, 20, INK, 700, extra="text-align:center;")
-        + p("Founder &middot; SLP &middot; AuDHD parent", 13, 18, MUTED, 400, margin="2px 0 0 0",
-            extra="text-align:center;white-space:nowrap;", cls="os-tiny os-cred")
-        + '</td></tr></table>'
-    )
-    # Wrap cols with intro-specific classes (T367 photo-left)
-    photo_col = (
-        f'<div class="os-browser-col os-intro-photo-col" style="display:block;width:100%;margin:0 0 12px 0;'
-        f'vertical-align:top;box-sizing:border-box;">{photo_block}</div>'
-    )
-    text_col = (
-        f'<div class="os-browser-col os-intro-text-col" style="display:block;width:100%;margin:0;'
-        f'vertical-align:top;box-sizing:border-box;">{note_copy}</div>'
-    )
-    intro_row = (
-        f'<div class="os-browser-cols os-intro-cols" style="display:block;width:100%;">'
-        f'{photo_col}{text_col}</div>'
-    )
-    o.append(padrow(intro_row))
-    o.append(sp(6))  # T373: ~6–8px tighter gap before In this issue
-    o.append(padrow('<div style="margin:0;">' + issue_chips_block() + '</div>'))
+    o.append(padrow(button(DEADLINES_URL, "See all deadlines", INK, CREAM)
+                    + p("Dates confirmed Sept 14. If something changed, reply and we will fix it.", 13, 20, MUTED, 400, margin="8px 0 0 0", cls="os-confirm")))
 
+    # --- Village Hall: bunting, the hall, fact pills, the notice board, the ticket ---
     o.append(major_sp())
-    o.append(section_head("deadlines", "Three things to know this month"))
+    o.append(fullrow(img(art(DECOR + "bunting.png"), 600, "", style="max-width:none;")))
+    o.append(padrow(anchor("village-hall") + hand("The next deep dive", 22, GOLD_INK, "8px 0 0 0")
+                    + h2("Village Hall", "2px 0 0 0", 40, 44)
+                    + p("One topic. One guest expert. Your questions.", 19, 25, INK, 500, margin="6px 0 0 0",
+                        extra=f"font-family:{DISPLAY};")))
+    o.append(fullrow(img(art("vh-land.jpg"), 600, "Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting",
+                         style="max-width:none;")))
+    o.append(padrow(fact_pills("Saturday, October 10, 2026", ["9:30 to 11:00 AM Central", "Online", "Free"])))
     o.append(sp(12))
-    o.append(padrow(card(rows_table(TOP_DEADLINE_ROWS), pad="8px 20px 8px 20px")))
-    o.append(sp(14))  # T373: 12–14px between deadline card and See all deadlines
-    o.append(padrow(
-        button(DEADLINES_URL, "See all deadlines", INK, CREAM).replace('class="os-btn"', 'class="os-btn os-btn-navy"')
-        + p("Dates confirmed Sept 14. If something changed, reply and we will fix it.", 13, 20, MUTED, 400, margin="8px 0 0 0", cls="os-confirm")))
+    mercedes = dict(
+        name="Mercedes Lawson, M.S. Ed.",
+        role="Founder of A.C.C.E.S.S. &middot; Greater Nashville",
+        photo_alt="Mercedes Lawson, M.S. Ed., with her family.",
+        bio=("She grew up with a sibling with disabilities, taught special education for nine years "
+             "helping 250+ students, and has two neurodivergent children. Through A.C.C.E.S.S. "
+             "(Advocacy &amp; Consultation Center for Educational Student Supports), she helps families "
+             "with IEP consultation, educational advocacy, and tutoring."),
+        links=[(ACCESS_URL, "accessyouredu.com"), (f"mailto:{ACCESS_EMAIL}", "access.your.education@<wbr>gmail.com")],
+    )
+    o.append(padrow(board(art, poster(
+        art, "Topic and guest", "The IEP process and navigating the school system",
+        guest_block(mercedes, art, photo_src=art("guest-1-print.jpg")),
+        "A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent "
+        "questions. The lesson is recorded and sent to registrants; the Q&amp;A is not."))))
+    o.append(sp(18))
+    o.append(padrow(ticket(art, button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK, align="center"), free_note())))
 
-
-    # --- Village Hall (T372 compact; T367 stacked full-width) ---
+    # --- The month ahead: featured night, then the calendar page ---
     o.append(major_sp())
-    o.append(padrow(
-        anchor("village-hall")
-        + rule()
-        + p("The next deep dive", 13, 18, ACCENT, 700, margin="12px 0 0 0")
-        + (f'<h2 class="os-h2 os-ink" style="margin:6px 0 0 0;font-family:{FONT};font-size:21px;'
-           f'line-height:27px;mso-line-height-rule:exactly;color:{INK};font-weight:700;">Village Hall</h2>')
-        + p("One topic. One guest expert. Your questions.", 16, 24, BODY, 400, margin="6px 0 0 0")
-    ))
-    o.append(sp(12))
-    vh_art = (
-        f'<img class="os-card-art" src="{art("village-hall-iep-compact.jpg")}" width="600" '
-        f'alt="Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting" '
-        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;">'
-    )
-    # T394: name + role on their own row above the photo. Photo left of
-    # the description, vertically centered with that copy. Mobile/email keep
-    # the title centered (Greater Nashville stays one line); desktop
-    # (>=700px) left-aligns the title. Photo+bio stay a two-column row.
-    mercedes = (
-        '<table role="presentation" class="os-vh-guest" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;margin:0 0 16px 0;">'
-        '<tr>'
-        '<td colspan="2" class="os-vh-guestname" align="center" '
-        'style="padding:0 0 10px 0;vertical-align:top;text-align:center;">'
-        + p("Mercedes Lawson, M.S. Ed.", 15, 20, GOLD, 700, margin="0 0 2px 0", extra="text-align:center;")
-        + p("Founder of A.C.C.E.S.S. &middot; Greater Nashville", 13, 18, SAND, 700,
-            margin="0", extra="text-align:center;white-space:nowrap;", cls="os-vh-guestrole")
-        + '</td></tr>'
-        '<tr>'
-        f'<td class="os-vh-guestphoto" width="88" valign="middle" style="width:88px;padding:0 12px 0 0;vertical-align:middle;">'
-        f'<img class="os-vh-portrait" src="{art(MERCEDES_PHOTO)}" width="88" height="115" '
-        f'alt="Mercedes Lawson, M.S. Ed., with her family." '
-        f'style="display:block;width:88px;max-width:88px;height:auto;border:0;outline:none;text-decoration:none;border-radius:10px;">'
-        '</td>'
-        '<td class="os-vh-guestblurb" valign="middle" align="left" '
-        'style="padding:0;vertical-align:middle;text-align:left;">'
-        + p("She grew up with a sibling with disabilities, taught special education for nine years "
-           "helping 250+ students, and has two neurodivergent children. Through A.C.C.E.S.S. "
-           "(Advocacy &amp; Consultation Center for Educational Student Supports), she helps families "
-           "with IEP consultation, educational advocacy, and tutoring.",
-           13, 19, SAND, 400, extra="text-align:left;")
-        + p(navy_a(ACCESS_URL, "accessyouredu.com"),
-           13, 18, SAND, 400, margin="8px 0 0 0", extra="text-align:left;", cls="os-vh-contact")
-        + p(navy_a(f"mailto:{ACCESS_EMAIL}", "access.your.education@<wbr>gmail.com", nowrap=False),
-           13, 18, SAND, 400, margin="2px 0 0 0", extra="text-align:left;", cls="os-vh-contact")
-        + '</td></tr></table>'
-    )
-    # T375 icons + T394 guest layout: date → time/online → Topic → title → name/role → photo|bio
-    vh_panel = (f'<table role="presentation" class="os-navy" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="{INK}" style="width:100%;border-collapse:separate;background-color:{INK};border-radius:16px;">'
-          '<tr><td align="left" style="padding:16px 18px 20px 18px;">'
-          + p("Saturday, October 10, 2026", 13, 18, GOLD, 700, margin="0 0 4px 0")
-          + vh_meta_icon("clock-gold", "9:30 to 11:00 AM Central", bottom="4px")
-          + vh_meta_icon("video-gold", "Online", bottom="18px")
-          + p("Topic and guest", 13, 18, GOLD, 700, margin="0 0 6px 0")
-          + p("The IEP process and navigating the school system", 17, 24, CREAM, 700, margin="0 0 14px 0")
-          + mercedes
-          + p("A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent questions. The lesson is recorded and sent to registrants; the Q&amp;A is not.", 14, 21, SAND, 400, margin="0 0 16px 0")
-          + button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK).replace('class="os-btn"', 'class="os-btn os-btn-gold"')
-          + price_boxes()
-          + '</td></tr></table>')
-    # T367: stacked full-width (not side-by-side) so VH stays featured but compact
-    vh_stack = (
-        f'<div class="os-vh-stack" style="display:block;width:100%;">'
-        f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 10px 0;vertical-align:top;box-sizing:border-box;">{vh_art}</div>'
-        f'<div class="os-browser-col" style="display:block;width:100%;margin:0;vertical-align:top;box-sizing:border-box;">{vh_panel}</div>'
-        f'</div>'
-    )
-    o.append(padrow(vh_stack, pad="0 34px"))
-
-    # --- The month ahead ---
-    o.append(major_sp())
-    o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro."))
-    o.append(sp(12))
-
-    featured_art = (
-        f'<a href="{MONSTERS_URL}" style="display:block;text-decoration:none;border:0;outline:none;">'
-        f'<img class="os-card-art" src="{art("featured-monsters-museum-compact.jpg")}" width="600" '
-        f'alt="Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones" '
-        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;"></a>'
-    )
-    # T373: 12px image→Featured, 5–6 label→title, 6 title→meta, 8 meta→link
-    featured_copy = (p("Featured", 13, 18, ACCENT, 700, margin="12px 0 0 0")
-                     + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 18, 25, INK, 700, margin="6px 0 0 0")
+    o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.",
+                          eyebrow="Happening soon"))
+    o.append(sp(14))
+    featured_art = story_img(art("featured-monsters-museum-compact.jpg"), 600,
+                             "Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones",
+                             link=MONSTERS_URL, extra_style="margin:0 auto;")
+    featured_copy = (hand("Featured", 21, GOLD_INK, "12px 0 0 0")
+                     + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 19, 25, INK, 700, margin="4px 0 0 0")
                      + p("Thu Oct 15 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required", 16, 24, BODY, 400, margin="6px 0 0 0")
-                     + p(a(MONSTERS_URL, "Reserve your spot"), 16, 24, BODY, 400, margin="8px 0 0 0"))
-    o.append(padrow(card(featured_art + featured_copy, pad="12px 20px 16px 20px")))
-
-    o.append(sp(16))
+                     + pill_row([(MONSTERS_URL, "Reserve your spot")], kind="gold", margin="6px 0 0 0"))
+    o.append(padrow(card(featured_art + featured_copy, pad="12px 12px 18px 12px")))
+    o.append(sp(20))
     ev_rows = []
     for i, e in enumerate(SECONDARY_EVENTS):
-        lines = [e["meta"]]
-        if e.get("note"):
-            lines.append(e["note"])
-        if e.get("link"):
-            lines.append(a(*e["link"]))
+        lines = [e["meta"]] + ([e["note"]] if e.get("note") else []) + disclose(e.get("disclose") or [])
         content = item(e["title"], lines)
-        if e.get("disclose"):
-            content += disclose(e["disclose"])
+        if e.get("link"):
+            content += pill_row([e["link"]])
         ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
-    o.append(padrow(card(rows_table(ev_rows), pad="6px 20px 6px 20px")))
+    o.append(padrow(calendar_page(art, rows_table(ev_rows))))
     o.append(sp(20))
-    o.append(padrow(button(EVENTS_CAL_URL, "View the full October events calendar", INK, CREAM, align="center").replace('class="os-btn"', 'class="os-btn os-btn-navy"')))
+    o.append(padrow(button(EVENTS_CAL_URL, "View the full October events calendar", INK, CREAM, align="center")))
 
-    # --- Library (desktop two-up) ---
+    # --- New in the library: two books ---
     o.append(major_sp())
-    o.append(section_head("library", "New in the library"))
-    o.append(sp(12))
-    # T373 library: 12px image→label, 5–6 label→title, 8 title→desc, 8 desc→link; 16px h-pad
-    therapy_img = (
-        f'<img class="os-card-art" src="{art("guide-therapy-styles-landscape-compact.jpg")}" '
-        f'width="490" height="228" '
-        f'alt="Adult and child sharing a calm sensory play tray in a warm playroom" '
-        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 12px 0;">'
-    )
-    therapy = (therapy_img
-               + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 0 0", cls="os-tiny")
-               + p("Therapy styles: play, structure, and compliance", 17, 24, INK, 700, margin="6px 0 0 0")
-               + p("Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like.", 15, 22, BODY, 400, margin="8px 0 0 0")
-               + p(a(f"{SITE}/resources/therapy-styles", "Read the guide"), 15, 22, BODY, 400, margin="8px 0 0 0", cls="os-card-cta"))
-    grief_img = (
-        f'<img class="os-card-art" src="{art("guide-grief-landscape-compact.jpg")}" '
-        f'width="490" height="228" '
-        f'alt="Parent on a porch in autumn while a child plays nearby in leaves - quiet and hopeful" '
-        f'style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;border-radius:12px;margin:0 0 12px 0;">'
-    )
-    grief = (grief_img
-             + p("New guide, reviewed Sept 2026", 13, 18, ACCENT, 700, margin="0 0 0 0", cls="os-tiny")
-             + p("Grief and disability: the loss nobody sends a card for", 17, 24, INK, 700, margin="6px 0 0 0")
-             + p("This kind of grief rarely has an occasion attached. It shows up at a birthday, a missed milestone, or in the parking lot after an evaluation.", 15, 22, BODY, 400, margin="8px 0 0 0")
-             + p(a(f"{SITE}/resources/grieving-the-life-you-imagined", "Read the grief guide"), 15, 22, BODY, 400, margin="8px 0 0 0", cls="os-card-cta"))
+    o.append(section_head("library", "New in the library", eyebrow="Resource Library"))
+    o.append(sp(14))
+    guide = lambda f, alt, title, blurb, href, cta, n: book(
+        art, "New guide",
+        img(art(f), 490, alt, 228, style="border-radius:10px;margin:0 0 12px 0;", cls="os-card-art"),
+        p(title, 18, 24, INK, 700) + p(blurb, 15, 22, BODY, 400, margin="8px 0 0 0")
+        + f'<div class="os-card-cta">{pill_row([(href, cta)], margin="4px 0 0 0")}</div>', n)
     o.append(padrow(browser_cols(
-        card(therapy, pad="16px 16px 16px 16px"),
-        card(grief, pad="16px 16px 16px 16px"),
-        gap=16,
-    )))
+        guide("guide-therapy-styles-landscape-compact.jpg", "Adult and child sharing a calm sensory play tray in a warm playroom",
+              "Therapy styles: play, structure, and compliance",
+              "Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like.",
+              f"{SITE}/resources/therapy-styles", "Read the guide", 0),
+        guide("guide-grief-landscape-compact.jpg", "Parent on a porch in autumn while a child plays nearby in leaves - quiet and hopeful",
+              "Grief and disability: the loss nobody sends a card for",
+              "This kind of grief rarely has an occasion attached. It shows up at a birthday, a missed milestone, or in the parking lot after an evaluation.",
+              f"{SITE}/resources/grieving-the-life-you-imagined", "Read the grief guide", 1),
+        gap=18)))
 
-    # --- Wall of Hope (T430): story card, then a short invitation ---
+    # --- Wall of Hope: Nicole's story pinned to the board, and a note to add yours ---
     o.append(major_sp())
-    o.append(section_head("hope", "Wall of Hope"))
-    o.append(sp(12))
-    hope_photo = (
-        f'<img class="os-hope-photo" src="{art("ellie-drawing-win-2026.jpg")}" width="240" height="307" '
-        f'alt="Ellie, age four, drawing X marks on a cardboard box with a marker." '
-        f'style="display:block;width:100%;max-width:240px;height:auto;border:0;outline:none;'
-        f'text-decoration:none;border-radius:12px;">'
-    )
-    hope_copy = (
-        p("Ellie&rsquo;s drawing win", 17, 24, INK, 700, margin="0")
-        + p("Ellie is four years old and has always struggled with fine motor skills. Because of this, "
-           "she has avoided drawing and attempting to write letters at all costs because she is a "
-           "perfectionist and is so petrified of doing something poorly.",
-           15, 22, BODY, 400, margin="8px 0 0 0")
-        + p("After lots of DIR Floortime work with her OT Alyssa that worked on prewriting, she picked "
-           "up a marker, and during play drew x&rsquo;s on a cardboard box. I had NEVER seen her draw "
-           "more than 2 seconds of scribbles and this was an incredible win for her.",
-           15, 22, BODY, 400, margin="8px 0 0 0")
-        + p("&#9998; Taylor, Murfreesboro", 15, 22, INK, 700, margin="12px 0 0 0")
-    )
-    # Email-safe two-cell table. .os-col stacks the photo above the story under 620px.
-    hope_table = (
-        '<table role="presentation" class="os-hope" cellpadding="0" cellspacing="0" border="0" width="100%" '
-        'style="width:100%;border-collapse:collapse;"><tr>'
-        f'<td class="os-col os-col-photo" width="240" valign="top" '
-        f'style="width:240px;padding:0 16px 0 0;vertical-align:top;">{hope_photo}</td>'
-        f'<td class="os-col" valign="top" style="vertical-align:top;">{hope_copy}</td>'
-        '</tr></table>'
-    )
-    o.append(padrow(card(hope_table, pad="16px 16px 16px 16px")))
-    o.append(sp(12))
-    invite = (
-        p("Borrow a little hope, or lend some", 17, 24, INK, 700, margin="0")
-        + p("Have a win of your own? Tell it like you would tell another parent. "
-           + a(f"{SITE}/hope", "Share your win"),
-           15, 22, BODY, 400, margin="8px 0 0 0")
-    )
-    o.append(padrow(card(invite, pad="16px 16px 16px 16px")))
+    o.append(section_head("hope", "Wall of Hope", eyebrow="One hopeful story"))
+    o.append(sp(8))
+    o.append(padrow(img(art(DECOR + "garland.png"), 532, "")))
+    hope_photo = img(art(HOPE["photo"]), 250, HOPE["alt"], style="margin:0 auto;", cls="os-hope-photo")
+    hope_paras = "".join(p(t, 16, 26, BODY, 400, margin=("0" if i == 0 else "12px 0 0 0")) for i, t in enumerate(HOPE["paras"]))
+    story = story_note(art, HOPE["eyebrow"], HOPE["title"], hope_photo, hope_paras, HOPE["byline"])
+    invite = share_note("Borrow a little hope, or lend some",
+                        "Have a win of your own? Tell it like you would tell another parent.",
+                        pill(f"{SITE}/hope", "Share your win", "gold", "4px 0 0 0"))
+    o.append(padrow(board(art, f'<div class="os-hope">{story}</div><div style="height:22px;font-size:0;line-height:0;">&nbsp;</div>{invite}')))
 
-    # --- One question ---
+    # --- One question, answered: the index card ---
     o.append(major_sp())
-    o.append(section_head("question", "One question, answered",
-                          "One real question from a local parent, answered plainly. " + a(f"{SITE}/contact", "Send us yours")))
-    o.append(sp(12))
+    o.append(section_head("question", "One question, answered", "One real question from a local parent, answered plainly.",
+                          eyebrow="Parent to parent"))
+    o.append(sp(14))
     steps = rows_table([
         step(1, f'{b("Put it in writing.")} Email the case manager and copy the principal: name what is missing, quote the IEP, ask for a fix by a date, and request service logs.'),
         step(2, f'{b("Ask for an IEP team meeting.")} Request one in writing any time. If things stall, copy the district special education director. Bring notes and a friend.'),
-        step(3, f'{b("Use free state help.")} File a TDOE administrative complaint (no lawyer, decision in 60 days), or call STEP TN at {tel("800-280-7837", "+18002807837")}.', last=True),
+        step(3, f'{b("Use free state help.")} File a Tennessee Department of Education administrative complaint (no lawyer, decision in 60 days), or call STEP TN at {tel("800-280-7837", "+18002807837")}', last=True),
     ])
-    # T373: 14–16px final step→divider; 10px links→disclaimer; lean bottom pad
-    qa = (p("October&rsquo;s question", 13, 18, ACCENT, 700, margin="0 0 6px 0")
-          + p("&ldquo;What do I do if my child&rsquo;s IEP isn&rsquo;t being followed?&rdquo;", 18, 25, INK, 700)
-          + p("An IEP is legally binding. The school has to deliver what is written in it.", 16, 24, BODY, 400, margin="10px 0 12px 0")
-          + steps
-          + f'<div style="margin:16px 0 0 0;border-top:1px solid {RULE};font-size:0;line-height:0;height:1px;">&nbsp;</div>'
-          + p(a(f"{SITE}/resources/iep-504", "IEP &amp; 504 guide") + " &nbsp;&middot;&nbsp; " + a("https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html", "TDOE dispute options"), 15, 22, BODY, 400, margin="12px 0 0 0")
-          + p("Parent-to-parent guidance, not legal advice.", 13, 20, MUTED, 400, margin="10px 0 0 0", cls="os-tiny"))
-    o.append(padrow(card(qa, pad="16px 20px 14px 20px")))
+    q_head = (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr><td valign="top">'
+              + hand("October&rsquo;s question") + '</td>' + question_mark() + '</tr></table>'
+              + p("&ldquo;What do I do if my child&rsquo;s IEP isn&rsquo;t being followed?&rdquo;", 20, 27, INK, 700, margin="4px 0 0 0")
+              + p("An IEP is legally binding. The school has to deliver what is written in it.", 16, 24, BODY, 400, margin="8px 0 0 0"))
+    q_foot = (pill_row([(f"{SITE}/resources/iep-504", "IEP &amp; 504 guide"),
+                        ("https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html",
+                         "Tennessee Department of Education dispute options"),
+                        (f"{SITE}/contact", "Send us yours")], margin="0")
+              + p("Parent-to-parent guidance, not legal advice.", 13, 20, MUTED, 400, margin="10px 0 0 0", cls="os-tiny"))
+    o.append(padrow(index_card(art, q_head, steps, q_foot)))
 
-    # --- Connect / support (T372 We Rock audience + sentence-case heading) ---
-    o.append(major_sp())
-    o.append(section_head("ongoing", "Connect with other local parents"))
-    o.append(sp(12))
-    # T373 matching card architecture:
-    # audience tag → one secondary metadata line → title (no FREE PARENT GROUP layer)
+    # --- Connect with other local parents: two taped notes ---
+    o.append(sp(34))
     online_card = group_card(
-        [],
-        "Our Special Village Online Parent Group",
-        [
-            ("calendar", "Thursdays"),
-            ("clock", "7:00&ndash;8:00 PM Central"),
-            ("video", "Online"),
-        ],
-        "Connect with parents and caregivers of neurodivergent and disabled children "
-        "in a welcoming, judgment-free space.",
-        [
-            "No formal diagnosis required",
-            "Drop in any Thursday beginning October 1",
-            "Cameras are optional",
-            "Meetings are never recorded",
-        ],
-        f"{SITE}/group",
-        "Join the Online Group",
-        secondary=["ONLINE", "WEEKLY", "FREE"],
-    )
+        [], "Our Special Village Online Parent Group",
+        [("calendar", "Thursdays"), ("clock", "7:00&ndash;8:00 PM Central"), ("video", "Online")],
+        "Connect with parents and caregivers of neurodivergent and disabled children in a welcoming, judgment-free space.",
+        ["No formal diagnosis required", "Drop in any Thursday beginning October 1", "Cameras are optional", "Meetings are never recorded"],
+        f"{SITE}/group", "Join the Online Group", secondary=["ONLINE", "WEEKLY", "FREE"], art=art, tilt="os-tl")
     werock_card = group_card(
-        [],
-        "We Rock the Spectrum Parent Group",
-        [
-            ("calendar", "Wednesdays at 5:00 PM"),
-            ("pin", "We Rock the Spectrum Murfreesboro"),
-        ],
+        [], "We Rock the Spectrum Parent Group",
+        [("calendar", "Wednesdays at 5:00 PM"), ("pin", "We Rock the Spectrum Murfreesboro")],
         "Connect with other parents of kids with special needs while children enjoy the gym. "
         "Gym staff watch the kids during group; childcare is available but not appropriate for all children.",
-        [
-            "Led by Cari Parr",
-            "$15 per child for kids to play",
-            "Gym staff watch children during group; not appropriate for all children",
-            "Discounted gym admission is available separately.",
-        ],
-        WRTS_URL,
-        "Plan Your Visit",
-        secondary=["IN PERSON", "WEEKLY", "FREE"],
-    )
-    o.append(padrow(
-        '<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
-        + f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 16px 0;vertical-align:top;box-sizing:border-box;">{online_card}</div>'
-        + f'<div class="os-browser-col" style="display:block;width:100%;margin:0;vertical-align:top;box-sizing:border-box;">{werock_card}</div>'
-        + '</div>'
-    ))
+        ["Led by Cari Parr", "$15 per child for kids to play",
+         "Gym staff watch children during group; not appropriate for all children", "Discounted gym admission is available separately."],
+        WRTS_URL, "Plan Your Visit", secondary=["IN PERSON", "WEEKLY", "FREE"], art=art, tilt="os-tr")
+    o.append(dusk_band(art, "ongoing", "The heart of the village", "Connect with other local parents",
+                       '<div class="os-browser-cols os-equal-pair" style="display:block;width:100%;">'
+                       f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 20px 0;box-sizing:border-box;">{online_card}</div>'
+                       f'<div class="os-browser-col" style="display:block;width:100%;margin:0;box-sizing:border-box;">{werock_card}</div></div>'))
 
+    # --- About, numbers, forward, footer ---
     o.append(major_sp())
-    about_copy = ((f'<h2 class="os-ink" style="margin:0;font-family:{FONT};font-size:17px;line-height:23px;'
-                   f'mso-line-height-rule:exactly;color:{INK};font-weight:700;">About Our Special Village</h2>')
-                  + p(ABOUT, 14, 21, BODY, 400, margin="6px 0 0 0")
-                  + p(a(f"{SITE}/about", "About the Village") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/editorial-policy", "How we check information"), 14, 21, BODY, 400, margin="8px 0 0 0"))
-    photo = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="160" class="os-photocell" bgcolor="{BLUSH}" '
-             f'style="width:160px;border-collapse:separate;background-color:{BLUSH};border-radius:12px;">'
-             f'<tr><td class="os-photocell" align="center" style="width:160px;vertical-align:middle;border-radius:12px;">'
-             f'<img class="os-photo" src="{art("about-family-bowling-small.jpg")}" width="160" height="160" alt="Taylor, her husband, and their daughter at a bowling alley." '
-             f'style="display:block;width:160px;max-width:100%;height:auto;margin:0;border:0;outline:none;text-decoration:none;border-radius:12px;font-family:{FONT};font-size:13px;line-height:18px;color:{BODY};"></td></tr></table>')
-    # T367 desktop: photo + text row; mobile stacks
-    about = (
-        f'<div class="os-about-row" style="display:block;width:100%;">'
-        f'<div class="os-about-photo" style="display:block;width:160px;max-width:160px;margin:0 0 16px 0;">{photo}</div>'
-        f'<div class="os-about-text" style="display:block;width:100%;">{about_copy}</div>'
-        f'</div>'
-    )
-    o.append(padrow(card(about, pad="14px 16px 14px 16px")))
-
-    o.append(sp(12))
-    nums = p("Numbers worth keeping", 14, 20, ACCENT, 700, margin="0 0 4px 0") + "".join(
-        p(t, 14, 20, BODY, 400, margin="4px 0 0 0") for t in NUMBERS)
-    o.append(padrow(card(nums, pad="12px 16px 12px 16px")))
-
-    o.append(sp(16))
-    o.append(padrow(p("Know a family who could use this? Forward it along. Anyone can join at "
-                      + a(f"{SITE}/newsletter", "ourspecialvillagetn.com/newsletter", nowrap=False) + ".", 14, 21, BODY, 400, extra="text-align:center;")))
-
+    o.append(padrow(about_card(art, ABOUT, [(f"{SITE}/about", "About the Village"), (f"{SITE}/editorial-policy", "How we check information")])))
     o.append(sp(20))
-    o.append(f'<tr><td class="os-pad" style="padding:0 34px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr><td class="os-rule" style="border-top:1px solid {HAIR};font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table></td></tr>')
-    o.append(sp(14))
-    footer = (p("Our Special Village &middot; Murfreesboro and surrounding areas, Tennessee", 14, 21, INK, 700, margin="0 0 6px 0")
-              + p("Local businesses and practices help keep the Village free and ad-free. " + a(f"{SITE}/sponsors", "Sponsorship options", nowrap=False) + ".", 13, 20, BODY, 400, margin="0 0 12px 0")
-              + p("You are receiving this because you joined the newsletter list at ourspecialvillagetn.com.<br>"
-                  + a(unsub_href, "Unsubscribe in one click", nowrap=False) + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/privacy", "Privacy") + " &nbsp;&middot;&nbsp; " + a(f"{SITE}/contact", "Contact"), 13, 20, BODY, 400, margin="0 0 10px 0", cls="os-tiny")
-              + p("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC<br>1810 Ward Dr, Suite 101, Murfreesboro, TN 37129", 13, 19, BODY, 400, cls="os-tiny"))
-    o.append(padrow('<div class="os-footer">' + footer + '</div>'))
-
+    o.append(padrow(numbers_card(art, NUMBERS)))
+    o.append(sp(22))
+    o.append(padrow(forward_line(SITE)))
+    o.append(sp(30))
+    o.append(footer_rows(art, SITE, unsub_href))
     o.append('</table></td></tr></table></body></html>')
-    return "\n".join(o) + "\n"
+    return compact("\n".join(o) + "\n")
+
+
+def _plain(s):
+    import html as _h
+    return _h.unescape(re.sub(r"<[^>]+>", "", s)).replace("\u2013", "-")
 
 
 def build_text():
@@ -1274,17 +1244,17 @@ def build_text():
     w("THREE THINGS TO KNOW THIS MONTH")
     w("")
     w("Mon Oct 5 · Fall break, Oct 5 to 9: Rutherford County and Murfreesboro City Schools")
-    w("  Both districts are closed all week. RCS conferences Tue Oct 20; MCS conferences Tue Nov 3 (no school). Ask for IEP progress data then.")
-    w("  RCS: https://www.rcschools.net/o/rcs/page/rcs-academic-calendars")
-    w("  MCS: https://www.cityschools.net/calendar")
+    w("  Both districts are closed all week. Rutherford County Schools conferences Tue Oct 20; Murfreesboro City Schools conferences Tue Nov 3 (no school). Ask for IEP progress data then.")
+    w(f"  Rutherford County Schools calendar: {RCS_CAL}")
+    w(f"  Murfreesboro City Schools calendar: {MCS_CAL}")
     w("")
     w("Mon Oct 5 · Voter registration deadline: Mon Oct 5")
     w("  For the Nov 3 election. Register or update at GoVoteTN.gov by Mon Oct 5. Early voting Oct 14 to 29. Disability mail-ballot requests by Sat Oct 24.")
-    w("  https://govotetn.gov/")
+    w("  GoVoteTN: https://govotetn.gov/")
     w("")
     w("Sun Nov 1 · Clocks fall back one hour")
     w("  If sleep is fragile, shift bedtime 10 to 15 minutes a night the week before.")
-    w("  https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst")
+    w(f"  How daylight saving time works: {DST_URL}")
     w("")
     w(f"See all deadlines: {DEADLINES_URL}")
     w("Dates confirmed Sept 14. If something changed, reply and we will fix it.")
@@ -1294,14 +1264,14 @@ def build_text():
     w("")
     w("Village Hall: Saturday, October 10, 2026")
     w("9:30 to 11:00 AM Central")
-    w("Online")
+    w("Online · Free")
     w("Topic and guest: The IEP process and navigating the school system")
     w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. (Advocacy & Consultation Center for Educational Student Supports) in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has two neurodivergent children. She helps families with IEP consultation, educational advocacy, and tutoring.")
     w(f"Website: {ACCESS_URL}")
     w(f"Email: {ACCESS_EMAIL}")
     w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
     w(f"Register for Village Hall: {SITE}/village-hall")
-    w("Choose what you can pay: Every family is welcome – choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward")
+    w("Free for every family. Our first Village Hall is free. Register to save your seat.")
     w("The meeting link is emailed to registrants.")
     w("")
     w("----------------------------------------")
@@ -1329,21 +1299,21 @@ def build_text():
     w("----------------------------------------")
     w("NEW IN THE LIBRARY")
     w("")
-    w("New guide, reviewed Sept 2026 · Therapy styles: play, structure, and compliance")
+    w("New guide · Therapy styles: play, structure, and compliance")
     w("  Two therapists can have the same license and run completely different rooms. Learn what the common labels actually look like.")
     w(f"  Read the guide: {SITE}/resources/therapy-styles")
     w("")
-    w("New guide, reviewed Sept 2026 · Grief and disability: the loss nobody sends a card for")
+    w("New guide · Grief and disability: the loss nobody sends a card for")
     w("  This kind of grief rarely has an occasion attached. It shows up at a birthday, a missed milestone, or in the parking lot after an evaluation.")
     w(f"  Read the grief guide: {SITE}/resources/grieving-the-life-you-imagined")
     w("")
     w("----------------------------------------")
     w("WALL OF HOPE")
     w("")
-    w("Ellie's drawing win")
-    w("  Ellie is four years old and has always struggled with fine motor skills. Because of this, she has avoided drawing and attempting to write letters at all costs because she is a perfectionist and is so petrified of doing something poorly.")
-    w("  After lots of DIR Floortime work with her OT Alyssa that worked on prewriting, she picked up a marker, and during play drew x's on a cardboard box. I had NEVER seen her draw more than 2 seconds of scribbles and this was an incredible win for her.")
-    w("  ✎ Taylor, Murfreesboro")
+    w(f"{HOPE['eyebrow']}: {_plain(HOPE['title'])}")
+    for para in HOPE["paras"]:
+        w("  " + _plain(para))
+    w("  " + _plain(HOPE["byline"]))
     w("")
     w("Borrow a little hope, or lend some")
     w("  Have a win of your own? Tell it like you would tell another parent.")
@@ -1358,10 +1328,10 @@ def build_text():
     w("")
     w("1. Put it in writing. Email the case manager and copy the principal: name what is missing, quote the IEP, ask for a fix by a date, and request service logs.")
     w("2. Ask for an IEP team meeting in writing. If things stall, copy the district special education director. Bring notes and a friend.")
-    w("3. Use free state help. File a TDOE administrative complaint, or call STEP TN at 800-280-7837.")
+    w("3. Use free state help. File a Tennessee Department of Education administrative complaint, or call STEP TN at 800-280-7837.")
     w("")
     w(f"IEP & 504 guide: {SITE}/resources/iep-504")
-    w("TDOE dispute options: https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html")
+    w("Tennessee Department of Education dispute options: https://www.tn.gov/education/legal-services/special-education-legal-services/legal-dispute-resolution-processes.html")
     w("Parent-to-parent guidance, not legal advice.")
     w("")
     w("----------------------------------------")
@@ -1391,8 +1361,8 @@ def build_text():
     w("")
     w("NUMBERS WORTH KEEPING")
     w("988 Suicide & Crisis Lifeline · Call or text any hour.")
-    w("STEP TN (IEP help): 800-280-7837 / Español 800-975-2919.")
-    w("Disability Rights TN: 800-342-1660.")
+    w("STEP TN (IEP help): 800-280-7837 / Español 800-975-2919")
+    w("Disability Rights TN: 800-342-1660")
     w("")
     w(f"Know a family who could use this? Forward it along. Anyone can join at {SITE}/newsletter")
     w("")
@@ -1507,23 +1477,25 @@ def build_deadlines_page():
     return f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>October 2026 deadlines · Our Special Village</title>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&amp;family=Outfit:wght@500;600&amp;family=Patrick+Hand&amp;display=swap" rel="stylesheet">
 <style>
 body{{margin:0;padding:24px 16px 48px;background:{CREAM};color:{BODY};font-family:{FONT};line-height:1.5;}}
 main{{max-width:640px;margin:0 auto;}}
-h1{{color:{INK};font-size:28px;margin:0 0 8px;}}
-h2{{color:{INK};font-size:18px;margin:28px 0 10px;}}
+h1{{color:{INK};font-family:{DISPLAY};font-weight:600;letter-spacing:-.02em;font-size:32px;line-height:1.15;margin:0 0 8px;}}
+h2{{color:{INK};font-family:{DISPLAY};font-weight:600;font-size:21px;margin:30px 0 12px;}}
 .meta{{color:{MUTED};font-size:14px;margin:0 0 24px;}}
-.item{{display:flex;gap:14px;align-items:flex-start;background:{WHITE};border:1px solid {HAIR};border-radius:12px;padding:14px 16px;margin:0 0 10px;}}
-.chip{{flex:0 0 62px;width:62px;background:{BLUSH};border-radius:10px;text-align:center;padding:7px 3px;box-sizing:border-box;}}
+.item{{display:flex;gap:14px;align-items:flex-start;background:{WHITE};border:1px solid {HAIR};border-radius:16px;padding:14px 16px;margin:0 0 12px;box-shadow:{SHADOW};}}
+.chip{{flex:0 0 62px;width:62px;background:#fff;border:2px solid {INK};border-radius:12px;overflow:hidden;text-align:center;padding:0 0 5px;box-sizing:border-box;font-family:{DISPLAY};font-weight:600;}}
 .chip .dow,.chip .dom,.chip .moy{{white-space:nowrap;overflow-wrap:normal;word-break:normal;}}
-.chip .dow{{color:{ACCENT};font-size:12px;line-height:14px;font-weight:700;}}
-.chip .dom{{color:{INK};font-size:22px;line-height:26px;font-weight:700;margin:1px 0 0;}}
-.chip .moy{{color:{BODY};font-size:11px;line-height:14px;font-weight:700;}}
+.chip .dow{{background:{INK};color:{GOLD};font-size:11px;line-height:14px;padding:3px 0 2px;letter-spacing:1px;text-transform:uppercase;}}
+.chip .dom{{color:{INK};font-size:24px;line-height:27px;margin:3px 0 0;}}
+.chip .moy{{color:#7a5b13;font-size:11px;line-height:14px;letter-spacing:.8px;text-transform:uppercase;}}
 .body{{flex:1;min-width:0;}}
-.body strong{{color:{INK};display:block;margin-bottom:4px;font-size:16px;overflow-wrap:normal;word-break:normal;}}
-a{{color:{ACCENT};font-weight:700;}}
+.body strong{{color:{INK};font-family:{DISPLAY};font-weight:600;display:block;margin-bottom:4px;font-size:17px;overflow-wrap:normal;word-break:normal;}}
+a{{color:{ACCENT};font-weight:700;text-decoration:none;}}
+.body a{{display:inline-block;margin:8px 8px 0 0;padding:5px 14px;background:{WHITE};border:2px solid {INK};border-bottom-width:4px;border-radius:999px;color:{INK};font:600 14px/18px {DISPLAY};white-space:nowrap;}}
 .back{{margin:0 0 20px;font-size:14px;}}
+.back a{{font-family:{DISPLAY};font-weight:600;}}
 </style></head><body><main>
 <p class="back"><a href="{PAGES}">&larr; October newsletter preview</a></p>
 <h1>All October deadlines</h1>
@@ -1565,302 +1537,89 @@ def main():
         f.write(deadlines)
     html = html_email  # assertions target MailerLite/email HTML
     for s in (html_email, txt):
-        assert "—" not in s and "&mdash;" not in s, "em dash found"
         assert "{$url}" in s and "{$unsubscribe}" in s
     # Merge tags may remain in HTML comments; live hrefs must be real destinations.
     assert f'href="{BROWSER_VIEW_URL}"' in html_browser
     assert f'href="{BROWSER_UNSUB_URL}"' in html_browser
-    assert 'href="{$url}"' not in html_browser
-    assert 'href="{$unsubscribe}"' not in html_browser
-    for s in (html_email, html_browser, txt):
+    assert 'href="{$url}"' not in html_browser and 'href="{$unsubscribe}"' not in html_browser
+    for s in (html_email, html_browser, txt, deadlines):
         assert "—" not in s and "&mdash;" not in s, "em dash found"
-        assert "Village Picks" not in s
-        assert "Microsoft Teams" not in s
-        assert "autumn-events-collage" not in s
-    assert "Wall of Hope" in html_email and "Wall of Hope" in html_browser
-    assert "WALL OF HOPE" in txt
-    assert "art/icons/" not in txt
-    assert "art/icons/calendar.png" in html_email
-    assert "art/icons/calendar.png" in html_browser
-    assert "art/icons/video.png" in html_browser
-    assert "art/icons/pin.png" in html_browser
-    assert 'alt="Taylor"' in html
-    assert "about-family-bowling-small.jpg" in html
-    assert "featured-monsters-museum-compact.jpg" in html
-    assert "guide-therapy-styles-landscape-compact.jpg" in html
-    assert "guide-grief-landscape-compact.jpg" in html
-    assert "village-hall-iep-compact.jpg" in html
-    assert "Three things to know this month" in html
-    # T404: all three Three-things item titles 18px, bodies 16px (email + browser).
-    three_titles = (
-        "Fall break, Oct 5 to 9: Rutherford County and Murfreesboro City Schools",
-        "Voter registration deadline: Mon&nbsp;Oct&nbsp;5",
-        "Clocks fall back one hour on Sun Nov 1",
-    )
-    for doc in (html, html_browser):
-        three = doc.split("Three things to know this month", 1)[1].split("See all deadlines", 1)[0]
-        heading = doc.split('id="deadlines"', 1)[1].split("</h2>", 1)[0]
-        assert "font-size:21px" in heading
-        for title in three_titles:
-            i = three.find(title)
-            assert i != -1, title
-            title_tag = three[three.rfind("<p ", 0, i):i]
-            assert "font-size:18px" in title_tag, title
-            after = three.find("</p>", i)
-            body_open = three.find("<p ", after)
-            body_tag = three[body_open:three.find(">", body_open) + 1]
-            assert "font-size:16px" in body_tag, title
-    assert "See all deadlines" in html
-    assert "View the full October events calendar" in html
-    assert "Connect with other local parents" in html
-    assert "Connect with Other Local Parents" not in html
-    assert "Support groups in Murfreesboro" not in html
-    assert "Every week" not in html
-    assert "Ongoing this month" not in html
-    assert html.count("Register for Village Hall") == 1
-    assert "In this issue" in html
-    assert "os-issue-chip" in html
-    assert "#deadlines" in html and "#ongoing" in html and "#events" in html and "#library" in html
-    assert "Fall break" in html and "Parent support" in html
-    assert "Sensory-friendly events" in html and "New resources" in html
-    assert "The next deep dive" in html
-    assert "os-browser-cols" in html
-    assert "max-width:880px" in html
-    assert "Welcome to Our Special Village!" in html
-    assert "Welcome to the Our Special Village family!" not in html
-    assert "October in Our Special Village" in html
-    assert "October gets full fast" not in html
-    assert "Sensory:" not in html
-    assert "Voter registration deadline: Mon&nbsp;Oct&nbsp;5" in html
-    assert "Topic and guest" in html
-    assert "Pay it forward" in html
-    assert "Sponsors another seat" not in html and "Sponsors<br>another seat" not in html
-    assert "Welcome" in html and "Helps" in html and "Suggested" in html
-    assert "Choose what you can pay" in html
-    assert "Every family is welcome" in html
-    assert "Pay what you can, including nothing" not in html
-    # FEEDBACK-2: Village Hall navy card must never use interpunct dots
-    assert "9:30 to 11:00 AM Central" in html
-    assert "9:30 to 11:00 AM Central, Online" not in html
-    assert "9:30 to 11:00 AM Central &middot;" not in html
-    assert "os-paybox" in html
-    assert "clock-gold.png" in html and "video-gold.png" in html
-    assert "Advocacy &amp; Consultation Center for Educational Student Supports" in html
-    assert "$0 always welcome &middot;" not in html
-    assert "45-minute lesson" in html
-    assert MERCEDES_PHOTO in html
-    assert MERCEDES_PHOTO in html_browser
-    assert "mercedes-family-hearts-160.jpg" in html
-    assert "mercedes-headshot-160.jpg" not in html
-    assert "mercedes-headshot-160.jpg" not in html_browser
-    assert "mercedes-lawson-160.jpg" not in html
-    assert "mercedes-lawson-160.jpg" not in html_browser
-    assert "mercedes-lawson.jpg" not in html
-    assert "mercedes-lawson.jpg" not in html_browser
-    assert "with her family" in html
-    assert "with her family" in html_browser
-    assert ACCESS_URL in html and ACCESS_URL in html_browser and ACCESS_URL in txt
-    assert ACCESS_EMAIL in html and ACCESS_EMAIL in html_browser and ACCESS_EMAIL in txt
-    assert f'mailto:{ACCESS_EMAIL}' in html
-    assert "os-vh-contact" in html
-    assert "access.your.education@<wbr>gmail.com" in html
-    assert "facebook.com" not in html.lower()
-    assert "instagram.com" not in html.lower()
-    # T398: the only ACCESS/Mercedes contacts in the guest block are website + email.
-    guest_slice = html[html.find('class="os-vh-guest"'):html.find("A 45-minute lesson")]
-    assert ACCESS_URL in guest_slice and ACCESS_EMAIL in guest_slice
-    assert "tel:" not in guest_slice
-    assert "Sensory Spooktacular" in html and "Sensory Spooktacular" in txt
-    assert "sensory-sensitive hour 1:00&ndash;2:00 PM" in html
-    assert "1810 Ward Dr, Murfreesboro" in html
-    assert "tickets limited" in html
-    assert "Little Luminaries and Cultivate Play" in html
-    titles = [e["title"] for e in SECONDARY_EVENTS]
-    spook_i = titles.index("Sensory Spooktacular")
-    ever_i = next(i for i, t in enumerate(titles) if "Evergreen Trunk or Treat" in t)
-    assert spook_i < ever_i
-    assert SECONDARY_EVENTS[spook_i]["link"] == (SPOOK_REG_URL, "Free registration")
-    assert SECONDARY_EVENTS[spook_i]["disclose"] == SPOOK_DETAILS
-    month = html.split("The month ahead", 1)[1].split("New in the library", 1)[0]
-    assert month.find("Sensory Spooktacular") < month.find("Evergreen Trunk or Treat")
-    assert month.find(">25</p>") < month.find(">31</p>")
-    assert month.find("Sensory Spooktacular") < month.find("View the full October events calendar")
-    spook_row = month[month.find("Sensory Spooktacular"):month.find("Evergreen Trunk or Treat")]
-    assert "<details" in spook_row and "<summary" in spook_row
-    assert ">Details</span>" in spook_row
-    assert SPOOK_ON_SITE in spook_row
-    assert SPOOK_THANKS in spook_row
-    assert f'href="{SPOOK_REG_URL}"' in spook_row
-    assert ">Free registration<" in spook_row or "Free registration" in spook_row
-    assert f'href="{SITE}/events"' not in spook_row
-    assert "<!--[if mso]>" in spook_row
-    assert SPOOK_ON_SITE in html and SPOOK_ON_SITE in txt
-    assert SPOOK_THANKS in html and SPOOK_THANKS in txt
-    spook_txt = txt[txt.find("Sensory Spooktacular"):txt.find("Evergreen Trunk or Treat")]
-    assert txt.find("Sensory Spooktacular") < txt.find("Evergreen Trunk or Treat")
-    assert SPOOK_ON_SITE in spook_txt
-    assert SPOOK_THANKS in spook_txt
-    assert SPOOK_REG_URL in spook_txt
-    assert "Free registration:" in spook_txt
-    assert f"Details: {SITE}/events" not in spook_txt
-    assert SPOOK_REG_URL in html and SPOOK_REG_URL in html_browser and SPOOK_REG_URL in txt
-    # T429: new October rows in start-time order, and Evergreen enriched from the flyer.
-    # Amanda Rains (Nov 14) is outside this issue.
-    t429_order = [
-        "rEcess",
-        "Game Day",
-        "Sensory Sunday Hour",
-        "Boo at the Zoo",
-        "Dollywood",
-        "Gallatin HOSA Special Needs Trunk or Treat",
-        "Sensory Spooktacular",
-        "Friends Halloween Party",
-        "Special Needs Family Fall Fest",
-        "Evergreen Trunk or Treat",
-    ]
-    for doc_name, doc in (("html", month), ("txt", txt)):
-        pos = -1
-        for name in t429_order:
-            i = doc.find(name)
-            assert i > pos, f"{doc_name} order: {name}"
-            pos = i
-    assert month.count(">25</p>") >= 2
-    assert "6050 Dana Way, Antioch, TN" in html and "6050 Dana Way, Antioch, TN" in txt
-    assert EVERGREEN_BLURB in html and EVERGREEN_BLURB in txt
-    assert "Touch-A-Truck after treats." in html and "Touch-A-Truck after treats." in txt
-    assert "700 Dan P. Herron Drive, Gallatin" in html and "700 Dan P. Herron Drive, Gallatin" in txt
-    assert "1257 Broad Street, Murfreesboro" in html
-    assert "1257 Broad Street, Murfreesboro" in txt
-    assert "5019 WalkUp Road, Pegram, TN" in html and "5019 WalkUp Road, Pegram, TN" in txt
-    assert "About 4 hours 15 min" in html and "About 4 hours 15 min" in txt
-    assert "(931) 265-5376" in html and "(931) 265-5376" in txt
-    assert f'href="{GALLATIN_FLYER}"' in html and GALLATIN_FLYER in txt
-    assert f'href="{CALEB_FLYER}"' in html and CALEB_FLYER in txt
-    assert f'href="{PEGRAM_FLYER}"' in html and PEGRAM_FLYER in txt
-    assert f'href="{DOLLYWOOD_URL}"' in html and DOLLYWOOD_URL in txt
-    assert f'href="{RECESS_MAIL}"' in html and RECESS_MAIL in txt
-    assert f'href="{EVERGREEN_URL}"' in html and EVERGREEN_URL in txt
-    assert "Amanda Rains" not in html and "Amanda Rains" not in txt
-    assert "two neurodivergent children" in html
-    assert "two neurodivergent children" in txt
-    assert "a child with Autism" not in html
-    assert "a child with Autism" not in txt
-    assert "child with Autism" not in html
-    assert "child with Autism" not in txt
-    assert "taylor-hickok-160.jpg" in html
-    assert "No formal diagnosis required" in html
-    assert "Neurodivergent parents, you are welcome too" not in html
-    assert "whether your child struggles a little or a lot" not in html
-    assert "I&rsquo;m neurodivergent myself" not in html
-    assert "Join the Online Group" in html
-    assert "Plan Your Visit" in html
-    assert "border-radius:12px" in html  # T364 full-width support CTAs
-    assert "Contact We Rock the Spectrum" not in html
-    assert "Led by Cari Parr" in html
-    assert "$15 per child for kids to play" in html
-    assert "not appropriate for all children" in html
-    assert "Parents remain with their children" not in html
-    assert "Childcare is not provided" not in html
-    assert "Good to know" in html
-    # T379 We Rock: drop & Caregiver; childcare caveat + $15
-    assert "FOR PARENTS OF KIDS WITH SPECIAL NEEDS" not in html
-    assert "FOR PARENTS &amp; CAREGIVERS" not in html
-    assert "We Rock the Spectrum Parent Group" in html
-    assert "Parent &amp; Caregiver Group" not in html
-    assert "supervised-by-parent gym play" not in html
-    assert "FREE PARENT GROUP" not in html
-    assert "FREE GROUP" not in html
-    assert "IN PERSON" in html and "WEEKLY" in html and "FREE" in html
-    assert "Discounted gym admission is available separately." in html
-    assert "Gym play admission is separate and available at a discounted group rate" not in html
-    assert "ONLINE" in html and "WEEKLY" in html and "FREE" in html
-    assert "village-hall-iep-compact.jpg" in html
-    assert "os-sec" in html
-    # T430: Wall of Hope between the library and the question, story then invitation.
-    for doc in (html, html_browser):
-        assert doc.find('id="library"') < doc.find('id="hope"') < doc.find('id="question"')
-        assert "ellie-drawing-win-2026.jpg" in doc
-        assert 'alt="Ellie, age four, drawing X marks on a cardboard box with a marker."' in doc
-        assert "Ellie&rsquo;s drawing win" in doc
-        assert "Ellie is four years old" in doc
-        assert "drew x&rsquo;s on a cardboard box" in doc
-        assert "I had NEVER seen her draw" in doc
-        assert "&#9998; Taylor, Murfreesboro" in doc
-        assert "September 28, 2026" not in doc
-        assert "-Taylor" not in doc
-        assert "class=\"os-col os-col-photo\"" in doc
-        assert "Borrow a little hope, or lend some" in doc
-        assert f'href="{SITE}/hope"' in doc
-        assert "The first stories are on their way" not in doc
+        assert "Village Picks" not in s and "Microsoft Teams" not in s
+        assert "reviewed Sept" not in s and "reviewed Aug" not in s  # Taylor: no reviewed stamps
+    for doc in (html_email, html_browser):
+        # Taylor: no word links. Every <a> is a button, a picture, a stop on the path, or an anchor target.
+        for m in re.finditer(r"<a (?![^>]*\bid=)[^>]*>", doc):
+            tag = m.group(0)
+            assert ("os-pill" in tag or "display:block" in tag or "display:inline-block" in tag), tag
+        assert "text-decoration:underline" not in doc
+        assert re.search(r"\bRCS\b|\bMCS\b|\bTDOE\b", re.sub(r"<[^>]+>", " ", doc)) is None, "spell out abbreviations"
+        # the site pictures
+        for f in ("decor/bunting.png", "decor/stamp.png", "decor/airmail-top.png", "decor/calendar-top.png",
+                  "decor/tag-eyelet.png", "decor/ribbon-gold.png", "decor/ribbon-blue.png", "decor/garland.png", "decor/dusk-top.png", "decor/stars.png", "decor/dusk-wave.png", "hero-sky.jpg", "decor/swoosh.png", "decor/cork.png", "decor/ruled.png", "decor/foot-hills.png",
+                  "decor/pin-brick.png", "decor/notch-l.png", "hero-land.jpg", "vh-land.jpg", "stop-1.png", "stop-4.png",
+                  "guest-1-print.jpg", "hope-print.jpg", "decor/about-print.jpg", "signature-taylor.png",
+                  "featured-monsters-museum-compact.jpg", "guide-therapy-styles-landscape-compact.jpg", "guide-grief-landscape-compact.jpg"):
+            assert f"art/{f}" in doc, f
+        # section order, and In this issue links to real sections
+        order = ['id="deadlines"', 'id="village-hall"', 'id="events"', 'id="library"', 'id="hope"', 'id="question"', 'id="ongoing"']
+        idx = [doc.find(x) for x in order]
+        assert all(k > 0 for k in idx) and idx == sorted(idx), idx
+        for href in ("#deadlines", "#ongoing", "#events", "#library"):
+            assert f'href="{href}"' in doc
+        # Wall of Hope is Nicole's story (Taylor, Sept 30), then the invitation
         hope_slice = doc.split('id="hope"', 1)[1].split('id="question"', 1)[0]
-        assert hope_slice.find("incredible win for her") < hope_slice.find("&#9998; Taylor, Murfreesboro")
-        assert hope_slice.find("&#9998; Taylor, Murfreesboro") < hope_slice.find("Borrow a little hope, or lend some")
-        assert hope_slice.find("Ellie is four years old") < hope_slice.find("Borrow a little hope, or lend some")
-        assert hope_slice.find("os-hope") < hope_slice.find("Share your win")
+        for para in HOPE["paras"]:
+            assert para in hope_slice
+        assert "His love needs no words." in hope_slice and "&#9998; Nicole, Murfreesboro" in hope_slice
+        assert "Ellie" not in doc and "&#9998; Taylor, Murfreesboro" not in doc
+        assert hope_slice.find("we are the village.") < hope_slice.find("&#9998; Nicole, Murfreesboro") < hope_slice.find("Borrow a little hope, or lend some")
+        assert f'href="{SITE}/hope"' in hope_slice and "Share your win" in hope_slice
+    assert "WALL OF HOPE" in txt and "His love needs no words." in txt and "✎ Nicole, Murfreesboro" in txt and "Ellie" not in txt
     assert txt.find("NEW IN THE LIBRARY") < txt.find("WALL OF HOPE") < txt.find("ONE QUESTION, ANSWERED")
-    assert "Ellie is four years old" in txt and "✎ Taylor, Murfreesboro" in txt
-    assert "-Taylor" not in txt and "September 28, 2026" not in txt
-    assert f"{SITE}/hope" in txt
-    # T394 Mercedes: title on its own row above photo; photo left of bio
-    guest_i = html.find('class="os-vh-guest"')
-    name_i = html.find("Mercedes Lawson, M.S. Ed.", guest_i)
-    photo_i = html.find(MERCEDES_PHOTO, guest_i)
-    blurb_i = html.find("She grew up with a sibling with disabilities", guest_i)
-    assert guest_i != -1 and name_i != -1 and photo_i != -1 and blurb_i != -1
-    assert name_i < photo_i < blurb_i
-    assert "os-vh-guestname" in html
-    assert "os-vh-guestblurb" in html
-    assert "os-vh-guestrole" in html
-    assert 'colspan="2"' in html[guest_i:name_i]
-    assert "</tr>" in html[name_i:photo_i]
-    assert "</tr>" not in html[photo_i:blurb_i]
-    assert "vertical-align:middle" in html[photo_i - 120:photo_i]
-    assert "vertical-align:middle" in html[photo_i:blurb_i]
-    # T394/T388: desktop (>=700px) left-aligns title; mobile/email stay centered
-    desk_css = html.split("@media only screen and (min-width:700px)")[1].split("@media")[0]
-    assert ".os-vh-guestname{text-align:left !important;}" in desk_css
-    assert ".os-vh-guestname p{text-align:left !important;}" in desk_css
-    assert ".os-vh-guestname{text-align:center !important;}" not in desk_css
-    mob_css = html.split("@media only screen and (max-width:620px)")[1].split("@media")[0]
-    assert ".os-vh-guestname{text-align:center !important;}" in mob_css
-    assert ".os-vh-guestname p{text-align:center !important;}" in mob_css
-    assert ".os-vh-guestrole{white-space:nowrap !important;}" in mob_css
-    assert ".os-vh-guestname{text-align:center;}" in html
-    assert 'href="tel:988"' in html
-    assert 'href="tel:988"' in html_browser
-    assert "Suicide &amp; Crisis Lifeline" in html
-    assert "988 Suicide & Crisis Lifeline" in txt
-    assert "988 · Call or text any hour." not in txt
-    assert "os-intro-byline" in html
-    assert "os-pay-wrap" in html
-    assert 'class="chip"' in deadlines
-    assert "Sun" in deadlines and "Nov" in deadlines
-    assert "Drop in any Thursday beginning October 1" in html
-    assert 'width="96"' in html and "signature-taylor.png" in html
-    assert 'align="center"' in html and "about-family-bowling-small.jpg" in html
-    # Village Hall appears before The month ahead
-    assert html.find("The next deep dive") < html.find("The month ahead")
-    assert html.find("id=\"village-hall\"") < html.find("id=\"events\"")
-    # Intro body must not be wholesale italic (signature PNG may keep italic fallback font).
-    intro_slice = html.split("October in Our Special Village", 1)[1].split("Three things to know this month", 1)[0]
-    assert "font-style:italic" not in intro_slice.replace("signature-taylor.png", "").split("With love")[0]
+    # words that must survive the restyle
+    for phrase in ("October in Our Special Village", "Welcome to Our Special Village!", "you do not have to figure everything out alone",
+                   "Three things to know this month", "Voter registration deadline: Mon&nbsp;Oct&nbsp;5", "Clocks fall back one hour on Sun Nov 1",
+                   "See all deadlines", "Dates confirmed Sept 14", "The next deep dive", "One topic. One guest expert. Your questions.",
+                   "Saturday, October 10, 2026", "9:30 to 11:00 AM Central", "Topic and guest", "The IEP process and navigating the school system",
+                   "Mercedes Lawson, M.S. Ed.", "two neurodivergent children", "Advocacy &amp; Consultation Center for Educational Student Supports",
+                   "45-minute lesson", "Register for Village Hall", "Free for every family", "Our first Village Hall is free.",
+                   "The meeting link is emailed to registrants.", "The month ahead", "View the full October events calendar",
+                   "Sensory Spooktacular", "sensory-sensitive hour 1:00&ndash;2:00 PM", "Little Luminaries and Cultivate Play", "tickets limited",
+                   "New in the library", "Therapy styles: play, structure, and compliance", "Grief and disability: the loss nobody sends a card for",
+                   "One question, answered", "An IEP is legally binding.", "Parent-to-parent guidance, not legal advice.",
+                   "Connect with other local parents", "Our Special Village Online Parent Group", "Drop in any Thursday beginning October 1",
+                   "We Rock the Spectrum Parent Group", "Led by Cari Parr", "$15 per child for kids to play", "Discounted gym admission is available separately.",
+                   "Join the Online Group", "Plan Your Visit", "About Our Special Village", "Numbers worth keeping", "Suicide &amp; Crisis Lifeline",
+                   "Know a family who could use this?", "Unsubscribe in one click", "Little Luminaries Therapy Services, PLLC",
+                   "6050 Dana Way, Antioch, TN", EVERGREEN_BLURB, "Touch-A-Truck after treats.", "700 Dan P. Herron Drive, Gallatin",
+                   "1257 Broad Street, Murfreesboro", "5019 WalkUp Road, Pegram, TN", "About 4 hours 15 min", "(931) 265-5376",
+                   SPOOK_ON_SITE, SPOOK_THANKS):
+        assert phrase in html.replace('<span class="os-hl">', "").replace("Special Village</span>", "Special Village"), phrase
+    for href in (ACCESS_URL, f"mailto:{ACCESS_EMAIL}", SPOOK_REG_URL, GALLATIN_FLYER, CALEB_FLYER, PEGRAM_FLYER, DOLLYWOOD_URL,
+                 RECESS_MAIL, EVERGREEN_URL, MONSTERS_URL, RCS_CAL, MCS_CAL, DST_URL, "tel:988", "tel:+18002807837",
+                 f"{SITE}/village-hall", f"{SITE}/group", WRTS_URL, f"{SITE}/sponsors", f"{SITE}/privacy", f"{SITE}/contact"):
+        assert f'href="{href}"' in html, href
+    assert html.count("Register for Village Hall") == 1
+    assert "Amanda Rains" not in html and "Amanda Rains" not in txt
+    # Spooktacular shows its details openly (no expander) and sits before Evergreen
+    month = html.split('id="events"', 1)[1].split('id="library"', 1)[0]
+    assert month.find("Sensory Spooktacular") < month.find("Evergreen Trunk or Treat")
+    assert month.find(">25</td>") < month.find(">31</td>")
+    spook_row = month[month.find("Sensory Spooktacular"):month.find("Caleb&rsquo;s Friends")]
+    assert "<details" not in html and SPOOK_ON_SITE in spook_row and SPOOK_THANKS in spook_row
+    assert spook_row.find(SPOOK_THANKS) < spook_row.find(SPOOK_REG_URL)
+    assert txt.find("Sensory Spooktacular") < txt.find("Evergreen Trunk or Treat")
+    for month_abbr in _NON_OCT_MONTHS:
+        assert not re.search(rf'white-space:nowrap;">(?:&ndash;|&mdash;|–|—|-){month_abbr}', html)
+        assert f'class="moy">&ndash;{month_abbr}' not in deadlines
+    assert ">Nov&nbsp;1<" in html
+    assert 'class="moy">Dec&nbsp;7<' in deadlines and 'class="moy">Jan&nbsp;15<' in deadlines
     text = re.sub(r"<style.*?</style>", " ", html, flags=re.S | re.I)
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"&\w+;", " ", text)
     words = len(text.split())
-    # T365 shortens support copy; allow slightly leaner range.
-    # T382 / T367 §4: calendar-tile secondary lines have no leading dash
-    # before a non-October month. Body mid-range dashes (5:00–9:00, Oct 15–Dec 7) stay.
-    for month in _NON_OCT_MONTHS:
-        assert not re.search(
-            rf'overflow-wrap:normal;">(?:&ndash;|&mdash;|–|—|-){month}', html)
-        assert f'class="moy">&ndash;{month}' not in deadlines
-        assert f'class="moy">–{month}' not in deadlines
-        assert f'class="moy">-{month}' not in deadlines
-    assert ">Nov&nbsp;1<" in html
-    assert 'class="moy">Dec&nbsp;7<' in deadlines
-    assert 'class="moy">Jan&nbsp;15<' in deadlines
-    assert 850 <= words <= 1550, f"word count {words} outside 850-1550"
+    # Nicole's full story (Sept 30) adds about 230 words over Ellie's.
+    assert 850 <= words <= 1800, f"word count {words} outside 850-1800"
     print(f"wrote {out}: email {len(html_email.encode('utf-8'))}B, browser {len(html_browser.encode('utf-8'))}B, txt {len(txt.encode('utf-8'))}B, words≈{words}")
 
 
