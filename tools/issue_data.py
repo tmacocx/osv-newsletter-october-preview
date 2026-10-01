@@ -220,10 +220,6 @@ ISSUES = [
                      meta=("11:00 AM&ndash;2:00 PM &middot; Berry&rsquo;s Chapel Church of Christ, Franklin "
                            "&middot; RSVP required &middot; About 45 min"),
                      link=("https://www.ableyouth.org/event/able-youth-christmas-party-4/", "Details")),
-                dict(chip=("Sun", "13", "Dec"), title="Sensory Sunday Hour &middot; Frist Art Museum",
-                     meta=("12:00&ndash;1:00 PM &middot; Frist Art Museum, Nashville &middot; Free for members and "
-                           "ages 18 and under &middot; About 45 min"),
-                     link=("https://fristartmuseum.org/plan-your-visit/", "Details")),
             ],
             calendar_label="View the full December events calendar",
         ),
@@ -709,7 +705,7 @@ JAN["todo"] = [
     COMMON_TODO[0],
     "Village Hall: Alyssa Engel of Cultivate Play, Sat Jan 9. Add her credentials, photo, and a short bio.",
     COMMON_TODO[2],
-    "Only one January event is confirmed so far (rEcess, Jan 2). Discovery Center, Frist, Autism Tennessee and "
+    "Only one January event is confirmed so far (rEcess, Jan 2). Discovery Center, Autism Tennessee and "
     "ABLE Youth had not posted January dates on Sept 28; I will add them when they do."]
 FEB["todo"] = [
     COMMON_TODO[0],

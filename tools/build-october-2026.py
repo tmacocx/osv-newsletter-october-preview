@@ -14,7 +14,10 @@ T410: Free TicketsCandy registration link on Spooktacular. Oct 1: its on-site +
 sponsor copy shows openly above the button (expanders don't open in Outlook or Gmail).
 Oct 1 (Taylor): this first Village Hall is free, so the ticket says "Free for every
 family" instead of the pay-what-you-can boxes. tools/outlook-copy.py makes the
-send-it-yourself Outlook copy.
+send-it-yourself Outlook copy. Later Oct 1 (Taylor): We Rock's Trick&Treat&Play joins
+The month ahead (Sat Oct 31, morning, before Evergreen). The Frist's Sensory Sunday Hour
+(Sun Oct 11) is gone: its event page is 404 and the Frist's own calendar, which runs into
+late 2027, lists no Sensory Sunday Hour (Oct 11 is a regular Family Sunday).
 T430: Wall of Hope returns between New in the library and One question,
 answered. Sept 30: the story is Nicole's ("His love needs no words.", from the
 site), not Taylor's. Every Wall of Hope signs off with the name, then
@@ -756,6 +759,9 @@ RECESS_MAIL = "mailto:rebecca.whitaker@ottercreek.org"
 DOLLYWOOD_URL = "https://dreamcooperative.com/"
 EVERGREEN_URL = "https://evergreenls.org/trunkortreat/"
 EVERGREEN_BLURB = "Fun, fellowship, and safe Halloween activities where everyone matters."
+WEROCK_HALLOWEEN_URL = "https://ecom.roller.app/werockthespectrummurfreesboro/booknow/en-us/product/2093802?date=2026-10-31"
+WEROCK_HALLOWEEN_BLURB = ("Kept inside this year: a sensory-friendly Halloween that&rsquo;s dye-free and stress-free, "
+                          "with sensory bins, crafts, games, and pizza.")
 
 # T429 drive times: OSRM from Murfreesboro Public Square, rounded up to 5 minutes.
 # Gallatin High School 55.5 -> About 60 min. Dollywood 252.7 -> About 4 hours 15 min.
@@ -774,11 +780,6 @@ SECONDARY_EVENTS = [
          meta="12:00&ndash;3:00 PM &middot; Nashville &middot; Free, food provided &middot; About 45 min",
          sensory="indoor, small-group games for autistic kids, teens, and adults; families welcome.",
          link=("https://autismtn.org/events/EventDetails.aspx?id=2003814", "Register")),
-    dict(chip=chip("Sun", "11", "Oct"),
-         title="Sensory Sunday Hour &middot; Frist Art Museum",
-         meta="12:00&ndash;1:00 PM &middot; Frist Art Museum, Nashville &middot; Free for members and ages 18 and under &middot; About 45 min",
-         sensory="gallery sound lowered for the hour, multisensory carts with volunteers.",
-         link=("https://fristartmuseum.org/event/sensory-sunday-hour-5/", "Details")),
     dict(chip=chip("Oct", "16", "Nov 1"),
          title="Boo at the Zoo &middot; Nashville Zoo",
          meta="Nightly 5:00&ndash;9:00 PM &middot; $19&ndash;$23 ages 2+, parking $10 &middot; About 35 min",
@@ -818,6 +819,14 @@ SECONDARY_EVENTS = [
          meta="6:00&ndash;7:00 PM &middot; 5019 WalkUp Road, Pegram, TN &middot; About 65 min",
          note="Indoors with trick-or-treat and games.",
          link=(PEGRAM_FLYER, "Details")),
+    # Oct 1 (Taylor): We Rock's indoor Halloween, from their post. Same booking link as the site's
+    # events calendar (Roller "Spooktacular 2026", Sat Oct 31). Morning, so before Evergreen.
+    dict(chip=chip("Sat", "31", "Oct"),
+         title="Trick&amp;Treat&amp;Play &middot; We Rock the Spectrum Murfreesboro",
+         meta=("Trick-or-treating 9:30 AM, Halloween play 10:00 AM&ndash;12:00 PM &middot; "
+               "820 N Thompson Lane, Murfreesboro &middot; $20 per child, $10 per sibling, adults free"),
+         note=WEROCK_HALLOWEEN_BLURB,
+         link=(WEROCK_HALLOWEEN_URL, "Book your ticket")),
     dict(chip=chip("Sat", "31", "Oct"),
          title="Evergreen Trunk or Treat &middot; Evergreen Life Services",
          meta="1:00&ndash;3:00 PM &middot; 6050 Dana Way, Antioch, TN &middot; Free &middot; About 30 min",
