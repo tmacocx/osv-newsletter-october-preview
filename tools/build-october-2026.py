@@ -347,15 +347,23 @@ def letter(art, h1_text, paras_html, name="Dr. Taylor Hickok", cred="Founder &mi
                  bottom=edge("airmail-bottom.png", "0 0 8px 8px"))
 
 
+# The jump buttons, in the order the sections run (Taylor, Oct 1: events, deadlines, Village Hall, the rest).
+JUMPS = [("#events", "Events"), ("#deadlines", "Deadlines"), ("#village-hall", "Village Hall"), ("#library", "New guides")]
+
+
 def stops_block(art, chips):
-    """In this issue: the site's "Stay connected" stops, Taylor's pictograms on the painted path."""
+    """In this issue: Taylor's pictograms on the painted path, each with a button underneath that jumps to
+    its section. Taylor, Oct 1, 2026: she hadn't realized the stops were jump links, so each now has a
+    button with a down arrow, and on phones they sit two by two."""
+    jump = (f"display:inline-block;margin:6px 0 0 0;padding:6px 11px;border-radius:99px;font:600 14px/18px {DISPLAY};"
+            f"text-decoration:none;background-color:{WHITE};border:2px solid {INK};border-bottom-width:4px;color:{INK};")
     cells = "".join(
         f'<td class="os-stop" width="25%" valign="top" align="center" style="width:25%;vertical-align:top;">'
-        f'<a href="{href}" style="display:block;text-decoration:none;color:{INK};">'
-        f'{img(art(f"stop-{i + 1}.png"), 133, "", style="width:100%;max-width:none;")}'
-        f'<span class="os-stoplabel os-ink" style="display:block;padding:2px 4px 0;font:600 15px/19px {DISPLAY};color:{INK};">{label}</span></a></td>'
+        f'<a href="{href}" style="display:block;text-decoration:none;">'
+        f'{img(art(f"stop-{i + 1}.png"), 133, "", style="width:100%;max-width:none;margin:0 auto;", cls="os-stopimg")}</a>'
+        f'<a class="os-pill os-ink" href="{href}" style="{jump}">{label}&nbsp;&darr;</a></td>'
         for i, (href, label) in enumerate(chips))
-    return (hand("In this issue", 22, GOLD_INK, "0 0 2px 0", "center")
+    return (hand("Tap a button to jump there", 22, GOLD_INK, "0 0 2px 0", "center")
             + f'<table {T} class="os-stops" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;"><tr>{cells}</tr></table>')
 
 
@@ -950,7 +958,9 @@ u + #os-body a{text-decoration:none;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;padding:0 !important;}
   .os-col-photo{padding:0 0 14px 0 !important;text-align:center !important;}
   .os-guestphoto,.os-aboutphoto{margin:0 auto !important;}
-  .os-stoplabel{font-size:13px !important;line-height:16px !important;}
+  .os-stops tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;}
+  .os-stop{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 0 14px 0 !important;}
+  .os-stopimg{width:100% !important;max-width:120px !important;}
   .os-stamp{width:80px !important;}
   .os-stamp img{width:80px !important;height:63px !important;}
   .os-cred{font-size:12px !important;white-space:normal !important;}
@@ -965,7 +975,6 @@ u + #os-body a{text-decoration:none;}
   .os-paycell:nth-child(even){padding:0 0 8px 4px !important;}
 }
 @media only screen and (max-width:359px){
-  .os-stoplabel{font-size:12px !important;}
   .os-cred{font-size:11px !important;}
 }
 """.replace("PAPER_SHADOW", PAPER_SHADOW).replace("SHADOW", SHADOW)
@@ -1062,17 +1071,39 @@ def build_html(base, browser=False):
 
     view_href = BROWSER_VIEW_URL if browser else "{$url}"
     unsub_href = BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
-    # --- Opening: top bar, header, the village in its landscape, Taylor's letter ---
+    # --- Opening: top bar, header, the village in its landscape, then the jump buttons ---
+    # Taylor, Oct 1: families had to scroll past her note to reach events and deadlines, so the
+    # order is now events, deadlines, Village Hall, the rest, and her note last.
     o.append(f'<tr><td style="padding:0 0 12px 0;">{top_bar("October 2026", view_href)}</td></tr>')
     o.append(padrow(site_header(art, SITE), pad="0 16px 14px 16px"))
     o.append(hero(art, 'October in Our <span class="os-hl">Special Village</span>', "fall"))
-    alone_hi = f'<span style="background-color:{GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{ALONE_PHRASE}</span>'
-    paras = "".join(p(para.replace(ALONE_PHRASE, alone_hi), 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0"))
-                    for i, para in enumerate(NOTE_PARAS))
-    o.append(padrow(letter(art, None, paras)))
     o.append(sp(26))
-    o.append(padrow(stops_block(art, [("#deadlines", "Fall break"), ("#ongoing", "Parent support"),
-                                      ("#events", "Sensory-friendly events"), ("#library", "New resources")]), pad="0 22px"))
+    o.append(padrow(stops_block(art, JUMPS), pad="0 22px"))
+
+    # --- The month ahead: featured night, then the calendar page ---
+    o.append(major_sp())
+    o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.",
+                          eyebrow="Happening soon"))
+    o.append(sp(14))
+    featured_art = story_img(art("featured-monsters-museum-compact.jpg"), 600,
+                             "Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones",
+                             link=MONSTERS_URL, extra_style="margin:0 auto;")
+    featured_copy = (hand("Featured", 21, GOLD_INK, "12px 0 0 0")
+                     + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 19, 25, INK, 700, margin="4px 0 0 0")
+                     + p("Thu Oct 15 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required", 16, 24, BODY, 400, margin="6px 0 0 0")
+                     + pill_row([(MONSTERS_URL, "Reserve your spot")], kind="gold", margin="6px 0 0 0"))
+    o.append(padrow(card(featured_art + featured_copy, pad="12px 12px 18px 12px")))
+    o.append(sp(20))
+    ev_rows = []
+    for i, e in enumerate(SECONDARY_EVENTS):
+        lines = [e["meta"]] + ([e["note"]] if e.get("note") else []) + disclose(e.get("disclose") or [])
+        content = item(e["title"], lines)
+        if e.get("link"):
+            content += pill_row([e["link"]])
+        ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
+    o.append(padrow(calendar_page(art, rows_table(ev_rows))))
+    o.append(sp(20))
+    o.append(padrow(button(EVENTS_CAL_URL, "View the full October events calendar", INK, CREAM, align="center")))
 
     # --- Three things: the deadline tag ---
     o.append(major_sp())
@@ -1111,31 +1142,6 @@ def build_html(base, browser=False):
         "questions. The lesson is recorded and sent to registrants; the Q&amp;A is not."))))
     o.append(sp(18))
     o.append(padrow(ticket(art, button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK, align="center"), free_note())))
-
-    # --- The month ahead: featured night, then the calendar page ---
-    o.append(major_sp())
-    o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.",
-                          eyebrow="Happening soon"))
-    o.append(sp(14))
-    featured_art = story_img(art("featured-monsters-museum-compact.jpg"), 600,
-                             "Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones",
-                             link=MONSTERS_URL, extra_style="margin:0 auto;")
-    featured_copy = (hand("Featured", 21, GOLD_INK, "12px 0 0 0")
-                     + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 19, 25, INK, 700, margin="4px 0 0 0")
-                     + p("Thu Oct 15 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required", 16, 24, BODY, 400, margin="6px 0 0 0")
-                     + pill_row([(MONSTERS_URL, "Reserve your spot")], kind="gold", margin="6px 0 0 0"))
-    o.append(padrow(card(featured_art + featured_copy, pad="12px 12px 18px 12px")))
-    o.append(sp(20))
-    ev_rows = []
-    for i, e in enumerate(SECONDARY_EVENTS):
-        lines = [e["meta"]] + ([e["note"]] if e.get("note") else []) + disclose(e.get("disclose") or [])
-        content = item(e["title"], lines)
-        if e.get("link"):
-            content += pill_row([e["link"]])
-        ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
-    o.append(padrow(calendar_page(art, rows_table(ev_rows))))
-    o.append(sp(20))
-    o.append(padrow(button(EVENTS_CAL_URL, "View the full October events calendar", INK, CREAM, align="center")))
 
     # --- New in the library: two books ---
     o.append(major_sp())
@@ -1212,6 +1218,13 @@ def build_html(base, browser=False):
                        f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 20px 0;box-sizing:border-box;">{online_card}</div>'
                        f'<div class="os-browser-col" style="display:block;width:100%;margin:0;box-sizing:border-box;">{werock_card}</div></div>'))
 
+    # --- Taylor's note, at the end (Taylor, Oct 1) ---
+    o.append(major_sp())
+    alone_hi = f'<span style="background-color:{GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{ALONE_PHRASE}</span>'
+    paras = "".join(p(para.replace(ALONE_PHRASE, alone_hi), 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0"))
+                    for i, para in enumerate(NOTE_PARAS))
+    o.append(padrow(anchor("note") + letter(art, None, paras)))
+
     # --- About, numbers, forward, footer ---
     o.append(major_sp())
     o.append(padrow(about_card(art, ABOUT, [(f"{SITE}/about", "About the Village"), (f"{SITE}/editorial-policy", "How we check information")])))
@@ -1228,6 +1241,26 @@ def build_html(base, browser=False):
 def _plain(s):
     import html as _h
     return _h.unescape(re.sub(r"<[^>]+>", "", s)).replace("\u2013", "-")
+
+
+RULE = "----------------------------------------"
+
+
+def reorder_text(txt):
+    """The plain-text email in the HTML's order (Taylor, Oct 1): the jump line, the month ahead,
+    deadlines, Village Hall, the rest, then Taylor's note just before About."""
+    blocks = txt.split(RULE)
+    intro = blocks[0].split("\n")
+    t = next(i for i, l in enumerate(intro) if l.endswith(" IN OUR SPECIAL VILLAGE"))
+    j = next(i for i, l in enumerate(intro) if l.startswith("In this issue: "))
+    head = "\n".join(intro[:t + 2] + [intro[j], ""]) + "\n"
+    note = "\nA NOTE FROM TAYLOR\n\n" + "\n".join(intro[t + 2:j]).rstrip("\n") + "\n\n"
+    first = lambda b: b.strip().split("\n", 1)[0]
+    find = lambda key: next(k for k, b in enumerate(blocks) if k and first(b).startswith(key))
+    lead = [blocks[find("THE MONTH AHEAD")], blocks[find("THREE THINGS")], blocks[find("THE NEXT DEEP DIVE")]]
+    others = [b for k, b in enumerate(blocks) if k and b not in lead]
+    a = next(k for k, b in enumerate(others) if first(b).startswith("ABOUT OUR SPECIAL VILLAGE"))
+    return RULE.join([head] + lead + others[:a] + [note] + others[a:])
 
 
 def build_text():
@@ -1248,7 +1281,7 @@ def build_text():
     w("With love,")
     w("Taylor")
     w("")
-    w("In this issue: Fall break · Parent support · Sensory-friendly events · New resources")
+    w("In this issue: " + " · ".join(label for _, label in JUMPS))
     w("")
     w("----------------------------------------")
     w("THREE THINGS TO KNOW THIS MONTH")
@@ -1386,7 +1419,7 @@ def build_text():
     w("")
     w("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC")
     w("1810 Ward Dr, Suite 101, Murfreesboro, TN 37129")
-    return "\n".join(L) + "\n"
+    return reorder_text("\n".join(L) + "\n")
 
 
 def deadline_chip(dow, day, moy):
@@ -1571,11 +1604,12 @@ def main():
                   "featured-monsters-museum-compact.jpg", "guide-therapy-styles-landscape-compact.jpg", "guide-grief-landscape-compact.jpg"):
             assert f"art/{f}" in doc, f
         # section order, and In this issue links to real sections
-        order = ['id="deadlines"', 'id="village-hall"', 'id="events"', 'id="library"', 'id="hope"', 'id="question"', 'id="ongoing"']
+        order = ['id="events"', 'id="deadlines"', 'id="village-hall"', 'id="library"', 'id="hope"', 'id="question"', 'id="ongoing"', 'id="note"']
         idx = [doc.find(x) for x in order]
         assert all(k > 0 for k in idx) and idx == sorted(idx), idx
-        for href in ("#deadlines", "#ongoing", "#events", "#library"):
-            assert f'href="{href}"' in doc
+        for href, _ in JUMPS:
+            assert f'href="{href}"' in doc and f'id="{href[1:]}"' in doc
+        assert doc.find('class="os-stops"') < doc.find('id="events"') and doc.find("Welcome to Our Special Village!") > doc.find('id="ongoing"')
         # Wall of Hope is Nicole's story (Taylor, Sept 30), then the invitation
         hope_slice = doc.split('id="hope"', 1)[1].split('id="question"', 1)[0]
         for para in HOPE["paras"]:
@@ -1586,6 +1620,8 @@ def main():
         assert f'href="{SITE}/hope"' in hope_slice and "Share your win" in hope_slice
     assert "WALL OF HOPE" in txt and "His love needs no words." in txt and "✎ Nicole, Murfreesboro" in txt and "Ellie" not in txt
     assert txt.find("NEW IN THE LIBRARY") < txt.find("WALL OF HOPE") < txt.find("ONE QUESTION, ANSWERED")
+    assert txt.find("THE MONTH AHEAD") < txt.find("THREE THINGS") < txt.find("THE NEXT DEEP DIVE") < txt.find("NEW IN THE LIBRARY")
+    assert txt.find("CONNECT WITH OTHER LOCAL PARENTS") < txt.find("A NOTE FROM TAYLOR") < txt.find("ABOUT OUR SPECIAL VILLAGE")
     # words that must survive the restyle
     for phrase in ("October in Our Special Village", "Welcome to Our Special Village!", "you do not have to figure everything out alone",
                    "Three things to know this month", "Voter registration deadline: Mon&nbsp;Oct&nbsp;5", "Clocks fall back one hour on Sun Nov 1",

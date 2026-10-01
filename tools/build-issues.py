@@ -252,7 +252,7 @@ def connect(issue, art):
 
 def build_html(issue, base, browser, deadlines_url, view_url):
     """Mirror of O.build_html with this issue's content: the same site-style pieces in the same
-    order, with the Wall of Hope between the library and the question."""
+    order (events, deadlines, Village Hall, library, Wall of Hope, question, groups, Taylor's note)."""
     art = lambda f: f"{base}{f}"
     T = O.T
     o = [head(issue)]
@@ -264,20 +264,16 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     view_href = view_url if browser else "{$url}"
     unsub_href = O.BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
 
-    # --- Opening: top bar, header, the village in its landscape, Taylor's letter, the stops ---
+    # --- Opening: top bar, header, the village in its landscape, the jump buttons ---
     o.append(f'<tr><td style="padding:0 0 12px 0;">{O.top_bar(issue["month_year"], view_href)}</td></tr>')
     o.append(padrow(O.site_header(art, SITE), pad="0 16px 14px 16px"))
     o.append(O.hero(art, f'{issue["month"]} in Our <span class="os-hl">Special Village</span>',
                     "fall" if issue["id"] == "2026-11" else "winter", land_alt=issue["hero_alt"]))
-    hi = issue.get("note_highlight")
-    paras = []
-    for i, para in enumerate(issue["note"]):
-        if hi and hi in para:
-            para = para.replace(hi, f'<span style="background-color:{O.GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{hi}</span>')
-        paras.append(p(para, 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0")))
-    o.append(padrow(O.letter(art, None, "".join(paras))))
     o.append(sp(26))
-    o.append(padrow(O.stops_block(art, issue["chips"]), pad="0 22px"))
+    o.append(padrow(O.stops_block(art, O.JUMPS), pad="0 22px"))
+
+    o.append(major_sp())
+    o.append(month_ahead(issue, art))
 
     # --- Three things: the deadline tag ---
     o.append(major_sp())
@@ -291,8 +287,6 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(major_sp())
     o.append(village_hall(issue, art))
     o.append(major_sp())
-    o.append(month_ahead(issue, art))
-    o.append(major_sp())
     o.append(library(issue, art))
     o.append(major_sp())
     o.append(wall_of_hope(issue, art))
@@ -300,6 +294,17 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(question(issue, art))
     o.append(sp(34))
     o.append(connect(issue, art))
+
+    # --- Taylor's note, at the end (Taylor, Oct 1: families scrolled past it to reach events) ---
+    hi = issue.get("note_highlight")
+    paras = []
+    for i, para in enumerate(issue["note"]):
+        if hi and hi in para:
+            para = para.replace(hi, f'<span style="background-color:{O.GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{hi}</span>')
+        paras.append(p(para, 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0")))
+    o.append(major_sp())
+    o.append(padrow(O.anchor("note") + O.letter(art, None, "".join(paras))))
+
 
     # --- About, numbers, forward, footer: identical to October ---
     o.append(major_sp())
@@ -332,7 +337,7 @@ def build_text(issue, deadlines_url):
     w("With love,")
     w("Taylor")
     w("")
-    w("In this issue: " + " · ".join(plain(lab) for _, lab in issue["chips"]))
+    w("In this issue: " + " · ".join(lab for _, lab in O.JUMPS))
     w("")
     w("----------------------------------------")
     w("THREE THINGS TO KNOW THIS MONTH")
@@ -468,7 +473,7 @@ def build_text(issue, deadlines_url):
     w("")
     w("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC")
     w("1810 Ward Dr, Suite 101, Murfreesboro, TN 37129")
-    return "\n".join(L) + "\n"
+    return O.reorder_text("\n".join(L) + "\n")
 
 
 # --------------------------------------------------------------------------- deadlines page
@@ -507,11 +512,11 @@ def check(issue, email, browser, txt, deadlines):
     assert email.count("Register for Village Hall") <= 1
     assert f'{issue["month"]} in Our <span class="os-hl">Special Village</span>' in email
     assert 'href="tel:988"' in email
-    order = ["id=\"deadlines\"", "id=\"village-hall\"", "id=\"events\"", "id=\"library\"",
-             "id=\"hope\"", "id=\"question\"", "id=\"ongoing\""]
+    order = ["id=\"events\"", "id=\"deadlines\"", "id=\"village-hall\"", "id=\"library\"",
+             "id=\"hope\"", "id=\"question\"", "id=\"ongoing\"", "id=\"note\""]
     idx = [email.find(x) for x in order]
     assert all(i > 0 for i in idx) and idx == sorted(idx), f"{issue['id']}: section order {idx}"
-    for href, _ in issue["chips"]:
+    for href, _ in O.JUMPS:
         assert f'id="{href[1:]}"' in email, href
     assert len(issue["three_things"]) >= 1
     assert len(issue["guides"]) == 2

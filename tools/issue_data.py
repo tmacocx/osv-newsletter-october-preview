@@ -68,8 +68,6 @@ ISSUES = [
              "I hope you find a little room to rest."),
         ],
         note_highlight="a little room to rest",
-        chips=[("#deadlines", "Thanksgiving break"), ("#village-hall", "AAC round table"),
-               ("#events", "Sensory-friendly events"), ("#library", "AAC + funding guides")],
         three_things=[],       # filled from research below
         all_deadlines=[],
         confirmed="",
@@ -187,8 +185,6 @@ ISSUES = [
              "moments that are just yours."),
         ],
         note_highlight="a few quiet moments that are just yours",
-        chips=[("#deadlines", "Winter break"), ("#events", "Sensory-friendly Santa"),
-               ("#library", "Guides for full days"), ("#question", "Holiday gatherings")],
         three_things=[], all_deadlines=[], confirmed="", deadlines_meta="",
         village_hall=dict(
             VH_TBD,
@@ -274,8 +270,6 @@ ISSUES = [
             ("Whatever this year holds for your child, you do not have to figure it out alone."),
         ],
         note_highlight="you do not have to figure it out alone",
-        chips=[("#deadlines", "School dates"), ("#question", "Asking for an evaluation"),
-               ("#events", "Respite + events"), ("#library", "School guides")],
         three_things=[], all_deadlines=[], confirmed="", deadlines_meta="",
         village_hall=dict(
             VH_TBD,
@@ -352,8 +346,6 @@ ISSUES = [
             ("Thank you for being part of this Village. It keeps growing because families like yours pass it along."),
         ],
         note_highlight="families like yours pass it along",
-        chips=[("#deadlines", "School days off"), ("#events", "Winter outings"),
-               ("#library", "Sensory + safety guides"), ("#question", "Finding a good therapist")],
         three_things=[], all_deadlines=[], confirmed="", deadlines_meta="",
         village_hall=dict(VH_TBD, date="Saturday, February 13, 2027", time=VH_TIME),
         events=dict(
