@@ -99,10 +99,10 @@ await shot(`<div id="shot" style="width:532px;height:56px"><div class="band"><sp
 .band{position:absolute;left:0;right:0;top:10px;height:46px;border-radius:8px 8px 0 0;background:${C.navy};box-shadow:inset 0 -4px 0 ${C.gold}}
 .rings{position:absolute;left:18%;right:18%;top:-9px;height:20px;background:radial-gradient(circle 5px at 50% 50%,${C.gold} 90%,transparent 100%) 0 0/25% 100% space}` });
 
-// ---------- deadline tag eyelet and string (newsletter.css .nl-item--tag .nl-deco) ----------
-await shot(`<div id="shot" style="width:40px;height:56px"><span class="eye"></span></div>`, path.join(shared, 'tag-eyelet.png'), { css: `
-.eye{position:absolute;left:12px;top:34px;width:16px;height:16px;border-radius:50%;background:${C.paper};box-shadow:0 0 0 3px #d8a88c}
-.eye::after{content:"";position:absolute;left:7px;top:-34px;width:2px;height:40px;background:#9d7128;rotate:24deg;transform-origin:bottom}` });
+// ---------- deadline tag: brass eyelet with a twine loop (tools/tag-loop.svg, also the site's newsletter.css) ----------
+// Oct 1, 2026: the straight string ran past the tag's rounded corner and stopped in mid-air.
+await shot(`<div id="shot" style="line-height:0">${fs.readFileSync(path.join(ROOT, 'tools', 'tag-loop.svg'), 'utf8')}</div>`,
+  path.join(shared, 'tag-eyelet.png'));
 
 
 // ---------- folded-up corner (hope.css .hope-story::after) ----------

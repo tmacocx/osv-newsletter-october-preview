@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="48" viewBox="0 0 64 48">
+  <!-- The deadline tag's brass eyelet with a twine loop through it (Oct 1, 2026).
+       The old string ran straight up past the tag's rounded corner and stopped in mid-air;
+       this loop stays on the tag. Used by tools/render-decor.mjs and the site's newsletter.css. -->
+  <defs>
+    <radialGradient id="osv-brass" cx="35%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#f3d488"/><stop offset=".55" stop-color="#d7a43e"/><stop offset="1" stop-color="#9c7020"/>
+    </radialGradient>
+    <radialGradient id="osv-hole" cx="50%" cy="40%" r="60%">
+      <stop offset="0" stop-color="#f7f1e2"/><stop offset=".7" stop-color="#efe4c9"/><stop offset="1" stop-color="#c9b48a"/>
+    </radialGradient>
+  </defs>
+  <circle cx="46" cy="31" r="8.6" fill="#5a3214" fill-opacity=".22"/>
+  <circle cx="46" cy="30" r="8" fill="url(#osv-brass)" stroke="#8a6418" stroke-opacity=".55" stroke-width=".7"/>
+  <circle cx="46" cy="30" r="4" fill="url(#osv-hole)" stroke="#7a5b13" stroke-opacity=".45" stroke-width=".6"/>
+  <path d="M45,29 C38,18 26,6 16,8 C6,10 8,22 18,25 C28,28 38,29 45,30" fill="none" stroke="#8a611d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M45,29 C38,18 26,6 16,8 C6,10 8,22 18,25 C28,28 38,29 45,30" fill="none" stroke="#c99a48" stroke-width="1" stroke-linecap="round" stroke-dasharray="1.6 2.4"/>
+  <circle cx="46" cy="30" r="2.2" fill="#e9dcbd"/>
+</svg>

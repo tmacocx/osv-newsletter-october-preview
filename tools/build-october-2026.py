@@ -360,9 +360,10 @@ def stops_block(art, chips):
 
 
 def tag_card(art, inner):
-    """Deadline watch as the site's paper tag, eyelet and string at the top."""
-    top = (f'<tr><td align="right" style="padding:0 20px 0 0;font-size:0;line-height:0;">'
-           f'{img(art(DECOR + "tag-eyelet.png"), 30, "", 42, fluid=False, style="display:inline-block;")}</td></tr>')
+    """Deadline watch as the site's paper tag: a brass eyelet with a twine loop at the top right
+    (tools/tag-loop.svg; Oct 1, 2026, the old straight string ran off the rounded corner)."""
+    top = (f'<tr><td align="right" style="padding:0 18px 0 0;font-size:0;line-height:0;">'
+           f'{img(art(DECOR + "tag-eyelet.png"), 64, "", 48, fluid=False, style="display:inline-block;")}</td></tr>')
     return paper(inner, "0 20px 8px 20px", BLUSH, "8px 36px 8px 8px", top=top)
 
 
