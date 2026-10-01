@@ -10,9 +10,11 @@ body 16px (Fall break, voter, clocks). Item 3 was 16/15 because CLOCKS
 omitted featured=True. Section heading (21px) and date chips unchanged.
 T400: Sensory Spooktacular sits in chronological order in The month ahead
 (Sun Oct 25 before Sat Oct 31 Evergreen; Little Luminaries and Cultivate Play).
-T410: Free TicketsCandy registration link on Spooktacular (Details expand kept).
-Details is a native <details> expand with the on-site + sponsor copy (not a
-link-only jump to /events). Outlook/MSO gets the same copy in a conditional.
+T410: Free TicketsCandy registration link on Spooktacular. Oct 1: its on-site +
+sponsor copy shows openly above the button (expanders don't open in Outlook or Gmail).
+Oct 1 (Taylor): this first Village Hall is free, so the ticket says "Free for every
+family" instead of the pay-what-you-can boxes. tools/outlook-copy.py makes the
+send-it-yourself Outlook copy.
 T430: Wall of Hope returns between New in the library and One question,
 answered. Sept 30: the story is Nicole's ("His love needs no words.", from the
 site), not Taylor's. Every Wall of Hope signs off with the name, then
@@ -286,7 +288,7 @@ def hero(art, title_html, season="fall",
     """The homepage hero (home.css .home-hero): golden-hour sky, the place line between two gold
     rules, a big title with the gold swash, the handwritten tagline, then the hills and the village."""
     sky, bg = art("hero-sky.jpg"), SKY_FALLBACK.get(season, "#f3e2c8")
-    rule_td = f'<td class="os-rule" width="26" style="width:26px;"><div style="height:2px;background-color:{GOLD};border-radius:2px;font-size:0;line-height:0;">&nbsp;</div></td>'
+    rule_td = f'<td class="os-hrule" width="26" style="width:26px;"><div style="height:2px;background-color:{GOLD};border-radius:2px;font-size:0;line-height:0;">&nbsp;</div></td>'
     place_row = (f'<table {T} align="center" style="margin:0 auto;"><tr>{rule_td}'
                  f'<td class="os-place" style="padding:0 10px;font:800 12px/16px {FONT};letter-spacing:2px;text-transform:uppercase;color:{GOLD_DARK};text-align:center;">{place}</td>'
                  f'{rule_td}</tr></table>')
@@ -657,6 +659,15 @@ def step(n, text, last=False, ruled=True):
             f'<td style="vertical-align:top;">{p(text, 16, lh, BODY, 400)}</td></tr></table></td></tr>')
 
 
+def free_note():
+    """October's Village Hall is free (Taylor, Oct 1): no pay-what-you-can boxes."""
+    heading = p("Free for every family", 17, 22, WHITE, 700, extra="text-align:center;")
+    support = p("Our first Village Hall is free. Register to save your seat.",
+                13, 19, SAND, 400, margin="6px 0 0 0", extra="text-align:center;", cls="os-pay-note")
+    note = p("The meeting link is emailed to registrants.", 12, 18, ON_DARK_MUTED, 400, margin="12px 0 0 0", extra="text-align:center;")
+    return heading + support + note
+
+
 def price_boxes():
     """Choose what you can pay: four boxes (2x2 on phones)."""
     boxes = [("$0", "Welcome"), ("$10", "Helps"), ("$20", "Suggested"), ("$35", "Pay it forward")]
@@ -677,14 +688,9 @@ def price_boxes():
     return f'<div class="os-pay-wrap" style="width:100%;">{heading}{support}{grid}</div>' + note
 
 
-def disclose(lines, label="Details"):
-    """Native expand/collapse; Outlook gets the same copy in an MSO conditional."""
-    body = "".join(p(ln, 15, 22, BODY, 400, margin="4px 0 0 0") for ln in lines)
-    summary = (f'<summary class="os-disclose-sum os-pill" style="cursor:pointer;display:inline-block;list-style:none;'
-               f'font:600 14px/18px {DISPLAY};margin:8px 0 0 0;padding:3px 11px;border:2px solid {INK};border-bottom-width:4px;'
-               f'border-radius:99px;color:{INK};background-color:{WHITE};white-space:nowrap;">{label} &#9662;</summary>')
-    return (f'<!--[if !mso]><!--><details class="os-disclose" style="margin:4px 0 0 0;">{summary}{body}</details><!--<![endif]-->'
-            f'<!--[if mso]>{body}<![endif]-->')
+def disclose(lines):
+    """Extra event lines, always shown: expanders don't open in Outlook or Gmail."""
+    return list(lines)
 
 
 def about_card(art, about_text, links):
@@ -904,10 +910,6 @@ u + #os-body a{text-decoration:none;}
 .os-tr{transform:rotate(.8deg);}
 .os-pay-note{white-space:nowrap;}
 .os-sec{height:52px !important;line-height:52px !important;font-size:0 !important;}
-.os-disclose{margin:4px 0 0 0;display:block;}
-.os-disclose-sum{cursor:pointer;list-style:none;}
-.os-disclose-sum::-webkit-details-marker{display:none;}
-.os-disclose-sum::marker{content:none;}
 @media only screen and (min-width:700px){
   .os-wrap{max-width:880px !important;width:100% !important;}
   .os-browser-cols{display:flex !important;flex-direction:row !important;gap:16px !important;align-items:stretch !important;width:100% !important;}
@@ -932,7 +934,7 @@ u + #os-body a{text-decoration:none;}
   .os-hero-h1{font-size:35px !important;line-height:38px !important;letter-spacing:-0.8px !important;}
   .os-tagline{font-size:23px !important;line-height:27px !important;}
   .os-place{font-size:10.5px !important;letter-spacing:1.3px !important;padding:0 !important;}
-  .os-rule{display:none !important;}
+  .os-hrule{display:none !important;}
   .os-mast-word{font-size:18px !important;}
   .os-h2{font-size:25px !important;line-height:30px !important;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;padding:0 !important;}
@@ -1080,7 +1082,7 @@ def build_html(base, browser=False):
                         extra=f"font-family:{DISPLAY};")))
     o.append(fullrow(img(art("vh-land.jpg"), 600, "Parents gathered around a table with a laptop for an online IEP workshop - autumn village setting",
                          style="max-width:none;")))
-    o.append(padrow(fact_pills("Saturday, October 10, 2026", ["9:30 to 11:00 AM Central", "Online"])))
+    o.append(padrow(fact_pills("Saturday, October 10, 2026", ["9:30 to 11:00 AM Central", "Online", "Free"])))
     o.append(sp(12))
     mercedes = dict(
         name="Mercedes Lawson, M.S. Ed.",
@@ -1098,7 +1100,7 @@ def build_html(base, browser=False):
         "A 45-minute lesson on how the IEP process works and how to navigate the school system, then live parent "
         "questions. The lesson is recorded and sent to registrants; the Q&amp;A is not."))))
     o.append(sp(18))
-    o.append(padrow(ticket(art, button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK, align="center"), price_boxes())))
+    o.append(padrow(ticket(art, button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK, align="center"), free_note())))
 
     # --- The month ahead: featured night, then the calendar page ---
     o.append(major_sp())
@@ -1116,12 +1118,10 @@ def build_html(base, browser=False):
     o.append(sp(20))
     ev_rows = []
     for i, e in enumerate(SECONDARY_EVENTS):
-        lines = [e["meta"]] + ([e["note"]] if e.get("note") else [])
+        lines = [e["meta"]] + ([e["note"]] if e.get("note") else []) + disclose(e.get("disclose") or [])
         content = item(e["title"], lines)
         if e.get("link"):
             content += pill_row([e["link"]])
-        if e.get("disclose"):
-            content += disclose(e["disclose"])
         ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
     o.append(padrow(calendar_page(art, rows_table(ev_rows))))
     o.append(sp(20))
@@ -1264,14 +1264,14 @@ def build_text():
     w("")
     w("Village Hall: Saturday, October 10, 2026")
     w("9:30 to 11:00 AM Central")
-    w("Online")
+    w("Online · Free")
     w("Topic and guest: The IEP process and navigating the school system")
     w("Mercedes Lawson, M.S. Ed. - Founder of A.C.C.E.S.S. (Advocacy & Consultation Center for Educational Student Supports) in Greater Nashville. She grew up with a sibling with disabilities, taught special education for nine years helping 250+ students, and has two neurodivergent children. She helps families with IEP consultation, educational advocacy, and tutoring.")
     w(f"Website: {ACCESS_URL}")
     w(f"Email: {ACCESS_EMAIL}")
     w("A 45-minute lesson, then live parent questions. Lesson recorded; Q&A is not.")
     w(f"Register for Village Hall: {SITE}/village-hall")
-    w("Choose what you can pay: Every family is welcome – choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward")
+    w("Free for every family. Our first Village Hall is free. Register to save your seat.")
     w("The meeting link is emailed to registrants.")
     w("")
     w("----------------------------------------")
@@ -1582,7 +1582,7 @@ def main():
                    "See all deadlines", "Dates confirmed Sept 14", "The next deep dive", "One topic. One guest expert. Your questions.",
                    "Saturday, October 10, 2026", "9:30 to 11:00 AM Central", "Topic and guest", "The IEP process and navigating the school system",
                    "Mercedes Lawson, M.S. Ed.", "two neurodivergent children", "Advocacy &amp; Consultation Center for Educational Student Supports",
-                   "45-minute lesson", "Register for Village Hall", "Choose what you can pay", "Every family is welcome", "Pay it forward",
+                   "45-minute lesson", "Register for Village Hall", "Free for every family", "Our first Village Hall is free.",
                    "The meeting link is emailed to registrants.", "The month ahead", "View the full October events calendar",
                    "Sensory Spooktacular", "sensory-sensitive hour 1:00&ndash;2:00 PM", "Little Luminaries and Cultivate Play", "tickets limited",
                    "New in the library", "Therapy styles: play, structure, and compliance", "Grief and disability: the loss nobody sends a card for",
@@ -1601,12 +1601,13 @@ def main():
         assert f'href="{href}"' in html, href
     assert html.count("Register for Village Hall") == 1
     assert "Amanda Rains" not in html and "Amanda Rains" not in txt
-    # Spooktacular keeps its expandable Details (with an Outlook fallback) and sits before Evergreen
+    # Spooktacular shows its details openly (no expander) and sits before Evergreen
     month = html.split('id="events"', 1)[1].split('id="library"', 1)[0]
     assert month.find("Sensory Spooktacular") < month.find("Evergreen Trunk or Treat")
     assert month.find(">25</td>") < month.find(">31</td>")
     spook_row = month[month.find("Sensory Spooktacular"):month.find("Caleb&rsquo;s Friends")]
-    assert "<details" in spook_row and "Details &#9662;</summary>" in spook_row and "<!--[if mso]>" in spook_row
+    assert "<details" not in html and SPOOK_ON_SITE in spook_row and SPOOK_THANKS in spook_row
+    assert spook_row.find(SPOOK_THANKS) < spook_row.find(SPOOK_REG_URL)
     assert txt.find("Sensory Spooktacular") < txt.find("Evergreen Trunk or Treat")
     for month_abbr in _NON_OCT_MONTHS:
         assert not re.search(rf'white-space:nowrap;">(?:&ndash;|&mdash;|–|—|-){month_abbr}', html)

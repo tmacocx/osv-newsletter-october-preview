@@ -169,11 +169,9 @@ def month_ahead(issue, art):
         for i, (ch, evs) in enumerate(groups):
             content = ""
             for k, e in enumerate(evs):
-                block = item(e["title"], [e["meta"]])
+                block = item(e["title"], [e["meta"]] + disclose(e.get("disclose") or []))
                 if e.get("link") or e.get("links"):
                     block += btn_row(e.get("links") or [e["link"]])
-                if e.get("disclose"):
-                    block += disclose(e["disclose"])
                 content += block if k == 0 else f'<div style="margin-top:14px;">{block}</div>'
             rows.append(row(chip(*ch), content, last=(i == len(groups) - 1), tight=True))
         out += [sp(20), padrow(O.calendar_page(art, rows_table(rows)))]
