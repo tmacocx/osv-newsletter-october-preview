@@ -2,7 +2,8 @@
 """October 2026 as a short note Taylor can paste into Outlook (Oct 1, 2026).
 
 Outlook drops fonts, textures and rounded shapes when a designed email is pasted in,
-so this sends a simple note instead: the October picture, a few lines, and one big
+so this sends a simple note instead: the October picture, a few lines (Taylor, Oct 1: say it's
+her first newsletter and a test run, ask for feedback, a newsletter service is coming), and one big
 button to the full newsletter online. Only plain tables, colours and pictures, which
 Outlook keeps. Pictures load from this public repo at one fixed commit.
 
@@ -68,7 +69,9 @@ def build(sha):
 </td></tr>
 <tr><td bgcolor="{PAPER}" style="background-color:{PAPER};padding:30px 30px 26px 30px;border-bottom:4px solid {GOLD};">
   {para("Hi friends,")}
-  {para("Our October newsletter is here! I put everything on one page so it&rsquo;s easy to read on your phone. Here&rsquo;s what&rsquo;s inside this month:")}
+  {para("This is my very first Our Special Village newsletter, and it&rsquo;s a bit of a test run! I&rsquo;m sending it from my own email for now, and we&rsquo;ll be moving to a real newsletter service soon.")}
+  {para("I&rsquo;d love your feedback, so just hit reply and tell me what helped and what you&rsquo;d like to see next time.")}
+  {para("I put everything on one page so it&rsquo;s easy to read on your phone. Here&rsquo;s what&rsquo;s inside this month:")}
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px 0;">{rows}</table>
   {button(FULL, "Read the October newsletter")}
   {para("With love,", margin="26px 0 4px 0")}
