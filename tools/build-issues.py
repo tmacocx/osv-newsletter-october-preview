@@ -264,13 +264,14 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     view_href = view_url if browser else "{$url}"
     unsub_href = O.BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
 
-    # --- Opening: top bar, header, the village in its landscape, the jump buttons ---
+    # --- Opening: top bar, header, the village in its landscape, Taylor's small letter beside the jump
+    # buttons (Taylor, Oct 3), then events, deadlines, Village Hall and the rest ---
     o.append(f'<tr><td style="padding:0 0 12px 0;">{O.top_bar(issue["month_year"], view_href)}</td></tr>')
     o.append(padrow(O.site_header(art, SITE), pad="0 16px 14px 16px"))
     o.append(O.hero(art, f'{issue["month"]} in Our <span class="os-hl">Special Village</span>',
                     "fall" if issue["id"] == "2026-11" else "winter", land_alt=issue["hero_alt"]))
     o.append(sp(26))
-    o.append(padrow(O.stops_block(art, O.JUMPS), pad="0 22px"))
+    o.append(padrow(O.opening_block(art, O.note_paras(issue["note"], issue.get("note_highlight")), O.JUMPS)))
 
     o.append(major_sp())
     o.append(month_ahead(issue, art))
@@ -294,17 +295,6 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(question(issue, art))
     o.append(sp(34))
     o.append(connect(issue, art))
-
-    # --- Taylor's note, at the end (Taylor, Oct 1: families scrolled past it to reach events) ---
-    hi = issue.get("note_highlight")
-    paras = []
-    for i, para in enumerate(issue["note"]):
-        if hi and hi in para:
-            para = para.replace(hi, f'<span style="background-color:{O.GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{hi}</span>')
-        paras.append(p(para, 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0")))
-    o.append(major_sp())
-    o.append(padrow(O.anchor("note") + O.letter(art, None, "".join(paras))))
-
 
     # --- About, numbers, forward, footer: identical to October ---
     o.append(major_sp())
@@ -512,8 +502,8 @@ def check(issue, email, browser, txt, deadlines):
     assert email.count("Register for Village Hall") <= 1
     assert f'{issue["month"]} in Our <span class="os-hl">Special Village</span>' in email
     assert 'href="tel:988"' in email
-    order = ["id=\"events\"", "id=\"deadlines\"", "id=\"village-hall\"", "id=\"library\"",
-             "id=\"hope\"", "id=\"question\"", "id=\"ongoing\"", "id=\"note\""]
+    order = ["id=\"note\"", "id=\"events\"", "id=\"deadlines\"", "id=\"village-hall\"", "id=\"library\"",
+             "id=\"hope\"", "id=\"question\"", "id=\"ongoing\""]
     idx = [email.find(x) for x in order]
     assert all(i > 0 for i in idx) and idx == sorted(idx), f"{issue['id']}: section order {idx}"
     for href, _ in O.JUMPS:

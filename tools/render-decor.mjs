@@ -252,11 +252,12 @@ async function stops(chips, out) {
   await shot(`<div id="shot" style="width:${W}px;height:${H}px">${plots}</div>`,
   out, { bg: C.cream, css: `.plot{position:absolute;top:${cy - 40}px;width:80px;height:80px;border-radius:50%;background:${C.paper};display:grid;place-items:center;
     box-shadow:0 1px 2px rgba(29,44,76,.05),0 12px 28px -16px rgba(29,44,76,.30),0 0 0 5px ${C.cream}}.plot img{width:58px;height:auto}` });
-  // cut into four equal pictures (stop-1.png ... stop-4.png) so each stop is its own link
+  // cut a 96px square around each circle (stop-1.png ... stop-4.png), so each stop is its own link
+  // and sits small beside its button
   const box = await (await page.$('#shot')).boundingBox();
   for (let i = 0; i < 4; i++) {
     const f = path.join(path.dirname(out), `stop-${i + 1}.png`);
-    await page.screenshot({ path: f, clip: { x: box.x + step * i, y: box.y, width: step, height: H } });
+    await page.screenshot({ path: f, clip: { x: box.x + xs[i] - 48, y: box.y + cy - 46, width: 96, height: 96 } });
     console.log('wrote', path.relative(ROOT, f));
   }
   fs.unlinkSync(out);

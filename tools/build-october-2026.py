@@ -319,52 +319,73 @@ def dusk_band(art, id_, eyebrow, title, inner):
             + fullrow(img(art(DECOR + "dusk-wave.png"), 600, "", style="max-width:none;")))
 
 
-def letter(art, h1_text, paras_html, name="Dr. Taylor Hickok", cred="Founder &middot; SLP &middot; AuDHD parent"):
-    """Taylor's note as the site's stamped, postmarked airmail letter (newsletter.css .nl-card)."""
-    byline = (f'<table {T} style="border-collapse:collapse;"><tr>'
-              f'<td style="padding:0 12px 0 0;vertical-align:middle;">'
-              f'<img class="os-intro-photo" src="{art("taylor-hickok-160.jpg")}" width="68" height="68" alt="Dr. Taylor Hickok, founder of Our Special Village." '
-              f'style="display:block;width:68px;height:68px;border:3px solid #ffffff;border-radius:50%;"></td>'
-              f'<td style="vertical-align:middle;">'
-              + p(name, 16, 20, INK, 700)
-              + p(cred, 13, 18, MUTED, 400, margin="2px 0 0 0", extra="white-space:nowrap;", cls="os-cred")
-              + '</td></tr></table>')
-    head_row = (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-                f'<td valign="middle" style="vertical-align:middle;">{byline}</td>'
-                f'<td class="os-stamp" width="112" align="right" valign="top" style="width:112px;vertical-align:top;line-height:0;">'
-                f'{img(art(DECOR + "stamp.png"), 112, "", 88, fluid=False)}</td></tr></table>')
-    title = (f'<h1 class="os-h1 os-ink" style="margin:12px 0 12px 0;font:600 34px/38px {DISPLAY};'
-             f'color:{INK};letter-spacing:-0.8px;">{h1_text}</h1>') if h1_text else '<div style="height:14px;font-size:0;line-height:0;">&nbsp;</div>'
-    body = (head_row
-            + title
-            + paras_html
-            + p("With love,", 16, 24, BODY, 400, margin="12px 0 2px 0")
-            + f'<img class="os-sig" src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
-              f'style="display:block;width:96px;height:auto;margin:0 0 0 8px;border:0;font:italic 22px Georgia,serif;color:{ACCENT};">')
-    edge = lambda f, r: (f'<tr><td style="padding:0;font-size:0;line-height:0;">'
-                         f'{img(art(DECOR + f), 532, "", style=f"max-width:100%;border-radius:{r};")}</td></tr>')
-    return paper(body, "18px 24px 18px 24px", NOTE, "8px", top=edge("airmail-top.png", "8px 8px 0 0"),
-                 bottom=edge("airmail-bottom.png", "0 0 8px 8px"))
-
-
 # The jump buttons, in the order the sections run (Taylor, Oct 1: events, deadlines, Village Hall, the rest).
 JUMPS = [("#events", "Events"), ("#deadlines", "Deadlines"), ("#village-hall", "Village Hall"), ("#library", "New guides")]
 
 
-def stops_block(art, chips):
-    """In this issue: Taylor's pictograms on the painted path, each with a button underneath that jumps to
-    its section. Taylor, Oct 1, 2026: she hadn't realized the stops were jump links, so each now has a
-    button with a down arrow, and on phones they sit two by two."""
-    jump = (f"display:inline-block;margin:6px 0 0 0;padding:6px 11px;border-radius:99px;font:600 14px/18px {DISPLAY};"
+def small_letter(art, paras_html, width=298):
+    """Taylor's note as a small airmail letter (Taylor, Oct 3: "my letter at the top, but make it smaller
+    and to the side"). Same words as before, in a smaller size, without the stamp."""
+    byline = (f'<table {T} style="border-collapse:collapse;margin:8px 0 10px 0;"><tr>'
+              f'<td style="padding:0 10px 0 0;vertical-align:middle;">'
+              f'<img src="{art("taylor-hickok-160.jpg")}" width="46" height="46" alt="Dr. Taylor Hickok, founder of Our Special Village." '
+              f'style="display:block;width:46px;height:46px;border:2px solid #ffffff;border-radius:50%;"></td>'
+              f'<td style="vertical-align:middle;">'
+              + p("Dr. Taylor Hickok", 15, 19, INK, 700)
+              + p("Founder &middot; SLP &middot; AuDHD parent", 12, 17, MUTED, 400, margin="1px 0 0 0")
+              + '</td></tr></table>')
+    head = (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+            f'<td valign="bottom" style="vertical-align:bottom;">{hand("A note from Taylor", 20)}</td>'
+            f'<td width="60" align="right" valign="top" style="width:60px;vertical-align:top;line-height:0;">'
+            f'{img(art(DECOR + "stamp.png"), 60, "", 47, fluid=False)}</td></tr></table>')
+    body = (head
+            + byline
+            + paras_html
+            + p("With love,", 14, 21, BODY, 400, margin="10px 0 0 0")
+            + f'<img src="{art("signature-taylor.png")}" width="74" height="42" alt="Taylor" '
+              f'style="display:block;width:74px;height:auto;margin:0 0 0 6px;border:0;font:italic 18px Georgia,serif;color:{ACCENT};">')
+    edge = lambda f, r: (f'<tr><td style="padding:0;font-size:0;line-height:0;">'
+                         f'{img(art(DECOR + f), width, "", style=f"border-radius:{r};")}</td></tr>')
+    return paper(body, "12px 18px 16px 18px", NOTE, "8px", "os-tl", top=edge("airmail-top.png", "8px 8px 0 0"),
+                 bottom=edge("airmail-bottom.png", "0 0 8px 8px"))
+
+
+def note_paras(paras, highlight=None):
+    """The note's paragraphs at the small letter's size, with one phrase highlighted in soft gold."""
+    out = []
+    for i, para in enumerate(paras):
+        if highlight and highlight in para:
+            para = para.replace(highlight, f'<span style="background-color:{GOLD_SOFT};color:{INK};padding:1px 3px;border-radius:4px;">{highlight}</span>')
+        out.append(p(para, 14, 21, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0")))
+    return "".join(out)
+
+
+def jump_list(art, chips):
+    """The jump buttons beside the letter: Taylor's pictogram on a paper circle, then a pill button with a
+    down arrow (Oct 1: she hadn't realized the old stops were links). A list of four next to the letter;
+    two by two on phones."""
+    jump = (f"display:inline-block;padding:7px 13px;border-radius:99px;font:600 15px/19px {DISPLAY};white-space:nowrap;"
             f"text-decoration:none;background-color:{WHITE};border:2px solid {INK};border-bottom-width:4px;color:{INK};")
-    cells = "".join(
-        f'<td class="os-stop" width="25%" valign="top" align="center" style="width:25%;vertical-align:top;">'
+    rows = "".join(
+        f'<tr class="os-jump"><td style="padding:0 0 10px 0;"><table {T} style="border-collapse:collapse;"><tr>'
+        f'<td class="os-jumpic" width="58" style="width:58px;vertical-align:middle;padding:0 8px 0 0;line-height:0;">'
         f'<a href="{href}" style="display:block;text-decoration:none;">'
-        f'{img(art(f"stop-{i + 1}.png"), 133, "", style="width:100%;max-width:none;margin:0 auto;", cls="os-stopimg")}</a>'
-        f'<a class="os-pill os-ink" href="{href}" style="{jump}">{label}&nbsp;&darr;</a></td>'
+        f'{img(art(f"stop-{i + 1}.png"), 58, "", 58, fluid=False, cls="os-jumpimg")}</a></td>'
+        f'<td class="os-jumpbtn" style="vertical-align:middle;"><a class="os-ink" href="{href}" style="{jump}">{label}&nbsp;&darr;</a></td>'
+        f'</tr></table></td></tr>'
         for i, (href, label) in enumerate(chips))
-    return (hand("Tap a button to jump there", 22, GOLD_INK, "0 0 2px 0", "center")
-            + f'<table {T} class="os-stops" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;"><tr>{cells}</tr></table>')
+    return (hand("Tap a button to jump there", 20, GOLD_INK, "4px 0 10px 0")
+            + f'<table {T} class="os-jumps" width="100%" style="width:100%;border-collapse:collapse;">{rows}</table>')
+
+
+def opening_block(art, paras_html, chips):
+    """Right under the opening picture: Taylor's small letter, with the jump buttons beside it, so events
+    start right after (Taylor, Oct 3). On phones the letter comes first, then the buttons."""
+    return (f'<table {T} class="os-opening" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+            f'<td class="os-col os-open-letter" width="56%" valign="top" style="width:56%;vertical-align:top;padding:0 20px 0 0;">'
+            f'{anchor("note")}{small_letter(art, paras_html)}</td>'
+            f'<td class="os-col os-open-jumps" valign="top" style="vertical-align:top;padding:6px 0 0 0;">{jump_list(art, chips)}</td>'
+            f'</tr></table>')
 
 
 def tag_card(art, inner):
@@ -958,14 +979,17 @@ u + #os-body a{text-decoration:none;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;padding:0 !important;}
   .os-col-photo{padding:0 0 14px 0 !important;text-align:center !important;}
   .os-guestphoto,.os-aboutphoto{margin:0 auto !important;}
-  .os-stops tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;}
-  .os-stop{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 0 14px 0 !important;}
-  .os-stopimg{width:100% !important;max-width:120px !important;}
-  .os-stamp{width:80px !important;}
-  .os-stamp img{width:80px !important;height:63px !important;}
-  .os-cred{font-size:12px !important;white-space:normal !important;}
+  .os-open-letter{padding:0 0 24px 0 !important;}
+  .os-jumps tbody{display:flex !important;flex-wrap:wrap !important;width:100% !important;}
+  .os-jump{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;}
+  .os-jump > td{display:block !important;padding:0 0 14px 0 !important;}
+  .os-jump table{margin:0 auto !important;}
+  .os-jumpic,.os-jumpbtn{display:block !important;width:100% !important;padding:0 !important;text-align:center !important;}
+  .os-jumpic a{display:inline-block !important;}
+  .os-jumpbtn{padding:4px 0 0 0 !important;}
+  .os-jumpbtn a{padding-left:11px !important;padding-right:11px !important;font-size:14px !important;}
+  .os-jumpimg{width:56px !important;height:56px !important;}
   .os-pill{white-space:normal !important;}
-  .os-intro-photo{width:56px !important;height:56px !important;}
   p{overflow-wrap:break-word;}
   .os-chip td{white-space:nowrap !important;}
   .os-pay-wrap{text-align:center !important;}
@@ -973,9 +997,6 @@ u + #os-body a{text-decoration:none;}
   .os-paygrid tr{display:flex !important;flex-wrap:wrap !important;width:100% !important;}
   .os-paycell{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 4px 8px 0 !important;}
   .os-paycell:nth-child(even){padding:0 0 8px 4px !important;}
-}
-@media only screen and (max-width:359px){
-  .os-cred{font-size:11px !important;}
 }
 """.replace("PAPER_SHADOW", PAPER_SHADOW).replace("SHADOW", SHADOW)
     dark = f"""
@@ -1071,14 +1092,13 @@ def build_html(base, browser=False):
 
     view_href = BROWSER_VIEW_URL if browser else "{$url}"
     unsub_href = BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
-    # --- Opening: top bar, header, the village in its landscape, then the jump buttons ---
-    # Taylor, Oct 1: families had to scroll past her note to reach events and deadlines, so the
-    # order is now events, deadlines, Village Hall, the rest, and her note last.
+    # --- Opening: top bar, header, the village in its landscape, then Taylor's small letter beside the
+    # jump buttons, then events, deadlines, Village Hall and the rest (Taylor, Oct 1 and Oct 3) ---
     o.append(f'<tr><td style="padding:0 0 12px 0;">{top_bar("October 2026", view_href)}</td></tr>')
     o.append(padrow(site_header(art, SITE), pad="0 16px 14px 16px"))
     o.append(hero(art, 'October in Our <span class="os-hl">Special Village</span>', "fall"))
     o.append(sp(26))
-    o.append(padrow(stops_block(art, JUMPS), pad="0 22px"))
+    o.append(padrow(opening_block(art, note_paras(NOTE_PARAS, ALONE_PHRASE), JUMPS)))
 
     # --- The month ahead: featured night, then the calendar page ---
     o.append(major_sp())
@@ -1218,13 +1238,6 @@ def build_html(base, browser=False):
                        f'<div class="os-browser-col" style="display:block;width:100%;margin:0 0 20px 0;box-sizing:border-box;">{online_card}</div>'
                        f'<div class="os-browser-col" style="display:block;width:100%;margin:0;box-sizing:border-box;">{werock_card}</div></div>'))
 
-    # --- Taylor's note, at the end (Taylor, Oct 1) ---
-    o.append(major_sp())
-    alone_hi = f'<span style="background-color:{GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{ALONE_PHRASE}</span>'
-    paras = "".join(p(para.replace(ALONE_PHRASE, alone_hi), 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0"))
-                    for i, para in enumerate(NOTE_PARAS))
-    o.append(padrow(anchor("note") + letter(art, None, paras)))
-
     # --- About, numbers, forward, footer ---
     o.append(major_sp())
     o.append(padrow(about_card(art, ABOUT, [(f"{SITE}/about", "About the Village"), (f"{SITE}/editorial-policy", "How we check information")])))
@@ -1247,20 +1260,14 @@ RULE = "----------------------------------------"
 
 
 def reorder_text(txt):
-    """The plain-text email in the HTML's order (Taylor, Oct 1): the jump line, the month ahead,
-    deadlines, Village Hall, the rest, then Taylor's note just before About."""
+    """The plain-text email in the HTML's order (Taylor, Oct 3): her note and the jump line, then the
+    month ahead, deadlines, Village Hall and the rest."""
     blocks = txt.split(RULE)
-    intro = blocks[0].split("\n")
-    t = next(i for i, l in enumerate(intro) if l.endswith(" IN OUR SPECIAL VILLAGE"))
-    j = next(i for i, l in enumerate(intro) if l.startswith("In this issue: "))
-    head = "\n".join(intro[:t + 2] + [intro[j], ""]) + "\n"
-    note = "\nA NOTE FROM TAYLOR\n\n" + "\n".join(intro[t + 2:j]).rstrip("\n") + "\n\n"
     first = lambda b: b.strip().split("\n", 1)[0]
     find = lambda key: next(k for k, b in enumerate(blocks) if k and first(b).startswith(key))
     lead = [blocks[find("THE MONTH AHEAD")], blocks[find("THREE THINGS")], blocks[find("THE NEXT DEEP DIVE")]]
     others = [b for k, b in enumerate(blocks) if k and b not in lead]
-    a = next(k for k, b in enumerate(others) if first(b).startswith("ABOUT OUR SPECIAL VILLAGE"))
-    return RULE.join([head] + lead + others[:a] + [note] + others[a:])
+    return RULE.join([blocks[0]] + lead + others)
 
 
 def build_text():
@@ -1604,12 +1611,12 @@ def main():
                   "featured-monsters-museum-compact.jpg", "guide-therapy-styles-landscape-compact.jpg", "guide-grief-landscape-compact.jpg"):
             assert f"art/{f}" in doc, f
         # section order, and In this issue links to real sections
-        order = ['id="events"', 'id="deadlines"', 'id="village-hall"', 'id="library"', 'id="hope"', 'id="question"', 'id="ongoing"', 'id="note"']
+        order = ['id="note"', 'id="events"', 'id="deadlines"', 'id="village-hall"', 'id="library"', 'id="hope"', 'id="question"', 'id="ongoing"']
         idx = [doc.find(x) for x in order]
         assert all(k > 0 for k in idx) and idx == sorted(idx), idx
         for href, _ in JUMPS:
             assert f'href="{href}"' in doc and f'id="{href[1:]}"' in doc
-        assert doc.find('class="os-stops"') < doc.find('id="events"') and doc.find("Welcome to Our Special Village!") > doc.find('id="ongoing"')
+        assert doc.find("Welcome to Our Special Village!") < doc.find('class="os-jumps"') < doc.find('id="events"')
         # Wall of Hope is Nicole's story (Taylor, Sept 30), then the invitation
         hope_slice = doc.split('id="hope"', 1)[1].split('id="question"', 1)[0]
         for para in HOPE["paras"]:
@@ -1621,7 +1628,7 @@ def main():
     assert "WALL OF HOPE" in txt and "His love needs no words." in txt and "✎ Nicole, Murfreesboro" in txt and "Ellie" not in txt
     assert txt.find("NEW IN THE LIBRARY") < txt.find("WALL OF HOPE") < txt.find("ONE QUESTION, ANSWERED")
     assert txt.find("THE MONTH AHEAD") < txt.find("THREE THINGS") < txt.find("THE NEXT DEEP DIVE") < txt.find("NEW IN THE LIBRARY")
-    assert txt.find("CONNECT WITH OTHER LOCAL PARENTS") < txt.find("A NOTE FROM TAYLOR") < txt.find("ABOUT OUR SPECIAL VILLAGE")
+    assert txt.find("Welcome to Our Special Village!") < txt.find("In this issue: ") < txt.find("THE MONTH AHEAD")
     # words that must survive the restyle
     for phrase in ("October in Our Special Village", "Welcome to Our Special Village!", "you do not have to figure everything out alone",
                    "Three things to know this month", "Voter registration deadline: Mon&nbsp;Oct&nbsp;5", "Clocks fall back one hour on Sun Nov 1",
