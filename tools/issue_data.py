@@ -144,6 +144,12 @@ ISSUES = [
                         "activities, and documentation."),
                  path="/resources/katie-beckett-funds", cta="Read the funds guide",
                  art_alt="A family crossing a stone footbridge toward a brick office building in autumn."),
+            # Taylor, Oct 3: "add it to the november newsletter". Title and blurb are the guide's own words on the site.
+            dict(label="Reading", title="Dyslexia: reading help, hi-lo books, and free tools",
+                 blurb=("What Tennessee schools have to do about dyslexia, the reading help that works, hi-lo books "
+                        "with big-kid stories at an easier level, and free ways to get them."),
+                 path="/resources/dyslexia", cta="Read the dyslexia guide",
+                 art_alt="The village library in autumn: a parent and child reading at a table, neighbors browsing the shelves."),
         ],
         hope=dict(quote=HOPE_QUOTE, who=HOPE_WHO,
                   art_alt="Neighbors pinning notes of hope to a wall in the village, with autumn trees around it."),

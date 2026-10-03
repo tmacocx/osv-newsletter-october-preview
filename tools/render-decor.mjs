@@ -9,6 +9,7 @@
 //
 //   cd ../OurSpecialVillage/public && python3 -m http.server 8765 &
 //   node tools/render-decor.mjs --site http://localhost:8765 --fonts ../OurSpecialVillage/public/fonts
+//   (add --only stops to redo just the In this issue stops)
 //
 // Inputs are listed in tools/decor.json. Then run tools/build-october-2026.py and tools/build-issues.py.
 import fs from 'node:fs';
@@ -243,16 +244,12 @@ main > .page-hero{padding:14px 24px 0;margin:0}
 }
 
 async function stops(chips, out) {
-  // Four stops on the painted path ("Stay connected", shell.css .community-path), cut into one picture per stop.
+  // Four stops, one picture each (Taylor's pictograms on the site's paper circles). Oct 3, 2026: no painted
+  // path between them; on phones the stops sit two by two and the road pieces dangled off each circle,
+  // so each stop is just its circle.
   const W = 532, H = 112, cy = 54, step = W / 4, xs = [0, 1, 2, 3].map((i) => step * i + step / 2);
-  let d = `M${xs[0]} ${cy}`;
-  for (let i = 1; i < 4; i++) {
-    const a = i % 2 ? -26 : 26, dx = xs[i] - xs[i - 1];
-    d += ` C ${xs[i - 1] + dx * 0.33} ${cy + a}, ${xs[i] - dx * 0.33} ${cy - a}, ${xs[i]} ${cy}`;
-  }
   const plots = chips.map((c, i) => `<span class="plot" style="left:${xs[i] - 40}px"><img src="${SITE}/images/village/${cfg.pictograms[c]}-192.webp" alt=""></span>`).join('');
-  await shot(`<div id="shot" style="width:${W}px;height:${H}px"><svg width="${W}" height="${H}" style="position:absolute;inset:0">
-    <path d="${d}" fill="none" stroke="#e5cf9a" stroke-width="20" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#f4e5bd" stroke-width="13" stroke-linecap="round"/></svg>${plots}</div>`,
+  await shot(`<div id="shot" style="width:${W}px;height:${H}px">${plots}</div>`,
   out, { bg: C.cream, css: `.plot{position:absolute;top:${cy - 40}px;width:80px;height:80px;border-radius:50%;background:${C.paper};display:grid;place-items:center;
     box-shadow:0 1px 2px rgba(29,44,76,.05),0 12px 28px -16px rgba(29,44,76,.30),0 0 0 5px ${C.cream}}.plot img{width:58px;height:auto}` });
   // cut into four equal pictures (stop-1.png ... stop-4.png) so each stop is its own link
@@ -267,6 +264,7 @@ async function stops(chips, out) {
 
 for (const iss of cfg.issues) {
   const out = path.join(ROOT, iss.out);
+  if (args.only === 'stops') { await stops(iss.chips, path.join(out, 'stops.png')); continue; }
   await hero(iss.hero, iss.season, out);
   await landscape(iss.vh, iss.season, path.join(out, 'vh-land.jpg'), { oval: !!iss.vh_oval, maxH: 250 });
   await stops(iss.chips, path.join(out, 'stops.png'));

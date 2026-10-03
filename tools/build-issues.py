@@ -519,7 +519,7 @@ def check(issue, email, browser, txt, deadlines):
     for href, _ in O.JUMPS:
         assert f'id="{href[1:]}"' in email, href
     assert len(issue["three_things"]) >= 1
-    assert len(issue["guides"]) == 2
+    assert 2 <= len(issue["guides"]) <= 3
     text = re.sub(r"<style.*?</style>", " ", email, flags=re.S | re.I)
     text = re.sub(r"<[^>]+>", " ", text)
     words = len(re.sub(r"&\w+;", " ", text).split())
