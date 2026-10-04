@@ -68,8 +68,6 @@ ISSUES = [
              "I hope you find a little room to rest."),
         ],
         note_highlight="a little room to rest",
-        chips=[("#deadlines", "Thanksgiving break"), ("#village-hall", "AAC round table"),
-               ("#events", "Sensory-friendly events"), ("#library", "AAC + funding guides")],
         three_things=[],       # filled from research below
         all_deadlines=[],
         confirmed="",
@@ -146,6 +144,12 @@ ISSUES = [
                         "activities, and documentation."),
                  path="/resources/katie-beckett-funds", cta="Read the funds guide",
                  art_alt="A family crossing a stone footbridge toward a brick office building in autumn."),
+            # Taylor, Oct 3: "add it to the november newsletter". Title and blurb are the guide's own words on the site.
+            dict(label="Reading", title="Dyslexia: reading help, hi-lo books, and free tools",
+                 blurb=("What Tennessee schools have to do about dyslexia, the reading help that works, hi-lo books "
+                        "with big-kid stories at an easier level, and free ways to get them."),
+                 path="/resources/dyslexia", cta="Read the dyslexia guide",
+                 art_alt="The village library in autumn: a parent and child reading at a table, neighbors browsing the shelves."),
         ],
         hope=dict(quote=HOPE_QUOTE, who=HOPE_WHO,
                   art_alt="Neighbors pinning notes of hope to a wall in the village, with autumn trees around it."),
@@ -187,8 +191,6 @@ ISSUES = [
              "moments that are just yours."),
         ],
         note_highlight="a few quiet moments that are just yours",
-        chips=[("#deadlines", "Winter break"), ("#events", "Sensory-friendly Santa"),
-               ("#library", "Guides for full days"), ("#question", "Holiday gatherings")],
         three_things=[], all_deadlines=[], confirmed="", deadlines_meta="",
         village_hall=dict(
             VH_TBD,
@@ -220,10 +222,6 @@ ISSUES = [
                      meta=("11:00 AM&ndash;2:00 PM &middot; Berry&rsquo;s Chapel Church of Christ, Franklin "
                            "&middot; RSVP required &middot; About 45 min"),
                      link=("https://www.ableyouth.org/event/able-youth-christmas-party-4/", "Details")),
-                dict(chip=("Sun", "13", "Dec"), title="Sensory Sunday Hour &middot; Frist Art Museum",
-                     meta=("12:00&ndash;1:00 PM &middot; Frist Art Museum, Nashville &middot; Free for members and "
-                           "ages 18 and under &middot; About 45 min"),
-                     link=("https://fristartmuseum.org/plan-your-visit/", "Details")),
             ],
             calendar_label="View the full December events calendar",
         ),
@@ -278,8 +276,6 @@ ISSUES = [
             ("Whatever this year holds for your child, you do not have to figure it out alone."),
         ],
         note_highlight="you do not have to figure it out alone",
-        chips=[("#deadlines", "School dates"), ("#question", "Asking for an evaluation"),
-               ("#events", "Respite + events"), ("#library", "School guides")],
         three_things=[], all_deadlines=[], confirmed="", deadlines_meta="",
         village_hall=dict(
             VH_TBD,
@@ -356,8 +352,6 @@ ISSUES = [
             ("Thank you for being part of this Village. It keeps growing because families like yours pass it along."),
         ],
         note_highlight="families like yours pass it along",
-        chips=[("#deadlines", "School days off"), ("#events", "Winter outings"),
-               ("#library", "Sensory + safety guides"), ("#question", "Finding a good therapist")],
         three_things=[], all_deadlines=[], confirmed="", deadlines_meta="",
         village_hall=dict(VH_TBD, date="Saturday, February 13, 2027", time=VH_TIME),
         events=dict(
@@ -709,7 +703,7 @@ JAN["todo"] = [
     COMMON_TODO[0],
     "Village Hall: Alyssa Engel of Cultivate Play, Sat Jan 9. Add her credentials, photo, and a short bio.",
     COMMON_TODO[2],
-    "Only one January event is confirmed so far (rEcess, Jan 2). Discovery Center, Frist, Autism Tennessee and "
+    "Only one January event is confirmed so far (rEcess, Jan 2). Discovery Center, Autism Tennessee and "
     "ABLE Youth had not posted January dates on Sept 28; I will add them when they do."]
 FEB["todo"] = [
     COMMON_TODO[0],
