@@ -244,20 +244,20 @@ main > .page-hero{padding:14px 24px 0;margin:0}
 }
 
 async function stops(chips, out) {
-  // Four stops, one picture each (Taylor's pictograms on the site's paper circles). Oct 3, 2026: no painted
-  // path between them; on phones the stops sit two by two and the road pieces dangled off each circle,
-  // so each stop is just its circle.
+  // The jump buttons' pictures: Taylor's pictograms on the site's paper circles, one transparent PNG per
+  // section (jump-events.png, jump-deadlines.png, ...), so they sit on the cork board beside her letter.
+  // Oct 3, 2026: no painted path between them (the road pieces dangled on phones). Oct 4: new file names,
+  // because browsers kept showing the old stop-N.png pictures (the site caches images for a day); give the
+  // files new names again whenever they change.
   const W = 532, H = 112, cy = 54, step = W / 4, xs = [0, 1, 2, 3].map((i) => step * i + step / 2);
   const plots = chips.map((c, i) => `<span class="plot" style="left:${xs[i] - 40}px"><img src="${SITE}/images/village/${cfg.pictograms[c]}-192.webp" alt=""></span>`).join('');
   await shot(`<div id="shot" style="width:${W}px;height:${H}px">${plots}</div>`,
-  out, { bg: C.cream, css: `.plot{position:absolute;top:${cy - 40}px;width:80px;height:80px;border-radius:50%;background:${C.paper};display:grid;place-items:center;
-    box-shadow:0 1px 2px rgba(29,44,76,.05),0 12px 28px -16px rgba(29,44,76,.30),0 0 0 5px ${C.cream}}.plot img{width:58px;height:auto}` });
-  // cut a 96px square around each circle (stop-1.png ... stop-4.png), so each stop is its own link
-  // and sits small beside its button
+  out, { css: `.plot{position:absolute;top:${cy - 40}px;width:80px;height:80px;border-radius:50%;background:${C.paper};display:grid;place-items:center;
+    box-shadow:0 1px 2px rgba(29,44,76,.08),0 10px 18px -12px rgba(60,40,10,.45),0 0 0 4px ${C.paper}}.plot img{width:60px;height:auto}` });
   const box = await (await page.$('#shot')).boundingBox();
-  for (let i = 0; i < 4; i++) {
-    const f = path.join(path.dirname(out), `stop-${i + 1}.png`);
-    await page.screenshot({ path: f, clip: { x: box.x + xs[i] - 48, y: box.y + cy - 46, width: 96, height: 96 } });
+  for (const [i, c] of chips.entries()) {
+    const f = path.join(path.dirname(out), `jump-${c}.png`);
+    await page.screenshot({ path: f, omitBackground: true, clip: { x: box.x + xs[i] - 48, y: box.y + cy - 48, width: 96, height: 96 } });
     console.log('wrote', path.relative(ROOT, f));
   }
   fs.unlinkSync(out);

@@ -361,30 +361,33 @@ def note_paras(paras, highlight=None):
 
 
 def jump_list(art, chips):
-    """The jump buttons beside the letter: Taylor's pictogram on a paper circle, then a pill button with a
-    down arrow (Oct 1: she hadn't realized the old stops were links). A list of four next to the letter;
-    two by two on phones."""
-    jump = (f"display:inline-block;padding:7px 13px;border-radius:99px;font:600 15px/19px {DISPLAY};white-space:nowrap;"
-            f"text-decoration:none;background-color:{WHITE};border:2px solid {INK};border-bottom-width:4px;color:{INK};")
+    """The jump buttons on a cork board beside the letter: Taylor's pictogram on a paper circle, then a big
+    pill button with a down arrow (Oct 1: she hadn't realized the old stops were links; Oct 4: "its too
+    small", so they fill the board). Two by two on phones, each picture above its button."""
+    jump = (f"display:block;padding:12px 14px;border-radius:99px;font:600 17px/21px {DISPLAY};white-space:nowrap;"
+            f"text-decoration:none;background-color:{WHITE};border:2px solid {INK};border-bottom-width:5px;color:{INK};")
     rows = "".join(
-        f'<tr class="os-jump"><td style="padding:0 0 10px 0;"><table {T} style="border-collapse:collapse;"><tr>'
-        f'<td class="os-jumpic" width="58" style="width:58px;vertical-align:middle;padding:0 8px 0 0;line-height:0;">'
+        f'<tr class="os-jump"><td style="padding:0 0 {0 if i == len(chips) - 1 else 14}px 0;"><table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+        f'<td class="os-jumpic" width="64" style="width:64px;vertical-align:middle;padding:0 8px 0 0;line-height:0;">'
         f'<a href="{href}" style="display:block;text-decoration:none;">'
-        f'{img(art(f"stop-{i + 1}.png"), 58, "", 58, fluid=False, cls="os-jumpimg")}</a></td>'
+        f'{img(art(f"jump-{href[1:]}.png"), 64, "", 64, fluid=False, cls="os-jumpimg")}</a></td>'
         f'<td class="os-jumpbtn" style="vertical-align:middle;"><a class="os-ink" href="{href}" style="{jump}">{label}&nbsp;&darr;</a></td>'
         f'</tr></table></td></tr>'
         for i, (href, label) in enumerate(chips))
-    return (hand("Tap a button to jump there", 20, GOLD_INK, "4px 0 10px 0")
+    return (hand("Tap a button to jump there", 23, INK, "0 0 14px 0")
             + f'<table {T} class="os-jumps" width="100%" style="width:100%;border-collapse:collapse;">{rows}</table>')
 
 
 def opening_block(art, paras_html, chips):
-    """Right under the opening picture: Taylor's small letter, with the jump buttons beside it, so events
-    start right after (Taylor, Oct 3). On phones the letter comes first, then the buttons."""
-    return (f'<table {T} class="os-opening" width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-            f'<td class="os-col os-open-letter" width="56%" valign="top" style="width:56%;vertical-align:top;padding:0 20px 0 0;">'
-            f'{anchor("note")}{small_letter(art, paras_html)}</td>'
-            f'<td class="os-col os-open-jumps" valign="top" style="vertical-align:top;padding:6px 0 0 0;">{jump_list(art, chips)}</td>'
+    """Right under the opening picture: Taylor's small letter, with the jump buttons on a cork board beside
+    it, so events start right after (Taylor, Oct 3). On phones the letter comes first, then the board."""
+    cork = art(DECOR + "cork.png")
+    return (f'<table {T} class="os-opening" width="100%" style="width:100%;border-collapse:separate;"><tr>'
+            f'<td class="os-col os-open-letter" width="50%" valign="top" style="width:50%;vertical-align:top;padding:0 18px 0 0;">'
+            f'{anchor("note")}{small_letter(art, paras_html, width=248)}</td>'
+            f'<td class="os-col os-open-jumps os-board os-sh" valign="middle" bgcolor="{CORK}" background="{cork}" '
+            f'style="vertical-align:middle;padding:20px 16px 22px 16px;background-color:{CORK};background-image:url(\'{cork}\');'
+            f'border:4px solid {CORK_FRAME};border-radius:22px;">{jump_list(art, chips)}</td>'
             f'</tr></table>')
 
 
@@ -949,6 +952,14 @@ u + #os-body a{text-decoration:none;}
 .os-tr{transform:rotate(.8deg);}
 .os-pay-note{white-space:nowrap;}
 .os-sec{height:52px !important;line-height:52px !important;font-size:0 !important;}
+@media only screen and (min-width:900px){
+  .os-open-jumps{padding:26px 24px 26px 24px !important;}
+  .os-jump > td{padding-bottom:22px !important;}
+  .os-jump:last-child > td{padding-bottom:0 !important;}
+  .os-jumpic{width:96px !important;padding-right:14px !important;}
+  .os-jumpimg{width:84px !important;height:84px !important;}
+  .os-jumpbtn a{font-size:21px !important;line-height:25px !important;padding:16px 22px !important;}
+}
 @media only screen and (min-width:700px){
   .os-wrap{max-width:880px !important;width:100% !important;}
   .os-browser-cols{display:flex !important;flex-direction:row !important;gap:16px !important;align-items:stretch !important;width:100% !important;}
@@ -979,16 +990,16 @@ u + #os-body a{text-decoration:none;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;padding:0 !important;}
   .os-col-photo{padding:0 0 14px 0 !important;text-align:center !important;}
   .os-guestphoto,.os-aboutphoto{margin:0 auto !important;}
-  .os-open-letter{padding:0 0 24px 0 !important;}
+  .os-open-letter{padding:0 0 26px 0 !important;}
+  .os-open-jumps{display:block !important;width:auto !important;padding:18px 10px 6px 10px !important;}
   .os-jumps tbody{display:flex !important;flex-wrap:wrap !important;width:100% !important;}
   .os-jump{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;}
-  .os-jump > td{display:block !important;padding:0 0 14px 0 !important;}
-  .os-jump table{margin:0 auto !important;}
+  .os-jump > td{display:block !important;padding:0 4px 16px 4px !important;}
   .os-jumpic,.os-jumpbtn{display:block !important;width:100% !important;padding:0 !important;text-align:center !important;}
   .os-jumpic a{display:inline-block !important;}
-  .os-jumpbtn{padding:4px 0 0 0 !important;}
-  .os-jumpbtn a{padding-left:11px !important;padding-right:11px !important;font-size:14px !important;}
-  .os-jumpimg{width:56px !important;height:56px !important;}
+  .os-jumpbtn{padding:6px 0 0 0 !important;}
+  .os-jumpbtn a{display:inline-block !important;padding:10px 14px !important;font-size:16px !important;line-height:20px !important;}
+  .os-jumpimg{width:64px !important;height:64px !important;}
   .os-pill{white-space:normal !important;}
   p{overflow-wrap:break-word;}
   .os-chip td{white-space:nowrap !important;}
@@ -1606,7 +1617,7 @@ def main():
         # the site pictures
         for f in ("decor/bunting.png", "decor/stamp.png", "decor/airmail-top.png", "decor/calendar-top.png",
                   "decor/tag-eyelet.png", "decor/ribbon-gold.png", "decor/ribbon-blue.png", "decor/garland.png", "decor/dusk-top.png", "decor/stars.png", "decor/dusk-wave.png", "hero-sky.jpg", "decor/swoosh.png", "decor/cork.png", "decor/ruled.png", "decor/foot-hills.png",
-                  "decor/pin-brick.png", "decor/notch-l.png", "hero-land.jpg", "vh-land.jpg", "stop-1.png", "stop-4.png",
+                  "decor/pin-brick.png", "decor/notch-l.png", "hero-land.jpg", "vh-land.jpg", "jump-events.png", "jump-library.png",
                   "guest-1-print.jpg", "hope-print.jpg", "decor/about-print.jpg", "signature-taylor.png",
                   "featured-monsters-museum-compact.jpg", "guide-therapy-styles-landscape-compact.jpg", "guide-grief-landscape-compact.jpg"):
             assert f"art/{f}" in doc, f
