@@ -754,7 +754,14 @@ def forward_line(site):
             + f'<div style="margin:6px 0 0 0;text-align:center;">{pill(f"{site}/newsletter", "ourspecialvillagetn.com/newsletter", "gold", "4px 0 0 0")}</div>')
 
 
-def footer_rows(art, site, unsub_href):
+# Taylor, Oct 4: "add this to every newsletter at the bottom moving forward". Her words, exactly as she wrote them.
+OWNER_LINE = "Our Special Village is owned and operated by Errant Software, LLC, in partnership with Little Luminaries Therapy Services"
+OWNER_ADDRESS = "1810 Ward Dr, Suite 101, Murfreesboro, TN 37129"
+# October already went out with the older line, so its page keeps it until Taylor says otherwise.
+OCTOBER_OWNER_LINE = "Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC"
+
+
+def footer_rows(art, site, unsub_href, owner_line=OWNER_LINE):
     """The site's footer under its dusk hills: navy, the pin in a paper circle, gold buttons."""
     brand = (f'<table {T} style="border-collapse:collapse;"><tr>'
              f'<td style="padding:0 10px 0 0;vertical-align:middle;">'
@@ -770,7 +777,7 @@ def footer_rows(art, site, unsub_href):
                  cls="os-footnote")
              + pill_row([(unsub_href, "Unsubscribe in one click"), (f"{site}/privacy", "Privacy"), (f"{site}/contact", "Contact")],
                         "2px 0 14px 0", on_dark=True)
-             + p("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC<br>1810 Ward Dr, Suite 101, Murfreesboro, TN 37129",
+             + p(f"{owner_line}<br>{OWNER_ADDRESS}",
                  13, 19, ON_DARK_MUTED, 400, cls="os-footnote"))
     return (fullrow(img(art(DECOR + "foot-hills.png"), 600, "", style="max-width:none;"))
             + f'<tr><td class="os-navy os-pad os-footer" bgcolor="{NAVY_DEEP}" style="background-color:{NAVY_DEEP};'
@@ -1257,7 +1264,7 @@ def build_html(base, browser=False):
     o.append(sp(22))
     o.append(padrow(forward_line(SITE)))
     o.append(sp(30))
-    o.append(footer_rows(art, SITE, unsub_href))
+    o.append(footer_rows(art, SITE, unsub_href, OCTOBER_OWNER_LINE))
     o.append('</table></td></tr></table></body></html>')
     return compact("\n".join(o) + "\n")
 
@@ -1435,8 +1442,8 @@ def build_text():
     w("Unsubscribe in one click: {$unsubscribe}")
     w(f"Privacy: {SITE}/privacy · Contact: {SITE}/contact")
     w("")
-    w("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC")
-    w("1810 Ward Dr, Suite 101, Murfreesboro, TN 37129")
+    w(OCTOBER_OWNER_LINE)
+    w(OWNER_ADDRESS)
     return reorder_text("\n".join(L) + "\n")
 
 

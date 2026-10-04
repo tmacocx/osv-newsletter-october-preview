@@ -305,7 +305,7 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(sp(22))
     o.append(padrow(O.forward_line(SITE)))
     o.append(sp(30))
-    o.append(O.footer_rows(art, SITE, unsub_href))
+    o.append(O.footer_rows(art, SITE, unsub_href, O.OWNER_LINE))
     o.append('</table></td></tr></table></body></html>')
     return render_ph(O.compact("\n".join(o) + "\n"))
 
@@ -461,8 +461,8 @@ def build_text(issue, deadlines_url):
     w("Unsubscribe in one click: {$unsubscribe}")
     w(f"Privacy: {SITE}/privacy · Contact: {SITE}/contact")
     w("")
-    w("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC")
-    w("1810 Ward Dr, Suite 101, Murfreesboro, TN 37129")
+    w(O.OWNER_LINE)
+    w(O.OWNER_ADDRESS)
     return O.reorder_text("\n".join(L) + "\n")
 
 
@@ -502,6 +502,9 @@ def check(issue, email, browser, txt, deadlines):
     assert email.count("Register for Village Hall") <= 1
     assert f'{issue["month"]} in Our <span class="os-hl">Special Village</span>' in email
     assert 'href="tel:988"' in email
+    for s in (email, browser, txt):  # Taylor's ownership line, word for word, at the very bottom
+        assert O.OWNER_LINE in s and O.OWNER_ADDRESS in s and "PLLC" not in s, f"{issue['id']}: ownership line"
+    assert txt.rstrip().endswith(O.OWNER_LINE + "\n" + O.OWNER_ADDRESS), f"{issue['id']}: ownership line not last"
     order = ["id=\"note\"", "id=\"events\"", "id=\"deadlines\"", "id=\"village-hall\"", "id=\"library\"",
              "id=\"hope\"", "id=\"question\"", "id=\"ongoing\""]
     idx = [email.find(x) for x in order]
