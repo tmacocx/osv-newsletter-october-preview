@@ -757,8 +757,7 @@ def forward_line(site):
 # Taylor, Oct 4: "add this to every newsletter at the bottom moving forward". Her words, exactly as she wrote them.
 OWNER_LINE = "Our Special Village is owned and operated by Errant Software, LLC, in partnership with Little Luminaries Therapy Services"
 OWNER_ADDRESS = "1810 Ward Dr, Suite 101, Murfreesboro, TN 37129"
-# October already went out with the older line, so its page keeps it until Taylor says otherwise.
-OCTOBER_OWNER_LINE = "Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC"
+# October's page too (Taylor, Oct 4, on the decision card: "Update October").
 
 
 def footer_rows(art, site, unsub_href, owner_line=OWNER_LINE):
@@ -1264,7 +1263,7 @@ def build_html(base, browser=False):
     o.append(sp(22))
     o.append(padrow(forward_line(SITE)))
     o.append(sp(30))
-    o.append(footer_rows(art, SITE, unsub_href, OCTOBER_OWNER_LINE))
+    o.append(footer_rows(art, SITE, unsub_href))
     o.append('</table></td></tr></table></body></html>')
     return compact("\n".join(o) + "\n")
 
@@ -1442,7 +1441,7 @@ def build_text():
     w("Unsubscribe in one click: {$unsubscribe}")
     w(f"Privacy: {SITE}/privacy · Contact: {SITE}/contact")
     w("")
-    w(OCTOBER_OWNER_LINE)
+    w(OWNER_LINE)
     w(OWNER_ADDRESS)
     return reorder_text("\n".join(L) + "\n")
 
@@ -1661,7 +1660,7 @@ def main():
                    "Connect with other local parents", "Our Special Village Online Parent Group", "Drop in any Thursday beginning October 1",
                    "We Rock the Spectrum Parent Group", "Led by Cari Parr", "$15 per child for kids to play", "Discounted gym admission is available separately.",
                    "Join the Online Group", "Plan Your Visit", "About Our Special Village", "Numbers worth keeping", "Suicide &amp; Crisis Lifeline",
-                   "Know a family who could use this?", "Unsubscribe in one click", "Little Luminaries Therapy Services, PLLC",
+                   "Know a family who could use this?", "Unsubscribe in one click", OWNER_LINE, OWNER_ADDRESS,
                    "6050 Dana Way, Antioch, TN", EVERGREEN_BLURB, "Touch-A-Truck after treats.", "700 Dan P. Herron Drive, Gallatin",
                    "1257 Broad Street, Murfreesboro", "5019 WalkUp Road, Pegram, TN", "About 4 hours 15 min", "(931) 265-5376",
                    SPOOK_ON_SITE, SPOOK_THANKS):
