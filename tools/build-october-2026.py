@@ -14,7 +14,10 @@ T410: Free TicketsCandy registration link on Spooktacular. Oct 1: its on-site +
 sponsor copy shows openly above the button (expanders don't open in Outlook or Gmail).
 Oct 1 (Taylor): this first Village Hall is free, so the ticket says "Free for every
 family" instead of the pay-what-you-can boxes. tools/outlook-copy.py makes the
-send-it-yourself Outlook copy.
+send-it-yourself Outlook copy. Later Oct 1 (Taylor): We Rock's Trick&Treat&Play joins
+The month ahead (Sat Oct 31, morning, before Evergreen). The Frist's Sensory Sunday Hour
+(Sun Oct 11) is gone: its event page is 404 and the Frist's own calendar, which runs into
+late 2027, lists no Sensory Sunday Hour (Oct 11 is a regular Family Sunday).
 T430: Wall of Hope returns between New in the library and One question,
 answered. Sept 30: the story is Nicole's ("His love needs no words.", from the
 site), not Taylor's. Every Wall of Hope signs off with the name, then
@@ -53,6 +56,7 @@ Edit this file and run it. Do not hand-edit the generated HTML.
     python3 tools/build-october-2026.py
 """
 import argparse
+import json
 import os
 import re
 
@@ -281,13 +285,23 @@ def site_header(art, site):
 SKY_FALLBACK = {"fall": "#f3e2c8", "winter": "#efe1d0"}
 
 
-def hero(art, title_html, season="fall",
+def dark_safe(art_dir):
+    """What tools/dark-safe-art.py recorded for an art folder: hero_sky_bg, the colour the sky was cut
+    against (it must sit under the sky), and hero_land, the 2x pixel heights of the land's two slices."""
+    with open(os.path.join(art_dir, "dark-safe.json")) as fh:
+        return json.load(fh)
+
+
+def hero(art, title_html, season="fall", safe=None,
          place="Murfreesboro &amp; surrounding areas &middot; Tennessee",
          tagline="It takes a village. Welcome to ours.",
          land_alt="Illustration of the village in autumn: homes, neighbors walking the path, and rolling Middle Tennessee hills."):
     """The homepage hero (home.css .home-hero): golden-hour sky, the place line between two gold
     rules, a big title with the gold swash, the handwritten tagline, then the hills and the village."""
-    sky, bg = art("hero-sky.jpg"), SKY_FALLBACK.get(season, "#f3e2c8")
+    # tools/dark-safe-art.py: the sky and the top strip of the land are see-through washes over
+    # hero_sky_bg, so a dark-mode app that repaints that colour dark gets a night sky instead of a pale block.
+    safe = safe or {}
+    sky, bg = art("hero-sky.png"), safe.get("hero_sky_bg") or SKY_FALLBACK.get(season, "#f3e2c8")
     rule_td = f'<td class="os-hrule" width="26" style="width:26px;"><div style="height:2px;background-color:{GOLD};border-radius:2px;font-size:0;line-height:0;">&nbsp;</div></td>'
     place_row = (f'<table {T} align="center" style="margin:0 auto;"><tr>{rule_td}'
                  f'<td class="os-place" style="padding:0 10px;font:800 12px/16px {FONT};letter-spacing:2px;text-transform:uppercase;color:{GOLD_DARK};text-align:center;">{place}</td>'
@@ -300,7 +314,18 @@ def hero(art, title_html, season="fall",
     return (f'<tr><td class="os-hero-sky os-pad" align="center" bgcolor="{bg}" background="{sky}" '
             f"style=\"background-color:{bg};background-image:url('{sky}');background-size:100% 100%;background-position:center bottom;"
             f'background-repeat:no-repeat;border-radius:28px 28px 0 0;padding:30px 24px 6px 24px;">{text}</td></tr>'
-            + fullrow(img(art("hero-land.jpg"), 600, land_alt, style="max-width:none;", cls="os-hero")))
+            + land_rows(art, safe.get("hero_land_bg", bg), safe.get("hero_land"), land_alt))
+
+
+def land_rows(art, bg, split, alt):
+    """The hills and the village under the hero sky: one picture, or (dark-safe) its see-through sky strip
+    over its sky colour (`bg`) and the painted rest beneath it."""
+    if not split:
+        return fullrow(img(art("hero-land.jpg"), 600, alt, style="max-width:none;", cls="os-hero"))
+    top, mid = (h // 2 for h in split)
+    cell = f'<tr><td bgcolor="{bg}" style="padding:0;font-size:0;line-height:0;background-color:{bg};">'
+    return (cell + img(art("hero-land-top.png"), 600, "", height=top, style="max-width:none;") + '</td></tr>'
+            + fullrow(img(art("hero-land-mid.jpg"), 600, alt, height=mid, style="max-width:none;", cls="os-hero")))
 
 
 def dusk_band(art, id_, eyebrow, title, inner):
@@ -316,50 +341,83 @@ def dusk_band(art, id_, eyebrow, title, inner):
             + fullrow(img(art(DECOR + "dusk-wave.png"), 600, "", style="max-width:none;")))
 
 
-def letter(art, h1_text, paras_html, name="Dr. Taylor Hickok", cred="Founder &middot; SLP &middot; AuDHD parent"):
-    """Taylor's note as the site's stamped, postmarked airmail letter (newsletter.css .nl-card)."""
-    byline = (f'<table {T} style="border-collapse:collapse;"><tr>'
-              f'<td style="padding:0 12px 0 0;vertical-align:middle;">'
-              f'<img class="os-intro-photo" src="{art("taylor-hickok-160.jpg")}" width="68" height="68" alt="Dr. Taylor Hickok, founder of Our Special Village." '
-              f'style="display:block;width:68px;height:68px;border:3px solid #ffffff;border-radius:50%;"></td>'
+# The jump buttons, in the order the sections run (Taylor, Oct 1: events, deadlines, Village Hall, the rest).
+JUMPS = [("#events", "Events"), ("#deadlines", "Deadlines"), ("#village-hall", "Village Hall"), ("#library", "New guides")]
+
+
+def small_letter(art, paras_html, width=298):
+    """Taylor's note as a small airmail letter (Taylor, Oct 3: "my letter at the top, but make it smaller
+    and to the side"). Same words as before, in a smaller size, without the stamp."""
+    byline = (f'<table {T} style="border-collapse:collapse;margin:8px 0 10px 0;"><tr>'
+              f'<td style="padding:0 10px 0 0;vertical-align:middle;">'
+              f'<img src="{art("taylor-hickok-160.jpg")}" width="46" height="46" alt="Dr. Taylor Hickok, founder of Our Special Village." '
+              f'style="display:block;width:46px;height:46px;border:2px solid #ffffff;border-radius:50%;"></td>'
               f'<td style="vertical-align:middle;">'
-              + p(name, 16, 20, INK, 700)
-              + p(cred, 13, 18, MUTED, 400, margin="2px 0 0 0", extra="white-space:nowrap;", cls="os-cred")
+              + p("Dr. Taylor Hickok", 15, 19, INK, 700)
+              + p("Founder &middot; SLP &middot; AuDHD parent", 12, 17, MUTED, 400, margin="1px 0 0 0")
               + '</td></tr></table>')
-    head_row = (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
-                f'<td valign="middle" style="vertical-align:middle;">{byline}</td>'
-                f'<td class="os-stamp" width="112" align="right" valign="top" style="width:112px;vertical-align:top;line-height:0;">'
-                f'{img(art(DECOR + "stamp.png"), 112, "", 88, fluid=False)}</td></tr></table>')
-    title = (f'<h1 class="os-h1 os-ink" style="margin:12px 0 12px 0;font:600 34px/38px {DISPLAY};'
-             f'color:{INK};letter-spacing:-0.8px;">{h1_text}</h1>') if h1_text else '<div style="height:14px;font-size:0;line-height:0;">&nbsp;</div>'
-    body = (head_row
-            + title
+    head = (f'<table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+            f'<td valign="bottom" style="vertical-align:bottom;">{hand("A note from Taylor", 20)}</td>'
+            f'<td width="60" align="right" valign="top" style="width:60px;vertical-align:top;line-height:0;">'
+            f'{img(art(DECOR + "stamp.png"), 60, "", 47, fluid=False)}</td></tr></table>')
+    body = (head
+            + byline
             + paras_html
-            + p("With love,", 16, 24, BODY, 400, margin="12px 0 2px 0")
-            + f'<img class="os-sig" src="{art("signature-taylor.png")}" width="96" height="55" alt="Taylor" '
-              f'style="display:block;width:96px;height:auto;margin:0 0 0 8px;border:0;font:italic 22px Georgia,serif;color:{ACCENT};">')
+            + p("With love,", 14, 21, BODY, 400, margin="10px 0 0 0")
+            + f'<img src="{art("signature-taylor.png")}" width="74" height="42" alt="Taylor" '
+              f'style="display:block;width:74px;height:auto;margin:0 0 0 6px;border:0;font:italic 18px Georgia,serif;color:{ACCENT};">')
     edge = lambda f, r: (f'<tr><td style="padding:0;font-size:0;line-height:0;">'
-                         f'{img(art(DECOR + f), 532, "", style=f"max-width:100%;border-radius:{r};")}</td></tr>')
-    return paper(body, "18px 24px 18px 24px", NOTE, "8px", top=edge("airmail-top.png", "8px 8px 0 0"),
+                         f'{img(art(DECOR + f), width, "", style=f"border-radius:{r};")}</td></tr>')
+    return paper(body, "12px 18px 16px 18px", NOTE, "8px", "os-tl", top=edge("airmail-top.png", "8px 8px 0 0"),
                  bottom=edge("airmail-bottom.png", "0 0 8px 8px"))
 
 
-def stops_block(art, chips):
-    """In this issue: the site's "Stay connected" stops, Taylor's pictograms on the painted path."""
-    cells = "".join(
-        f'<td class="os-stop" width="25%" valign="top" align="center" style="width:25%;vertical-align:top;">'
-        f'<a href="{href}" style="display:block;text-decoration:none;color:{INK};">'
-        f'{img(art(f"stop-{i + 1}.png"), 133, "", style="width:100%;max-width:none;")}'
-        f'<span class="os-stoplabel os-ink" style="display:block;padding:2px 4px 0;font:600 15px/19px {DISPLAY};color:{INK};">{label}</span></a></td>'
+def note_paras(paras, highlight=None):
+    """The note's paragraphs at the small letter's size, with one phrase highlighted in soft gold."""
+    out = []
+    for i, para in enumerate(paras):
+        if highlight and highlight in para:
+            para = para.replace(highlight, f'<span style="background-color:{GOLD_SOFT};color:{INK};padding:1px 3px;border-radius:4px;">{highlight}</span>')
+        out.append(p(para, 14, 21, BODY, 400, margin=("0" if i == 0 else "8px 0 0 0")))
+    return "".join(out)
+
+
+def jump_list(art, chips):
+    """The jump buttons on a cork board beside the letter: Taylor's pictogram on a paper circle, then a big
+    pill button with a down arrow (Oct 1: she hadn't realized the old stops were links; Oct 4: "its too
+    small", so they fill the board). Two by two on phones, each picture above its button."""
+    jump = (f"display:block;padding:12px 14px;border-radius:99px;font:600 17px/21px {DISPLAY};white-space:nowrap;"
+            f"text-decoration:none;background-color:{WHITE};border:2px solid {INK};border-bottom-width:5px;color:{INK};")
+    rows = "".join(
+        f'<tr class="os-jump"><td style="padding:0 0 {0 if i == len(chips) - 1 else 14}px 0;"><table {T} width="100%" style="width:100%;border-collapse:collapse;"><tr>'
+        f'<td class="os-jumpic" width="64" style="width:64px;vertical-align:middle;padding:0 8px 0 0;line-height:0;">'
+        f'<a href="{href}" style="display:block;text-decoration:none;">'
+        f'{img(art(f"jump-{href[1:]}.png"), 64, "", 64, fluid=False, cls="os-jumpimg")}</a></td>'
+        f'<td class="os-jumpbtn" style="vertical-align:middle;"><a class="os-ink" href="{href}" style="{jump}">{label}&nbsp;&darr;</a></td>'
+        f'</tr></table></td></tr>'
         for i, (href, label) in enumerate(chips))
-    return (hand("In this issue", 22, GOLD_INK, "0 0 2px 0", "center")
-            + f'<table {T} class="os-stops" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;"><tr>{cells}</tr></table>')
+    return (hand("Tap a button to jump there", 23, INK, "0 0 14px 0")
+            + f'<table {T} class="os-jumps" width="100%" style="width:100%;border-collapse:collapse;">{rows}</table>')
+
+
+def opening_block(art, paras_html, chips):
+    """Right under the opening picture: Taylor's small letter, with the jump buttons on a cork board beside
+    it, so events start right after (Taylor, Oct 3). On phones the letter comes first, then the board."""
+    cork = art(DECOR + "cork.png")
+    return (f'<table {T} class="os-opening" width="100%" style="width:100%;border-collapse:separate;"><tr>'
+            f'<td class="os-col os-open-letter" width="50%" valign="top" style="width:50%;vertical-align:top;padding:0 18px 0 0;">'
+            f'{anchor("note")}{small_letter(art, paras_html, width=248)}</td>'
+            f'<td class="os-col os-open-jumps os-board os-sh" valign="middle" bgcolor="{CORK}" background="{cork}" '
+            f'style="vertical-align:middle;padding:20px 16px 22px 16px;background-color:{CORK};background-image:url(\'{cork}\');'
+            f'border:4px solid {CORK_FRAME};border-radius:22px;">{jump_list(art, chips)}</td>'
+            f'</tr></table>')
 
 
 def tag_card(art, inner):
-    """Deadline watch as the site's paper tag, eyelet and string at the top."""
-    top = (f'<tr><td align="right" style="padding:0 20px 0 0;font-size:0;line-height:0;">'
-           f'{img(art(DECOR + "tag-eyelet.png"), 30, "", 42, fluid=False, style="display:inline-block;")}</td></tr>')
+    """Deadline watch as the site's paper tag: a brass eyelet with a twine loop at the top right
+    (tools/tag-loop.svg; Oct 1, 2026, the old straight string ran off the rounded corner)."""
+    top = (f'<tr><td align="right" style="padding:0 18px 0 0;font-size:0;line-height:0;">'
+           f'{img(art(DECOR + "tag-eyelet.png"), 64, "", 48, fluid=False, style="display:inline-block;")}</td></tr>')
     return paper(inner, "0 20px 8px 20px", BLUSH, "8px 36px 8px 8px", top=top)
 
 
@@ -718,12 +776,18 @@ def forward_line(site):
             + f'<div style="margin:6px 0 0 0;text-align:center;">{pill(f"{site}/newsletter", "ourspecialvillagetn.com/newsletter", "gold", "4px 0 0 0")}</div>')
 
 
-def footer_rows(art, site, unsub_href):
+# Taylor, Oct 4: "add this to every newsletter at the bottom moving forward". Her words, exactly as she wrote them.
+OWNER_LINE = "Our Special Village is owned and operated by Errant Software, LLC, in partnership with Little Luminaries Therapy Services"
+OWNER_ADDRESS = "1810 Ward Dr, Suite 101, Murfreesboro, TN 37129"
+# October's page too (Taylor, Oct 4, on the decision card: "Update October").
+
+
+def footer_rows(art, site, unsub_href, owner_line=OWNER_LINE):
     """The site's footer under its dusk hills: navy, the pin in a paper circle, gold buttons."""
     brand = (f'<table {T} style="border-collapse:collapse;"><tr>'
              f'<td style="padding:0 10px 0 0;vertical-align:middle;">'
-             f'<img src="{art("osv-mark-80.png")}" width="44" height="44" alt="" style="display:block;width:44px;height:44px;border:0;'
-             f'border-radius:22px;background-color:{WHITE};"></td>'
+             f'<img src="{art("osv-mark-disc.png")}" width="44" height="44" alt="" style="display:block;width:44px;height:44px;border:0;'
+             f'border-radius:22px;"></td>'
              f'<td class="os-white" style="vertical-align:middle;font:600 21px/24px {DISPLAY};color:{WHITE};white-space:nowrap;">Our Special Village</td></tr></table>')
     inner = (brand
              + p("Our Special Village &middot; Murfreesboro and surrounding areas, Tennessee", 14, 21, WHITE, 700, margin="14px 0 6px 0",
@@ -734,7 +798,7 @@ def footer_rows(art, site, unsub_href):
                  cls="os-footnote")
              + pill_row([(unsub_href, "Unsubscribe in one click"), (f"{site}/privacy", "Privacy"), (f"{site}/contact", "Contact")],
                         "2px 0 14px 0", on_dark=True)
-             + p("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC<br>1810 Ward Dr, Suite 101, Murfreesboro, TN 37129",
+             + p(f"{owner_line}<br>{OWNER_ADDRESS}",
                  13, 19, ON_DARK_MUTED, 400, cls="os-footnote"))
     return (fullrow(img(art(DECOR + "foot-hills.png"), 600, "", style="max-width:none;"))
             + f'<tr><td class="os-navy os-pad os-footer" bgcolor="{NAVY_DEEP}" style="background-color:{NAVY_DEEP};'
@@ -756,6 +820,9 @@ RECESS_MAIL = "mailto:rebecca.whitaker@ottercreek.org"
 DOLLYWOOD_URL = "https://dreamcooperative.com/"
 EVERGREEN_URL = "https://evergreenls.org/trunkortreat/"
 EVERGREEN_BLURB = "Fun, fellowship, and safe Halloween activities where everyone matters."
+WEROCK_HALLOWEEN_URL = "https://ecom.roller.app/werockthespectrummurfreesboro/booknow/en-us/product/2093802?date=2026-10-31"
+WEROCK_HALLOWEEN_BLURB = ("Kept inside this year: a sensory-friendly Halloween that&rsquo;s dye-free and stress-free, "
+                          "with sensory bins, crafts, games, and pizza.")
 
 # T429 drive times: OSRM from Murfreesboro Public Square, rounded up to 5 minutes.
 # Gallatin High School 55.5 -> About 60 min. Dollywood 252.7 -> About 4 hours 15 min.
@@ -774,11 +841,6 @@ SECONDARY_EVENTS = [
          meta="12:00&ndash;3:00 PM &middot; Nashville &middot; Free, food provided &middot; About 45 min",
          sensory="indoor, small-group games for autistic kids, teens, and adults; families welcome.",
          link=("https://autismtn.org/events/EventDetails.aspx?id=2003814", "Register")),
-    dict(chip=chip("Sun", "11", "Oct"),
-         title="Sensory Sunday Hour &middot; Frist Art Museum",
-         meta="12:00&ndash;1:00 PM &middot; Frist Art Museum, Nashville &middot; Free for members and ages 18 and under &middot; About 45 min",
-         sensory="gallery sound lowered for the hour, multisensory carts with volunteers.",
-         link=("https://fristartmuseum.org/event/sensory-sunday-hour-5/", "Details")),
     dict(chip=chip("Oct", "16", "Nov 1"),
          title="Boo at the Zoo &middot; Nashville Zoo",
          meta="Nightly 5:00&ndash;9:00 PM &middot; $19&ndash;$23 ages 2+, parking $10 &middot; About 35 min",
@@ -818,6 +880,14 @@ SECONDARY_EVENTS = [
          meta="6:00&ndash;7:00 PM &middot; 5019 WalkUp Road, Pegram, TN &middot; About 65 min",
          note="Indoors with trick-or-treat and games.",
          link=(PEGRAM_FLYER, "Details")),
+    # Oct 1 (Taylor): We Rock's indoor Halloween, from their post. Same booking link as the site's
+    # events calendar (Roller "Spooktacular 2026", Sat Oct 31). Morning, so before Evergreen.
+    dict(chip=chip("Sat", "31", "Oct"),
+         title="Trick&amp;Treat&amp;Play &middot; We Rock the Spectrum Murfreesboro",
+         meta=("Trick-or-treating 9:30 AM, Halloween play 10:00 AM&ndash;12:00 PM &middot; "
+               "820 N Thompson Lane, Murfreesboro &middot; $20 per child, $10 per sibling, adults free"),
+         note=WEROCK_HALLOWEEN_BLURB,
+         link=(WEROCK_HALLOWEEN_URL, "Book your ticket")),
     dict(chip=chip("Sat", "31", "Oct"),
          title="Evergreen Trunk or Treat &middot; Evergreen Life Services",
          meta="1:00&ndash;3:00 PM &middot; 6050 Dana Way, Antioch, TN &middot; Free &middot; About 30 min",
@@ -910,6 +980,14 @@ u + #os-body a{text-decoration:none;}
 .os-tr{transform:rotate(.8deg);}
 .os-pay-note{white-space:nowrap;}
 .os-sec{height:52px !important;line-height:52px !important;font-size:0 !important;}
+@media only screen and (min-width:900px){
+  .os-open-jumps{padding:26px 24px 26px 24px !important;}
+  .os-jump > td{padding-bottom:22px !important;}
+  .os-jump:last-child > td{padding-bottom:0 !important;}
+  .os-jumpic{width:96px !important;padding-right:14px !important;}
+  .os-jumpimg{width:84px !important;height:84px !important;}
+  .os-jumpbtn a{font-size:21px !important;line-height:25px !important;padding:16px 22px !important;}
+}
 @media only screen and (min-width:700px){
   .os-wrap{max-width:880px !important;width:100% !important;}
   .os-browser-cols{display:flex !important;flex-direction:row !important;gap:16px !important;align-items:stretch !important;width:100% !important;}
@@ -940,12 +1018,17 @@ u + #os-body a{text-decoration:none;}
   .os-col{display:block !important;width:100% !important;max-width:100% !important;padding:0 !important;}
   .os-col-photo{padding:0 0 14px 0 !important;text-align:center !important;}
   .os-guestphoto,.os-aboutphoto{margin:0 auto !important;}
-  .os-stoplabel{font-size:13px !important;line-height:16px !important;}
-  .os-stamp{width:80px !important;}
-  .os-stamp img{width:80px !important;height:63px !important;}
-  .os-cred{font-size:12px !important;white-space:normal !important;}
+  .os-open-letter{padding:0 0 26px 0 !important;}
+  .os-open-jumps{display:block !important;width:auto !important;padding:18px 10px 6px 10px !important;}
+  .os-jumps tbody{display:flex !important;flex-wrap:wrap !important;width:100% !important;}
+  .os-jump{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;}
+  .os-jump > td{display:block !important;padding:0 4px 16px 4px !important;}
+  .os-jumpic,.os-jumpbtn{display:block !important;width:100% !important;padding:0 !important;text-align:center !important;}
+  .os-jumpic a{display:inline-block !important;}
+  .os-jumpbtn{padding:6px 0 0 0 !important;}
+  .os-jumpbtn a{display:inline-block !important;padding:10px 14px !important;font-size:16px !important;line-height:20px !important;}
+  .os-jumpimg{width:64px !important;height:64px !important;}
   .os-pill{white-space:normal !important;}
-  .os-intro-photo{width:56px !important;height:56px !important;}
   p{overflow-wrap:break-word;}
   .os-chip td{white-space:nowrap !important;}
   .os-pay-wrap{text-align:center !important;}
@@ -954,19 +1037,7 @@ u + #os-body a{text-decoration:none;}
   .os-paycell{display:block !important;width:50% !important;max-width:50% !important;box-sizing:border-box !important;padding:0 4px 8px 0 !important;}
   .os-paycell:nth-child(even){padding:0 0 8px 4px !important;}
 }
-@media only screen and (max-width:359px){
-  .os-stoplabel{font-size:12px !important;}
-  .os-cred{font-size:11px !important;}
-}
 """.replace("PAPER_SHADOW", PAPER_SHADOW).replace("SHADOW", SHADOW)
-    dark = f"""
-[data-ogsb] .os-bg{{background-color:{CREAM} !important;}} [data-ogsb] .os-card{{background-color:{NOTE} !important;}} [data-ogsb] .os-navy,[data-ogsb] .os-btn-navy{{background-color:{INK} !important;}} [data-ogsb] .os-btn-gold,[data-ogsb] .os-stepbg{{background-color:{GOLD} !important;}}
-[data-ogsc] .os-ink{{color:{INK} !important;}} [data-ogsc] .os-body{{color:{BODY} !important;}} [data-ogsc] .os-muted{{color:{MUTED} !important;}} [data-ogsc] .os-accent{{color:{ACCENT} !important;}} [data-ogsc] .os-gold{{color:{GOLD} !important;}} [data-ogsc] .os-goldink{{color:{GOLD_INK} !important;}} [data-ogsc] .os-brick{{color:{BRICK_INK} !important;}} [data-ogsc] .os-sand{{color:{SAND} !important;}} [data-ogsc] .os-white{{color:{WHITE} !important;}}
-@media (prefers-color-scheme: dark){{
-  .os-bg{{background-color:{CREAM} !important;}} .os-card{{background-color:{NOTE} !important;}} .os-navy,.os-btn-navy{{background-color:{INK} !important;}} .os-btn-gold,.os-stepbg{{background-color:{GOLD} !important;}}
-  .os-ink{{color:{INK} !important;}} .os-body{{color:{BODY} !important;}} .os-muted{{color:{MUTED} !important;}} .os-accent{{color:{ACCENT} !important;}} .os-gold{{color:{GOLD} !important;}} .os-goldink{{color:{GOLD_INK} !important;}} .os-brick{{color:{BRICK_INK} !important;}} .os-sand{{color:{SAND} !important;}} .os-white{{color:{WHITE} !important;}}
-}}
-"""
     return f'''<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
@@ -976,7 +1047,7 @@ u + #os-body a{text-decoration:none;}
 <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&amp;family=Outfit:wght@500;600&amp;family=Patrick+Hand&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
-{dark}
+/*os-dark*/
 </style>
 <!--[if mso]>
 <style type="text/css">body,table,td,p,a,span{{font-family:Arial,Helvetica,sans-serif !important;}} p,td,a,span{{mso-line-height-rule:exactly;}}</style>
@@ -1017,6 +1088,69 @@ HOPE = dict(
 _TAG = re.compile(r"<(td|table|th|div|p|span|a|img|b)\b[^>]*>")
 
 
+# Classes that only existed to steer dark mode by hand; dark_lock() covers every colour now.
+DARK_ONLY_CLASSES = {"os-bg", "os-navy", "os-btn-navy", "os-btn-gold", "os-stepbg", "os-ink", "os-body", "os-muted",
+                     "os-accent", "os-gold", "os-goldink", "os-brick", "os-sand", "os-white", "os-cream"}
+_HEX = r"(#[0-9a-fA-F]{6})"
+
+
+def dark_lock(html):
+    """Keep the light design in every mail app that lets an email ask for it.
+
+    Taylor (Oct 1, after sending October): "for next time we gotta fix dark mode". Apple Mail and
+    Outlook for Mac and iPhone honour prefers-color-scheme; Outlook.com, the new Outlook and the
+    Outlook apps mark the colours they darkened with [data-ogsb] (backgrounds) and [data-ogsc]
+    (text). Every element that sets a colour gets a short class (b0, c0, d0...) and the head gets one
+    rule per colour putting it back. A half-locked email is worse than none (white text restored onto a
+    darkened button), so the lock covers all of them or the build fails.
+
+    Gmail's apps and Outlook on Windows can't be asked; tools/dark-safe-art.py makes the pictures
+    hold up when they repaint the page.
+    """
+    head_end = html.index("</head>")
+    toks = {"b": {}, "c": {}, "d": {}}
+
+    def tok(kind, color):
+        d = toks[kind]
+        if color not in d:
+            d[color] = f"{kind}{len(d)}"
+        return d[color]
+
+    def fix(m):
+        tag = m.group(0)
+        sm = re.search(r'style="([^"]*)"', tag)
+        style = sm.group(1) if sm else ""
+        new = []
+        bg = re.search(r"background(?:-color)?:\s*" + _HEX, style) or re.search(r'bgcolor="' + _HEX + '"', tag)
+        if bg:
+            new.append(tok("b", bg.group(1).lower()))
+        fg = re.search(r"(?:^|;)\s*color:\s*" + _HEX, style)
+        if fg:
+            new.append(tok("c", fg.group(1).lower()))
+        borders = {c.lower() for c in re.findall(r"border(?:-(?:top|right|bottom|left))?(?:-color)?:[^;\"]*?" + _HEX, style)}
+        if len(borders) == 1:
+            new.append(tok("d", borders.pop()))
+        cm = re.search(r' class="([^"]*)"', tag)
+        if cm:
+            classes = [c for c in cm.group(1).split() if c not in DARK_ONLY_CLASSES] + new
+            repl = f' class="{" ".join(classes)}"' if classes else ""
+            return tag[:cm.start()] + repl + tag[cm.end():]
+        if new:
+            name_end = len(m.group(1)) + 1
+            return tag[:name_end] + f' class="{" ".join(new)}"' + tag[name_end:]
+        return tag
+
+    body = re.sub(r"<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>", fix, html[head_end:])
+    prop = {"b": "background-color", "c": "color", "d": "border-color"}
+    attr = {"b": "data-ogsb", "c": "data-ogsc", "d": "data-ogsb"}
+    og = "".join(f"[{attr[k]}] .{t}{{{prop[k]}:{c}!important}}" for k, d in toks.items() for c, t in d.items())
+    media = "".join(f".{t}{{{prop[k]}:{c}!important}}" for k, d in toks.items() for c, t in d.items())
+    css = f"{og}\n@media (prefers-color-scheme:dark){{{media}}}"
+    head = html[:head_end]
+    assert "/*os-dark*/" in head
+    return head.replace("/*os-dark*/", css) + body
+
+
 def compact(html):
     """Trim inline CSS that the HTML attributes already say, to stay under Gmail's 102KB clip.
 
@@ -1052,17 +1186,39 @@ def build_html(base, browser=False):
 
     view_href = BROWSER_VIEW_URL if browser else "{$url}"
     unsub_href = BROWSER_UNSUB_URL if browser else "{$unsubscribe}"
-    # --- Opening: top bar, header, the village in its landscape, Taylor's letter ---
+    # --- Opening: top bar, header, the village in its landscape, then Taylor's small letter beside the
+    # jump buttons, then events, deadlines, Village Hall and the rest (Taylor, Oct 1 and Oct 3) ---
     o.append(f'<tr><td style="padding:0 0 12px 0;">{top_bar("October 2026", view_href)}</td></tr>')
     o.append(padrow(site_header(art, SITE), pad="0 16px 14px 16px"))
-    o.append(hero(art, 'October in Our <span class="os-hl">Special Village</span>', "fall"))
-    alone_hi = f'<span style="background-color:{GOLD_SOFT};color:{INK};padding:1px 4px;border-radius:4px;">{ALONE_PHRASE}</span>'
-    paras = "".join(p(para.replace(ALONE_PHRASE, alone_hi), 16, 25, BODY, 400, margin=("0" if i == 0 else "10px 0 0 0"))
-                    for i, para in enumerate(NOTE_PARAS))
-    o.append(padrow(letter(art, None, paras)))
+    o.append(hero(art, 'October in Our <span class="os-hl">Special Village</span>', "fall",
+                  dark_safe(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "art"))))
     o.append(sp(26))
-    o.append(padrow(stops_block(art, [("#deadlines", "Fall break"), ("#ongoing", "Parent support"),
-                                      ("#events", "Sensory-friendly events"), ("#library", "New resources")]), pad="0 22px"))
+    o.append(padrow(opening_block(art, note_paras(NOTE_PARAS, ALONE_PHRASE), JUMPS)))
+
+    # --- The month ahead: featured night, then the calendar page ---
+    o.append(major_sp())
+    o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.",
+                          eyebrow="Happening soon"))
+    o.append(sp(14))
+    featured_art = story_img(art("featured-monsters-museum-compact.jpg"), 600,
+                             "Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones",
+                             link=MONSTERS_URL, extra_style="margin:0 auto;")
+    featured_copy = (hand("Featured", 21, GOLD_INK, "12px 0 0 0")
+                     + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 19, 25, INK, 700, margin="4px 0 0 0")
+                     + p("Thu Oct 15 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required", 16, 24, BODY, 400, margin="6px 0 0 0")
+                     + pill_row([(MONSTERS_URL, "Reserve your spot")], kind="gold", margin="6px 0 0 0"))
+    o.append(padrow(card(featured_art + featured_copy, pad="12px 12px 18px 12px")))
+    o.append(sp(20))
+    ev_rows = []
+    for i, e in enumerate(SECONDARY_EVENTS):
+        lines = [e["meta"]] + ([e["note"]] if e.get("note") else []) + disclose(e.get("disclose") or [])
+        content = item(e["title"], lines)
+        if e.get("link"):
+            content += pill_row([e["link"]])
+        ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
+    o.append(padrow(calendar_page(art, rows_table(ev_rows))))
+    o.append(sp(20))
+    o.append(padrow(button(EVENTS_CAL_URL, "View the full October events calendar", INK, CREAM, align="center")))
 
     # --- Three things: the deadline tag ---
     o.append(major_sp())
@@ -1101,31 +1257,6 @@ def build_html(base, browser=False):
         "questions. The lesson is recorded and sent to registrants; the Q&amp;A is not."))))
     o.append(sp(18))
     o.append(padrow(ticket(art, button(f"{SITE}/village-hall", "Register for Village Hall", GOLD, INK, align="center"), free_note())))
-
-    # --- The month ahead: featured night, then the calendar page ---
-    o.append(major_sp())
-    o.append(section_head("events", "The month ahead", "Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.",
-                          eyebrow="Happening soon"))
-    o.append(sp(14))
-    featured_art = story_img(art("featured-monsters-museum-compact.jpg"), 600,
-                             "Family exploring a friendly museum dinosaur exhibit at a calm after-hours sensory night; one child wears headphones",
-                             link=MONSTERS_URL, extra_style="margin:0 auto;")
-    featured_copy = (hand("Featured", 21, GOLD_INK, "12px 0 0 0")
-                     + p("All Access Night: Monsters in the Museum &middot; Discovery Center", 19, 25, INK, 700, margin="4px 0 0 0")
-                     + p("Thu Oct 15 &middot; 6:00&ndash;8:00 PM &middot; Murfreesboro &middot; Free, registration required", 16, 24, BODY, 400, margin="6px 0 0 0")
-                     + pill_row([(MONSTERS_URL, "Reserve your spot")], kind="gold", margin="6px 0 0 0"))
-    o.append(padrow(card(featured_art + featured_copy, pad="12px 12px 18px 12px")))
-    o.append(sp(20))
-    ev_rows = []
-    for i, e in enumerate(SECONDARY_EVENTS):
-        lines = [e["meta"]] + ([e["note"]] if e.get("note") else []) + disclose(e.get("disclose") or [])
-        content = item(e["title"], lines)
-        if e.get("link"):
-            content += pill_row([e["link"]])
-        ev_rows.append(row(e["chip"], content, last=(i == len(SECONDARY_EVENTS) - 1), tight=True))
-    o.append(padrow(calendar_page(art, rows_table(ev_rows))))
-    o.append(sp(20))
-    o.append(padrow(button(EVENTS_CAL_URL, "View the full October events calendar", INK, CREAM, align="center")))
 
     # --- New in the library: two books ---
     o.append(major_sp())
@@ -1212,12 +1343,26 @@ def build_html(base, browser=False):
     o.append(sp(30))
     o.append(footer_rows(art, SITE, unsub_href))
     o.append('</table></td></tr></table></body></html>')
-    return compact("\n".join(o) + "\n")
+    return dark_lock(compact("\n".join(o) + "\n"))
 
 
 def _plain(s):
     import html as _h
     return _h.unescape(re.sub(r"<[^>]+>", "", s)).replace("\u2013", "-")
+
+
+RULE = "----------------------------------------"
+
+
+def reorder_text(txt):
+    """The plain-text email in the HTML's order (Taylor, Oct 3): her note and the jump line, then the
+    month ahead, deadlines, Village Hall and the rest."""
+    blocks = txt.split(RULE)
+    first = lambda b: b.strip().split("\n", 1)[0]
+    find = lambda key: next(k for k, b in enumerate(blocks) if k and first(b).startswith(key))
+    lead = [blocks[find("THE MONTH AHEAD")], blocks[find("THREE THINGS")], blocks[find("THE NEXT DEEP DIVE")]]
+    others = [b for k, b in enumerate(blocks) if k and b not in lead]
+    return RULE.join([blocks[0]] + lead + others)
 
 
 def build_text():
@@ -1238,7 +1383,7 @@ def build_text():
     w("With love,")
     w("Taylor")
     w("")
-    w("In this issue: Fall break · Parent support · Sensory-friendly events · New resources")
+    w("In this issue: " + " · ".join(label for _, label in JUMPS))
     w("")
     w("----------------------------------------")
     w("THREE THINGS TO KNOW THIS MONTH")
@@ -1374,9 +1519,9 @@ def build_text():
     w("Unsubscribe in one click: {$unsubscribe}")
     w(f"Privacy: {SITE}/privacy · Contact: {SITE}/contact")
     w("")
-    w("Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC")
-    w("1810 Ward Dr, Suite 101, Murfreesboro, TN 37129")
-    return "\n".join(L) + "\n"
+    w(OWNER_LINE)
+    w(OWNER_ADDRESS)
+    return reorder_text("\n".join(L) + "\n")
 
 
 def deadline_chip(dow, day, moy):
@@ -1555,17 +1700,18 @@ def main():
         assert re.search(r"\bRCS\b|\bMCS\b|\bTDOE\b", re.sub(r"<[^>]+>", " ", doc)) is None, "spell out abbreviations"
         # the site pictures
         for f in ("decor/bunting.png", "decor/stamp.png", "decor/airmail-top.png", "decor/calendar-top.png",
-                  "decor/tag-eyelet.png", "decor/ribbon-gold.png", "decor/ribbon-blue.png", "decor/garland.png", "decor/dusk-top.png", "decor/stars.png", "decor/dusk-wave.png", "hero-sky.jpg", "decor/swoosh.png", "decor/cork.png", "decor/ruled.png", "decor/foot-hills.png",
-                  "decor/pin-brick.png", "decor/notch-l.png", "hero-land.jpg", "vh-land.jpg", "stop-1.png", "stop-4.png",
+                  "decor/tag-eyelet.png", "decor/ribbon-gold.png", "decor/ribbon-blue.png", "decor/garland.png", "decor/dusk-top.png", "decor/stars.png", "decor/dusk-wave.png", "hero-sky.png", "osv-mark-disc.png", "decor/swoosh.png", "decor/cork.png", "decor/ruled.png", "decor/foot-hills.png",
+                  "decor/pin-brick.png", "decor/notch-l.png", "hero-land-top.png", "hero-land-mid.jpg", "vh-land.jpg", "jump-events.png", "jump-library.png",
                   "guest-1-print.jpg", "hope-print.jpg", "decor/about-print.jpg", "signature-taylor.png",
                   "featured-monsters-museum-compact.jpg", "guide-therapy-styles-landscape-compact.jpg", "guide-grief-landscape-compact.jpg"):
             assert f"art/{f}" in doc, f
         # section order, and In this issue links to real sections
-        order = ['id="deadlines"', 'id="village-hall"', 'id="events"', 'id="library"', 'id="hope"', 'id="question"', 'id="ongoing"']
+        order = ['id="note"', 'id="events"', 'id="deadlines"', 'id="village-hall"', 'id="library"', 'id="hope"', 'id="question"', 'id="ongoing"']
         idx = [doc.find(x) for x in order]
         assert all(k > 0 for k in idx) and idx == sorted(idx), idx
-        for href in ("#deadlines", "#ongoing", "#events", "#library"):
-            assert f'href="{href}"' in doc
+        for href, _ in JUMPS:
+            assert f'href="{href}"' in doc and f'id="{href[1:]}"' in doc
+        assert doc.find("Welcome to Our Special Village!") < doc.find('class="os-jumps"') < doc.find('id="events"')
         # Wall of Hope is Nicole's story (Taylor, Sept 30), then the invitation
         hope_slice = doc.split('id="hope"', 1)[1].split('id="question"', 1)[0]
         for para in HOPE["paras"]:
@@ -1576,6 +1722,8 @@ def main():
         assert f'href="{SITE}/hope"' in hope_slice and "Share your win" in hope_slice
     assert "WALL OF HOPE" in txt and "His love needs no words." in txt and "✎ Nicole, Murfreesboro" in txt and "Ellie" not in txt
     assert txt.find("NEW IN THE LIBRARY") < txt.find("WALL OF HOPE") < txt.find("ONE QUESTION, ANSWERED")
+    assert txt.find("THE MONTH AHEAD") < txt.find("THREE THINGS") < txt.find("THE NEXT DEEP DIVE") < txt.find("NEW IN THE LIBRARY")
+    assert txt.find("Welcome to Our Special Village!") < txt.find("In this issue: ") < txt.find("THE MONTH AHEAD")
     # words that must survive the restyle
     for phrase in ("October in Our Special Village", "Welcome to Our Special Village!", "you do not have to figure everything out alone",
                    "Three things to know this month", "Voter registration deadline: Mon&nbsp;Oct&nbsp;5", "Clocks fall back one hour on Sun Nov 1",
@@ -1590,7 +1738,7 @@ def main():
                    "Connect with other local parents", "Our Special Village Online Parent Group", "Drop in any Thursday beginning October 1",
                    "We Rock the Spectrum Parent Group", "Led by Cari Parr", "$15 per child for kids to play", "Discounted gym admission is available separately.",
                    "Join the Online Group", "Plan Your Visit", "About Our Special Village", "Numbers worth keeping", "Suicide &amp; Crisis Lifeline",
-                   "Know a family who could use this?", "Unsubscribe in one click", "Little Luminaries Therapy Services, PLLC",
+                   "Know a family who could use this?", "Unsubscribe in one click", OWNER_LINE, OWNER_ADDRESS,
                    "6050 Dana Way, Antioch, TN", EVERGREEN_BLURB, "Touch-A-Truck after treats.", "700 Dan P. Herron Drive, Gallatin",
                    "1257 Broad Street, Murfreesboro", "5019 WalkUp Road, Pegram, TN", "About 4 hours 15 min", "(931) 265-5376",
                    SPOOK_ON_SITE, SPOOK_THANKS):

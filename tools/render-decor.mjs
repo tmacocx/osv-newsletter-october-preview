@@ -9,8 +9,9 @@
 //
 //   cd ../OurSpecialVillage/public && python3 -m http.server 8765 &
 //   node tools/render-decor.mjs --site http://localhost:8765 --fonts ../OurSpecialVillage/public/fonts
+//   (add --only stops to redo just the In this issue stops)
 //
-// Inputs are listed in tools/decor.json. Then run tools/build-october-2026.py and tools/build-issues.py.
+// Inputs are listed in tools/decor.json. Then run tools/dark-safe-art.py, tools/build-october-2026.py and tools/build-issues.py.
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -99,10 +100,10 @@ await shot(`<div id="shot" style="width:532px;height:56px"><div class="band"><sp
 .band{position:absolute;left:0;right:0;top:10px;height:46px;border-radius:8px 8px 0 0;background:${C.navy};box-shadow:inset 0 -4px 0 ${C.gold}}
 .rings{position:absolute;left:18%;right:18%;top:-9px;height:20px;background:radial-gradient(circle 5px at 50% 50%,${C.gold} 90%,transparent 100%) 0 0/25% 100% space}` });
 
-// ---------- deadline tag eyelet and string (newsletter.css .nl-item--tag .nl-deco) ----------
-await shot(`<div id="shot" style="width:40px;height:56px"><span class="eye"></span></div>`, path.join(shared, 'tag-eyelet.png'), { css: `
-.eye{position:absolute;left:12px;top:34px;width:16px;height:16px;border-radius:50%;background:${C.paper};box-shadow:0 0 0 3px #d8a88c}
-.eye::after{content:"";position:absolute;left:7px;top:-34px;width:2px;height:40px;background:#9d7128;rotate:24deg;transform-origin:bottom}` });
+// ---------- deadline tag: brass eyelet with a twine loop (tools/tag-loop.svg, also the site's newsletter.css) ----------
+// Oct 1, 2026: the straight string ran past the tag's rounded corner and stopped in mid-air.
+await shot(`<div id="shot" style="line-height:0">${fs.readFileSync(path.join(ROOT, 'tools', 'tag-loop.svg'), 'utf8')}</div>`,
+  path.join(shared, 'tag-eyelet.png'));
 
 
 // ---------- folded-up corner (hope.css .hope-story::after) ----------
@@ -243,23 +244,20 @@ main > .page-hero{padding:14px 24px 0;margin:0}
 }
 
 async function stops(chips, out) {
-  // Four stops on the painted path ("Stay connected", shell.css .community-path), cut into one picture per stop.
+  // The jump buttons' pictures: Taylor's pictograms on the site's paper circles, one transparent PNG per
+  // section (jump-events.png, jump-deadlines.png, ...), so they sit on the cork board beside her letter.
+  // Oct 3, 2026: no painted path between them (the road pieces dangled on phones). Oct 4: new file names,
+  // because browsers kept showing the old stop-N.png pictures (the site caches images for a day); give the
+  // files new names again whenever they change.
   const W = 532, H = 112, cy = 54, step = W / 4, xs = [0, 1, 2, 3].map((i) => step * i + step / 2);
-  let d = `M${xs[0]} ${cy}`;
-  for (let i = 1; i < 4; i++) {
-    const a = i % 2 ? -26 : 26, dx = xs[i] - xs[i - 1];
-    d += ` C ${xs[i - 1] + dx * 0.33} ${cy + a}, ${xs[i] - dx * 0.33} ${cy - a}, ${xs[i]} ${cy}`;
-  }
   const plots = chips.map((c, i) => `<span class="plot" style="left:${xs[i] - 40}px"><img src="${SITE}/images/village/${cfg.pictograms[c]}-192.webp" alt=""></span>`).join('');
-  await shot(`<div id="shot" style="width:${W}px;height:${H}px"><svg width="${W}" height="${H}" style="position:absolute;inset:0">
-    <path d="${d}" fill="none" stroke="#e5cf9a" stroke-width="20" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#f4e5bd" stroke-width="13" stroke-linecap="round"/></svg>${plots}</div>`,
-  out, { bg: C.cream, css: `.plot{position:absolute;top:${cy - 40}px;width:80px;height:80px;border-radius:50%;background:${C.paper};display:grid;place-items:center;
-    box-shadow:0 1px 2px rgba(29,44,76,.05),0 12px 28px -16px rgba(29,44,76,.30),0 0 0 5px ${C.cream}}.plot img{width:58px;height:auto}` });
-  // cut into four equal pictures (stop-1.png ... stop-4.png) so each stop is its own link
+  await shot(`<div id="shot" style="width:${W}px;height:${H}px">${plots}</div>`,
+  out, { css: `.plot{position:absolute;top:${cy - 40}px;width:80px;height:80px;border-radius:50%;background:${C.paper};display:grid;place-items:center;
+    box-shadow:0 1px 2px rgba(29,44,76,.08),0 10px 18px -12px rgba(60,40,10,.45),0 0 0 4px ${C.paper}}.plot img{width:60px;height:auto}` });
   const box = await (await page.$('#shot')).boundingBox();
-  for (let i = 0; i < 4; i++) {
-    const f = path.join(path.dirname(out), `stop-${i + 1}.png`);
-    await page.screenshot({ path: f, clip: { x: box.x + step * i, y: box.y, width: step, height: H } });
+  for (const [i, c] of chips.entries()) {
+    const f = path.join(path.dirname(out), `jump-${c}.png`);
+    await page.screenshot({ path: f, omitBackground: true, clip: { x: box.x + xs[i] - 48, y: box.y + cy - 48, width: 96, height: 96 } });
     console.log('wrote', path.relative(ROOT, f));
   }
   fs.unlinkSync(out);
@@ -267,6 +265,7 @@ async function stops(chips, out) {
 
 for (const iss of cfg.issues) {
   const out = path.join(ROOT, iss.out);
+  if (args.only === 'stops') { await stops(iss.chips, path.join(out, 'stops.png')); continue; }
   await hero(iss.hero, iss.season, out);
   await landscape(iss.vh, iss.season, path.join(out, 'vh-land.jpg'), { oval: !!iss.vh_oval, maxH: 250 });
   await stops(iss.chips, path.join(out, 'stops.png'));

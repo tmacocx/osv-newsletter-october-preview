@@ -30,6 +30,7 @@ ISSUE_ART = {
         (f"{PACK}/page-season-sets/wall-of-hope-fall.png", "wall-of-hope.jpg", 600, 262, 0.55),
         (f"{PACK}/category-season-sets/therapy-communication-fall.png", "guide-1.jpg", 490, 228, 0.5),
         (f"{PACK}/category-season-sets/funding-rights-fall.png", "guide-2.jpg", 490, 228, 0.5),
+        (f"{PACK}/page-season-sets/resource-library-fall.png", "guide-3.jpg", 490, 228, 0.5),
     ],
     "2026-12": [
         (f"{VILLAGE}/newsletter-winter.png", "hero.jpg", 1200, None, 0.5),

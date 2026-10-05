@@ -14,7 +14,20 @@ Whatever this year holds for your child, you do not have to figure it out alone.
 With love,
 Taylor
 
-In this issue: School dates · Asking for an evaluation · Respite + events · School guides
+In this issue: Events · Deadlines · Village Hall · New guides
+
+----------------------------------------
+THE MONTH AHEAD
+Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.
+
+rEcess · Otter Creek Church and 99 Balloons  [Featured]
+  Sat Jan 2 · 8:00-11:45 AM · Brentwood · About 40 min
+  A monthly respite morning: kids with disabilities and their siblings enjoy games and activities while parents rest, run errands, or do whatever they need.
+  Email to reserve a spot: mailto:rebecca.whitaker@ottercreek.org
+
+Winter calendars are still filling in. We add events as organizers post them, so check the full calendar before your weekend.
+
+View the full January events calendar: https://ourspecialvillagetn.com/events
 
 ----------------------------------------
 THREE THINGS TO KNOW THIS MONTH
@@ -34,7 +47,7 @@ Family Support funds: apply early in the year
   Family Support guide: https://ourspecialvillagetn.com/resources/funding/family-support
 
 See all deadlines: deadlines.html
-Dates confirmed Sept 28. If something changed, reply and we will fix it.
+If a date changed, reply and we will fix it.
 
 ----------------------------------------
 THE NEXT DEEP DIVE · VILLAGE HALL
@@ -48,19 +61,6 @@ A 45-minute lesson with the guest, then live parent questions. The lesson is rec
 Get Village Hall details: https://ourspecialvillagetn.com/village-hall
 Choose what you can pay: Every family is welcome - choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward
 The meeting link is emailed to registrants.
-
-----------------------------------------
-THE MONTH AHEAD
-Picked for sensory-sensitive kids and their families. Drive times are from Murfreesboro.
-
-rEcess · Otter Creek Church and 99 Balloons  [Featured]
-  Sat Jan 2 · 8:00-11:45 AM · Brentwood · About 40 min
-  A monthly respite morning: kids with disabilities and their siblings enjoy games and activities while parents rest, run errands, or do whatever they need.
-  Email to reserve a spot: mailto:rebecca.whitaker@ottercreek.org
-
-Winter calendars are still filling in. We add events as organizers post them, so check the full calendar before your weekend.
-
-View the full January events calendar: https://ourspecialvillagetn.com/events
 
 ----------------------------------------
 FROM THE LIBRARY
@@ -78,7 +78,7 @@ A LITTLE HOPE
 From the Wall of Hope
 
 [PLACEHOLDER: A parent’s story from the Wall of Hope goes here: two to four sentences, shared with permission.]
-[PLACEHOLDER: First name], Murfreesboro
+[PLACEHOLDER: First name, City]
 Read more stories or share yours: https://ourspecialvillagetn.com/hope
 
 ----------------------------------------
@@ -136,5 +136,5 @@ You are receiving this because you joined the newsletter list at ourspecialvilla
 Unsubscribe in one click: {$unsubscribe}
 Privacy: https://ourspecialvillagetn.com/privacy · Contact: https://ourspecialvillagetn.com/contact
 
-Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC
+Our Special Village is owned and operated by Errant Software, LLC, in partnership with Little Luminaries Therapy Services
 1810 Ward Dr, Suite 101, Murfreesboro, TN 37129

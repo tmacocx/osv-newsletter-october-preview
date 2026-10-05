@@ -12,40 +12,7 @@ Thanksgiving can be a lot for our kids and for us. Whatever your table looks lik
 With love,
 Taylor
 
-In this issue: Thanksgiving break · AAC round table · Sensory-friendly events · AAC + funding guides
-
-----------------------------------------
-THREE THINGS TO KNOW THIS MONTH
-
-Sun Nov 15 · First Hand Foundation grants: next deadline Sun Nov 15
-  Grants for kids 18 and under with a medical need, within income limits (for example $65,000 with one child). They pay for future therapy, equipment, AAC, and travel for care. Due the 15th of every month.
-  First Hand grants: https://firsthandfoundation.org/grants/
-
-Tue Nov 3 · No school Tue Nov 3 and Thanksgiving week, Nov 23 to 27
-  Both Rutherford County Schools and Murfreesboro City Schools. Progress reports and report cards come home the first week of November; ask for IEP progress data.
-  Rutherford County Schools calendar: https://www.rcschools.net/o/rcs/page/rcs-academic-calendars
-  Murfreesboro City Schools calendar: https://www.cityschools.net/calendar
-
-HealthCare.gov open enrollment: Nov 1 to Jan 15
-  Shop or renew a 2027 Marketplace plan. Enroll by Dec 15 for coverage that starts Jan 1. Kids may qualify for TennCare or CoverKids any time.
-  HealthCare.gov dates: https://www.healthcare.gov/quick-guide/dates-and-deadlines/
-
-See all deadlines: deadlines.html
-Dates confirmed Sept 28. If something changed, reply and we will fix it.
-
-----------------------------------------
-THE NEXT DEEP DIVE · VILLAGE HALL
-
-Village Hall: Saturday, November 14, 2026
-9:30 to 11:00 AM Central
-Online
-Topic and guest: AAC round table with Taylor, PRC-Saltillo, and Tobii Dynavox
-Amanda Rains, M.S., CCC-SLP - LAMP Certified Professional · PRC-Saltillo. Amanda has focused on AAC since graduate school, where she led an AAC group for adults with Down syndrome. In private practice she ran AAC evaluations and therapy for children and young adults who use AAC, and coached families and school teams to make devices work every day. She is a LAMP Certified Professional with PRC-Saltillo.
-Kerry Hankins-Grider - Tobii Dynavox. [PLACEHOLDER: Kerry’s bio goes here (bio coming).]
-A conversation about AAC: who it can help, how families choose and fund a device, and how to make it part of everyday life. Then live parent questions. The talk is recorded and sent to registrants; the Q&A is not.
-Register for Village Hall: https://ourspecialvillagetn.com/village-hall
-Choose what you can pay: Every family is welcome - choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward
-The meeting link is emailed to registrants.
+In this issue: Events · Deadlines · Village Hall · New guides
 
 ----------------------------------------
 THE MONTH AHEAD
@@ -80,6 +47,39 @@ Super Sports Saturday · ABLE Youth
 View the full November events calendar: https://ourspecialvillagetn.com/events
 
 ----------------------------------------
+THREE THINGS TO KNOW THIS MONTH
+
+Sun Nov 15 · First Hand Foundation grants: next deadline Sun Nov 15
+  Grants for kids 18 and under with a medical need, within income limits (for example $65,000 with one child). They pay for future therapy, equipment, AAC, and travel for care. Due the 15th of every month.
+  First Hand grants: https://firsthandfoundation.org/grants/
+
+Tue Nov 3 · No school Tue Nov 3 and Thanksgiving week, Nov 23 to 27
+  Both Rutherford County Schools and Murfreesboro City Schools. Progress reports and report cards come home the first week of November; ask for IEP progress data.
+  Rutherford County Schools calendar: https://www.rcschools.net/o/rcs/page/rcs-academic-calendars
+  Murfreesboro City Schools calendar: https://www.cityschools.net/calendar
+
+HealthCare.gov open enrollment: Nov 1 to Jan 15
+  Shop or renew a 2027 Marketplace plan. Enroll by Dec 15 for coverage that starts Jan 1. Kids may qualify for TennCare or CoverKids any time.
+  HealthCare.gov dates: https://www.healthcare.gov/quick-guide/dates-and-deadlines/
+
+See all deadlines: deadlines.html
+If a date changed, reply and we will fix it.
+
+----------------------------------------
+THE NEXT DEEP DIVE · VILLAGE HALL
+
+Village Hall: Saturday, November 14, 2026
+9:30 to 11:00 AM Central
+Online
+Topic and guest: AAC round table with Taylor, PRC-Saltillo, and Tobii Dynavox
+Amanda Rains, M.S., CCC-SLP - LAMP Certified Professional · PRC-Saltillo. Amanda has focused on AAC since graduate school, where she led an AAC group for adults with Down syndrome. In private practice she ran AAC evaluations and therapy for children and young adults who use AAC, and coached families and school teams to make devices work every day. She is a LAMP Certified Professional with PRC-Saltillo.
+Kerry Hankins-Grider - Tobii Dynavox. [PLACEHOLDER: Kerry’s bio goes here (bio coming).]
+A conversation about AAC: who it can help, how families choose and fund a device, and how to make it part of everyday life. Then live parent questions. The talk is recorded and sent to registrants; the Q&A is not.
+Register for Village Hall: https://ourspecialvillagetn.com/village-hall
+Choose what you can pay: Every family is welcome - choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward
+The meeting link is emailed to registrants.
+
+----------------------------------------
 FROM THE LIBRARY
 
 Communication · AAC devices and how to get one
@@ -90,12 +90,16 @@ Paying for care · Using your Katie Beckett funds
   Practical Tennessee Katie Beckett Part B ideas for therapy, respite, equipment, supplies, activities, and documentation.
   Read the funds guide: https://ourspecialvillagetn.com/resources/katie-beckett-funds
 
+Reading · Dyslexia: reading help, hi-lo books, and free tools
+  What Tennessee schools have to do about dyslexia, the reading help that works, hi-lo books with big-kid stories at an easier level, and free ways to get them.
+  Read the dyslexia guide: https://ourspecialvillagetn.com/resources/dyslexia
+
 ----------------------------------------
 A LITTLE HOPE
 From the Wall of Hope
 
 [PLACEHOLDER: A parent’s story from the Wall of Hope goes here: two to four sentences, shared with permission.]
-[PLACEHOLDER: First name], Murfreesboro
+[PLACEHOLDER: First name, City]
 Read more stories or share yours: https://ourspecialvillagetn.com/hope
 
 ----------------------------------------
@@ -153,5 +157,5 @@ You are receiving this because you joined the newsletter list at ourspecialvilla
 Unsubscribe in one click: {$unsubscribe}
 Privacy: https://ourspecialvillagetn.com/privacy · Contact: https://ourspecialvillagetn.com/contact
 
-Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC
+Our Special Village is owned and operated by Errant Software, LLC, in partnership with Little Luminaries Therapy Services
 1810 Ward Dr, Suite 101, Murfreesboro, TN 37129

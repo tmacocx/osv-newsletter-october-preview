@@ -12,39 +12,7 @@ However your family celebrates, or doesn’t, I hope the season gives you a few 
 With love,
 Taylor
 
-In this issue: Winter break · Sensory-friendly Santa · Guides for full days · Holiday gatherings
-
-----------------------------------------
-THREE THINGS TO KNOW THIS MONTH
-
-Fri Dec 18 · Winter break: last day Fri Dec 18, back Tue Jan 5
-  Dec 18 is a short day in Rutherford County and Murfreesboro City Schools. Break runs Dec 21 to Jan 1, and Mon Jan 4 is also no school for students. A visual countdown can make the change in routine easier.
-  Rutherford County Schools calendar: https://www.rcschools.net/o/rcs/page/rcs-academic-calendars
-  Murfreesboro City Schools calendar: https://www.cityschools.net/calendar
-
-Tue Dec 15 · HealthCare.gov: pick a plan by Tue Dec 15 for Jan 1
-  Open enrollment runs to Jan 15, but plans chosen after Dec 15 start Feb 1.
-  HealthCare.gov dates: https://www.healthcare.gov/quick-guide/dates-and-deadlines/
-
-Tue Dec 15 · First Hand Foundation grants: next deadline Tue Dec 15
-  Grants for kids 18 and under with a medical need, within income limits (for example $65,000 with one child). They pay for future therapy, equipment, AAC, and travel for care. Due the 15th of every month.
-  First Hand grants: https://firsthandfoundation.org/grants/
-
-See all deadlines: deadlines.html
-Dates confirmed Sept 28. If something changed, reply and we will fix it.
-
-----------------------------------------
-THE NEXT DEEP DIVE · VILLAGE HALL
-
-Village Hall: Saturday, December 12, 2026
-9:30 to 11:00 AM Central
-Online
-Topic and guest: All things behavior
-Katie Dell - Neurodiversity-affirming BCBA · Behavior Cubed. [PLACEHOLDER: Katie’s credentials, photo, and a short bio.]
-A 45-minute lesson with the guest, then live parent questions. The lesson is recorded and sent to registrants; the Q&A is not.
-Get Village Hall details: https://ourspecialvillagetn.com/village-hall
-Choose what you can pay: Every family is welcome - choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward
-The meeting link is emailed to registrants.
+In this issue: Events · Deadlines · Village Hall · New guides
 
 ----------------------------------------
 THE MONTH AHEAD
@@ -71,11 +39,39 @@ All Access Night: Holiday Party · Discovery Center
   6:00-8:00 PM · Murfreesboro · Free, registration required · Smaller crowds, less sensory input
   Reserve your spot: https://explorethedc.org/series/all-access-nights/
 
-Sensory Sunday Hour · Frist Art Museum
-  12:00-1:00 PM · Frist Art Museum, Nashville · Free for members and ages 18 and under · About 45 min
-  Details: https://fristartmuseum.org/plan-your-visit/
-
 View the full December events calendar: https://ourspecialvillagetn.com/events
+
+----------------------------------------
+THREE THINGS TO KNOW THIS MONTH
+
+Fri Dec 18 · Winter break: last day Fri Dec 18, back Tue Jan 5
+  Dec 18 is a short day in Rutherford County and Murfreesboro City Schools. Break runs Dec 21 to Jan 1, and Mon Jan 4 is also no school for students. A visual countdown can make the change in routine easier.
+  Rutherford County Schools calendar: https://www.rcschools.net/o/rcs/page/rcs-academic-calendars
+  Murfreesboro City Schools calendar: https://www.cityschools.net/calendar
+
+Tue Dec 15 · HealthCare.gov: pick a plan by Tue Dec 15 for Jan 1
+  Open enrollment runs to Jan 15, but plans chosen after Dec 15 start Feb 1.
+  HealthCare.gov dates: https://www.healthcare.gov/quick-guide/dates-and-deadlines/
+
+Tue Dec 15 · First Hand Foundation grants: next deadline Tue Dec 15
+  Grants for kids 18 and under with a medical need, within income limits (for example $65,000 with one child). They pay for future therapy, equipment, AAC, and travel for care. Due the 15th of every month.
+  First Hand grants: https://firsthandfoundation.org/grants/
+
+See all deadlines: deadlines.html
+If a date changed, reply and we will fix it.
+
+----------------------------------------
+THE NEXT DEEP DIVE · VILLAGE HALL
+
+Village Hall: Saturday, December 12, 2026
+9:30 to 11:00 AM Central
+Online
+Topic and guest: All things behavior
+Katie Dell - Neurodiversity-affirming BCBA · Behavior Cubed. [PLACEHOLDER: Katie’s credentials, photo, and a short bio.]
+A 45-minute lesson with the guest, then live parent questions. The lesson is recorded and sent to registrants; the Q&A is not.
+Get Village Hall details: https://ourspecialvillagetn.com/village-hall
+Choose what you can pay: Every family is welcome - choose $0, or give more to help cover another seat. $0 Welcome / $10 Helps / $20 Suggested / $35 Pay it forward
+The meeting link is emailed to registrants.
 
 ----------------------------------------
 FROM THE LIBRARY
@@ -93,7 +89,7 @@ A LITTLE HOPE
 From the Wall of Hope
 
 [PLACEHOLDER: A parent’s story from the Wall of Hope goes here: two to four sentences, shared with permission.]
-[PLACEHOLDER: First name], Murfreesboro
+[PLACEHOLDER: First name, City]
 Read more stories or share yours: https://ourspecialvillagetn.com/hope
 
 ----------------------------------------
@@ -151,5 +147,5 @@ You are receiving this because you joined the newsletter list at ourspecialvilla
 Unsubscribe in one click: {$unsubscribe}
 Privacy: https://ourspecialvillagetn.com/privacy · Contact: https://ourspecialvillagetn.com/contact
 
-Our Special Village is owned and operated by Little Luminaries Therapy Services, PLLC
+Our Special Village is owned and operated by Errant Software, LLC, in partnership with Little Luminaries Therapy Services
 1810 Ward Dr, Suite 101, Murfreesboro, TN 37129
