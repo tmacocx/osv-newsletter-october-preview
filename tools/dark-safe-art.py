@@ -76,13 +76,38 @@ DECOR_BASES = {
 }
 
 
+# pictures with a shape lighter than the paper (the dusk sun): it stays solid, a moon on a dark page
+DECOR_LIGHT_SHAPES = {"dusk-top.png"}
+
+
+def light_shapes(rgb, base, grow=8):
+    """Solid mask for shapes lighter than `base`: from the pixels clearly lighter than it, grow
+    through everything about as light, stopping at the darker sky around it."""
+    from PIL import ImageFilter
+    w = np.array([0.299, 0.587, 0.114])
+    luma, paper = rgb.astype(float) @ w, base @ w
+    near = luma > paper - grow
+    region = luma > paper + 3
+    while True:
+        im = Image.fromarray((region * 255).astype(np.uint8), "L").filter(ImageFilter.MaxFilter(3))
+        grown = (np.asarray(im) > 0) & near
+        if (grown == region).all():
+            break
+        region = grown
+    im = Image.fromarray((region * 255).astype(np.uint8), "L").filter(ImageFilter.GaussianBlur(1.5))
+    return np.asarray(im).astype(float) / 255
+
+
 def decor(folder):
     for name, base in DECOR_BASES.items():
         f = os.path.join(folder, name)
         if not os.path.exists(f) or has_alpha(f):
             continue
         rgb = np.asarray(Image.open(f).convert("RGB"))
-        n = save(color_to_alpha(rgb, hexrgb(base)), f)
+        if name in DECOR_LIGHT_SHAPES:
+            n = save(_cut(rgb.astype(float), hexrgb(base), 0, boost=0, solid=light_shapes(rgb, hexrgb(base))), f)
+        else:
+            n = save(color_to_alpha(rgb, hexrgb(base)), f)
         print(f"  {os.path.relpath(f, ROOT)}: see-through on {base} ({n // 1024}KB)")
 
 
