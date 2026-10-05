@@ -20,7 +20,7 @@ VH_TIME = "9:30 to 11:00 AM Central"
 VH_ABOUT = ("A 45-minute lesson with the guest, then live parent questions. The lesson is recorded "
             "and sent to registrants; the Q&amp;A is not.")
 HOPE_QUOTE = ph("A parent&rsquo;s story from the Wall of Hope goes here: two to four sentences, shared with permission.")
-HOPE_WHO = ph("First name") + ", Murfreesboro"  # Taylor: every Wall of Hope signs off name, Murfreesboro
+HOPE_WHO = ph("First name, City")  # Taylor (Oct 5): parent's first name and their own city, e.g. "Lauren, Murfreesboro"
 
 RECESS_META = ("8:00&ndash;11:45 AM &middot; Otter Creek Church, Brentwood &middot; "
                "Respite for kids with disabilities and their siblings &middot; About 40 min")
