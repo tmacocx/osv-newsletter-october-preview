@@ -11,7 +11,7 @@
 //   node tools/render-decor.mjs --site http://localhost:8765 --fonts ../OurSpecialVillage/public/fonts
 //   (add --only stops to redo just the In this issue stops)
 //
-// Inputs are listed in tools/decor.json. Then run tools/build-october-2026.py and tools/build-issues.py.
+// Inputs are listed in tools/decor.json. Then run tools/dark-safe-art.py, tools/build-october-2026.py and tools/build-issues.py.
 import fs from 'node:fs';
 import path from 'node:path';
 

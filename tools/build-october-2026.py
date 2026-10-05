@@ -56,6 +56,7 @@ Edit this file and run it. Do not hand-edit the generated HTML.
     python3 tools/build-october-2026.py
 """
 import argparse
+import json
 import os
 import re
 
@@ -284,13 +285,23 @@ def site_header(art, site):
 SKY_FALLBACK = {"fall": "#f3e2c8", "winter": "#efe1d0"}
 
 
-def hero(art, title_html, season="fall",
+def dark_safe(art_dir):
+    """What tools/dark-safe-art.py recorded for an art folder: hero_sky_bg, the colour the sky was cut
+    against (it must sit under the sky), and hero_land, the 2x pixel heights of the land's two slices."""
+    with open(os.path.join(art_dir, "dark-safe.json")) as fh:
+        return json.load(fh)
+
+
+def hero(art, title_html, season="fall", safe=None,
          place="Murfreesboro &amp; surrounding areas &middot; Tennessee",
          tagline="It takes a village. Welcome to ours.",
          land_alt="Illustration of the village in autumn: homes, neighbors walking the path, and rolling Middle Tennessee hills."):
     """The homepage hero (home.css .home-hero): golden-hour sky, the place line between two gold
     rules, a big title with the gold swash, the handwritten tagline, then the hills and the village."""
-    sky, bg = art("hero-sky.jpg"), SKY_FALLBACK.get(season, "#f3e2c8")
+    # tools/dark-safe-art.py: the sky and the top strip of the land are see-through washes over
+    # hero_sky_bg, so a dark-mode app that repaints that colour dark gets a night sky instead of a pale block.
+    safe = safe or {}
+    sky, bg = art("hero-sky.png"), safe.get("hero_sky_bg") or SKY_FALLBACK.get(season, "#f3e2c8")
     rule_td = f'<td class="os-hrule" width="26" style="width:26px;"><div style="height:2px;background-color:{GOLD};border-radius:2px;font-size:0;line-height:0;">&nbsp;</div></td>'
     place_row = (f'<table {T} align="center" style="margin:0 auto;"><tr>{rule_td}'
                  f'<td class="os-place" style="padding:0 10px;font:800 12px/16px {FONT};letter-spacing:2px;text-transform:uppercase;color:{GOLD_DARK};text-align:center;">{place}</td>'
@@ -303,7 +314,18 @@ def hero(art, title_html, season="fall",
     return (f'<tr><td class="os-hero-sky os-pad" align="center" bgcolor="{bg}" background="{sky}" '
             f"style=\"background-color:{bg};background-image:url('{sky}');background-size:100% 100%;background-position:center bottom;"
             f'background-repeat:no-repeat;border-radius:28px 28px 0 0;padding:30px 24px 6px 24px;">{text}</td></tr>'
-            + fullrow(img(art("hero-land.jpg"), 600, land_alt, style="max-width:none;", cls="os-hero")))
+            + land_rows(art, safe.get("hero_land_bg", bg), safe.get("hero_land"), land_alt))
+
+
+def land_rows(art, bg, split, alt):
+    """The hills and the village under the hero sky: one picture, or (dark-safe) its see-through sky strip
+    over its sky colour (`bg`) and the painted rest beneath it."""
+    if not split:
+        return fullrow(img(art("hero-land.jpg"), 600, alt, style="max-width:none;", cls="os-hero"))
+    top, mid = (h // 2 for h in split)
+    cell = f'<tr><td bgcolor="{bg}" style="padding:0;font-size:0;line-height:0;background-color:{bg};">'
+    return (cell + img(art("hero-land-top.png"), 600, "", height=top, style="max-width:none;") + '</td></tr>'
+            + fullrow(img(art("hero-land-mid.jpg"), 600, alt, height=mid, style="max-width:none;", cls="os-hero")))
 
 
 def dusk_band(art, id_, eyebrow, title, inner):
@@ -764,8 +786,8 @@ def footer_rows(art, site, unsub_href, owner_line=OWNER_LINE):
     """The site's footer under its dusk hills: navy, the pin in a paper circle, gold buttons."""
     brand = (f'<table {T} style="border-collapse:collapse;"><tr>'
              f'<td style="padding:0 10px 0 0;vertical-align:middle;">'
-             f'<img src="{art("osv-mark-80.png")}" width="44" height="44" alt="" style="display:block;width:44px;height:44px;border:0;'
-             f'border-radius:22px;background-color:{WHITE};"></td>'
+             f'<img src="{art("osv-mark-disc.png")}" width="44" height="44" alt="" style="display:block;width:44px;height:44px;border:0;'
+             f'border-radius:22px;"></td>'
              f'<td class="os-white" style="vertical-align:middle;font:600 21px/24px {DISPLAY};color:{WHITE};white-space:nowrap;">Our Special Village</td></tr></table>')
     inner = (brand
              + p("Our Special Village &middot; Murfreesboro and surrounding areas, Tennessee", 14, 21, WHITE, 700, margin="14px 0 6px 0",
@@ -1016,14 +1038,6 @@ u + #os-body a{text-decoration:none;}
   .os-paycell:nth-child(even){padding:0 0 8px 4px !important;}
 }
 """.replace("PAPER_SHADOW", PAPER_SHADOW).replace("SHADOW", SHADOW)
-    dark = f"""
-[data-ogsb] .os-bg{{background-color:{CREAM} !important;}} [data-ogsb] .os-card{{background-color:{NOTE} !important;}} [data-ogsb] .os-navy,[data-ogsb] .os-btn-navy{{background-color:{INK} !important;}} [data-ogsb] .os-btn-gold,[data-ogsb] .os-stepbg{{background-color:{GOLD} !important;}}
-[data-ogsc] .os-ink{{color:{INK} !important;}} [data-ogsc] .os-body{{color:{BODY} !important;}} [data-ogsc] .os-muted{{color:{MUTED} !important;}} [data-ogsc] .os-accent{{color:{ACCENT} !important;}} [data-ogsc] .os-gold{{color:{GOLD} !important;}} [data-ogsc] .os-goldink{{color:{GOLD_INK} !important;}} [data-ogsc] .os-brick{{color:{BRICK_INK} !important;}} [data-ogsc] .os-sand{{color:{SAND} !important;}} [data-ogsc] .os-white{{color:{WHITE} !important;}}
-@media (prefers-color-scheme: dark){{
-  .os-bg{{background-color:{CREAM} !important;}} .os-card{{background-color:{NOTE} !important;}} .os-navy,.os-btn-navy{{background-color:{INK} !important;}} .os-btn-gold,.os-stepbg{{background-color:{GOLD} !important;}}
-  .os-ink{{color:{INK} !important;}} .os-body{{color:{BODY} !important;}} .os-muted{{color:{MUTED} !important;}} .os-accent{{color:{ACCENT} !important;}} .os-gold{{color:{GOLD} !important;}} .os-goldink{{color:{GOLD_INK} !important;}} .os-brick{{color:{BRICK_INK} !important;}} .os-sand{{color:{SAND} !important;}} .os-white{{color:{WHITE} !important;}}
-}}
-"""
     return f'''<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light">
@@ -1033,7 +1047,7 @@ u + #os-body a{text-decoration:none;}
 <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&amp;family=Outfit:wght@500;600&amp;family=Patrick+Hand&amp;display=swap" rel="stylesheet">
 <style type="text/css">
 {css}
-{dark}
+/*os-dark*/
 </style>
 <!--[if mso]>
 <style type="text/css">body,table,td,p,a,span{{font-family:Arial,Helvetica,sans-serif !important;}} p,td,a,span{{mso-line-height-rule:exactly;}}</style>
@@ -1072,6 +1086,69 @@ HOPE = dict(
 
 
 _TAG = re.compile(r"<(td|table|th|div|p|span|a|img|b)\b[^>]*>")
+
+
+# Classes that only existed to steer dark mode by hand; dark_lock() covers every colour now.
+DARK_ONLY_CLASSES = {"os-bg", "os-navy", "os-btn-navy", "os-btn-gold", "os-stepbg", "os-ink", "os-body", "os-muted",
+                     "os-accent", "os-gold", "os-goldink", "os-brick", "os-sand", "os-white", "os-cream"}
+_HEX = r"(#[0-9a-fA-F]{6})"
+
+
+def dark_lock(html):
+    """Keep the light design in every mail app that lets an email ask for it.
+
+    Taylor (Oct 1, after sending October): "for next time we gotta fix dark mode". Apple Mail and
+    Outlook for Mac and iPhone honour prefers-color-scheme; Outlook.com, the new Outlook and the
+    Outlook apps mark the colours they darkened with [data-ogsb] (backgrounds) and [data-ogsc]
+    (text). Every element that sets a colour gets a short class (b0, c0, d0...) and the head gets one
+    rule per colour putting it back. A half-locked email is worse than none (white text restored onto a
+    darkened button), so the lock covers all of them or the build fails.
+
+    Gmail's apps and Outlook on Windows can't be asked; tools/dark-safe-art.py makes the pictures
+    hold up when they repaint the page.
+    """
+    head_end = html.index("</head>")
+    toks = {"b": {}, "c": {}, "d": {}}
+
+    def tok(kind, color):
+        d = toks[kind]
+        if color not in d:
+            d[color] = f"{kind}{len(d)}"
+        return d[color]
+
+    def fix(m):
+        tag = m.group(0)
+        sm = re.search(r'style="([^"]*)"', tag)
+        style = sm.group(1) if sm else ""
+        new = []
+        bg = re.search(r"background(?:-color)?:\s*" + _HEX, style) or re.search(r'bgcolor="' + _HEX + '"', tag)
+        if bg:
+            new.append(tok("b", bg.group(1).lower()))
+        fg = re.search(r"(?:^|;)\s*color:\s*" + _HEX, style)
+        if fg:
+            new.append(tok("c", fg.group(1).lower()))
+        borders = {c.lower() for c in re.findall(r"border(?:-(?:top|right|bottom|left))?(?:-color)?:[^;\"]*?" + _HEX, style)}
+        if len(borders) == 1:
+            new.append(tok("d", borders.pop()))
+        cm = re.search(r' class="([^"]*)"', tag)
+        if cm:
+            classes = [c for c in cm.group(1).split() if c not in DARK_ONLY_CLASSES] + new
+            repl = f' class="{" ".join(classes)}"' if classes else ""
+            return tag[:cm.start()] + repl + tag[cm.end():]
+        if new:
+            name_end = len(m.group(1)) + 1
+            return tag[:name_end] + f' class="{" ".join(new)}"' + tag[name_end:]
+        return tag
+
+    body = re.sub(r"<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>", fix, html[head_end:])
+    prop = {"b": "background-color", "c": "color", "d": "border-color"}
+    attr = {"b": "data-ogsb", "c": "data-ogsc", "d": "data-ogsb"}
+    og = "".join(f"[{attr[k]}] .{t}{{{prop[k]}:{c}!important}}" for k, d in toks.items() for c, t in d.items())
+    media = "".join(f".{t}{{{prop[k]}:{c}!important}}" for k, d in toks.items() for c, t in d.items())
+    css = f"{og}\n@media (prefers-color-scheme:dark){{{media}}}"
+    head = html[:head_end]
+    assert "/*os-dark*/" in head
+    return head.replace("/*os-dark*/", css) + body
 
 
 def compact(html):
@@ -1113,7 +1190,8 @@ def build_html(base, browser=False):
     # jump buttons, then events, deadlines, Village Hall and the rest (Taylor, Oct 1 and Oct 3) ---
     o.append(f'<tr><td style="padding:0 0 12px 0;">{top_bar("October 2026", view_href)}</td></tr>')
     o.append(padrow(site_header(art, SITE), pad="0 16px 14px 16px"))
-    o.append(hero(art, 'October in Our <span class="os-hl">Special Village</span>', "fall"))
+    o.append(hero(art, 'October in Our <span class="os-hl">Special Village</span>', "fall",
+                  dark_safe(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "art"))))
     o.append(sp(26))
     o.append(padrow(opening_block(art, note_paras(NOTE_PARAS, ALONE_PHRASE), JUMPS)))
 
@@ -1265,7 +1343,7 @@ def build_html(base, browser=False):
     o.append(sp(30))
     o.append(footer_rows(art, SITE, unsub_href))
     o.append('</table></td></tr></table></body></html>')
-    return compact("\n".join(o) + "\n")
+    return dark_lock(compact("\n".join(o) + "\n"))
 
 
 def _plain(s):
@@ -1622,8 +1700,8 @@ def main():
         assert re.search(r"\bRCS\b|\bMCS\b|\bTDOE\b", re.sub(r"<[^>]+>", " ", doc)) is None, "spell out abbreviations"
         # the site pictures
         for f in ("decor/bunting.png", "decor/stamp.png", "decor/airmail-top.png", "decor/calendar-top.png",
-                  "decor/tag-eyelet.png", "decor/ribbon-gold.png", "decor/ribbon-blue.png", "decor/garland.png", "decor/dusk-top.png", "decor/stars.png", "decor/dusk-wave.png", "hero-sky.jpg", "decor/swoosh.png", "decor/cork.png", "decor/ruled.png", "decor/foot-hills.png",
-                  "decor/pin-brick.png", "decor/notch-l.png", "hero-land.jpg", "vh-land.jpg", "jump-events.png", "jump-library.png",
+                  "decor/tag-eyelet.png", "decor/ribbon-gold.png", "decor/ribbon-blue.png", "decor/garland.png", "decor/dusk-top.png", "decor/stars.png", "decor/dusk-wave.png", "hero-sky.png", "osv-mark-disc.png", "decor/swoosh.png", "decor/cork.png", "decor/ruled.png", "decor/foot-hills.png",
+                  "decor/pin-brick.png", "decor/notch-l.png", "hero-land-top.png", "hero-land-mid.jpg", "vh-land.jpg", "jump-events.png", "jump-library.png",
                   "guest-1-print.jpg", "hope-print.jpg", "decor/about-print.jpg", "signature-taylor.png",
                   "featured-monsters-museum-compact.jpg", "guide-therapy-styles-landscape-compact.jpg", "guide-grief-landscape-compact.jpg"):
             assert f"art/{f}" in doc, f

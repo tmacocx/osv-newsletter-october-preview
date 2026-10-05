@@ -269,7 +269,8 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(f'<tr><td style="padding:0 0 12px 0;">{O.top_bar(issue["month_year"], view_href)}</td></tr>')
     o.append(padrow(O.site_header(art, SITE), pad="0 16px 14px 16px"))
     o.append(O.hero(art, f'{issue["month"]} in Our <span class="os-hl">Special Village</span>',
-                    "fall" if issue["id"] == "2026-11" else "winter", land_alt=issue["hero_alt"]))
+                    "fall" if issue["id"] == "2026-11" else "winter", land_alt=issue["hero_alt"],
+                    safe=O.dark_safe(os.path.join(ROOT, "issues", issue["id"], "art"))))
     o.append(sp(26))
     o.append(padrow(O.opening_block(art, O.note_paras(issue["note"], issue.get("note_highlight")), O.JUMPS)))
 
@@ -307,7 +308,7 @@ def build_html(issue, base, browser, deadlines_url, view_url):
     o.append(sp(30))
     o.append(O.footer_rows(art, SITE, unsub_href, O.OWNER_LINE))
     o.append('</table></td></tr></table></body></html>')
-    return render_ph(O.compact("\n".join(o) + "\n"))
+    return O.dark_lock(render_ph(O.compact("\n".join(o) + "\n")))
 
 
 # --------------------------------------------------------------------------- plain text

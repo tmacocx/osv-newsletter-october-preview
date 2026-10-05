@@ -413,7 +413,7 @@ ACT_ACC = "https://www.act.org/content/act/en/products-and-services/the-act/regi
 EFS = "https://www.tn.gov/education/efs.html"
 IEA = "https://www.tn.gov/education/iea.html"
 NIST = "https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst"
-CONFIRMED = "Dates confirmed Sept 28. If something changed, reply and we will fix it."
+CONFIRMED = "If a date changed, reply and we will fix it."
 
 
 def L(href, label):
@@ -462,7 +462,7 @@ NOV, DEC, JAN, FEB = ISSUES
 
 NOV.update(
     confirmed=CONFIRMED,
-    deadlines_meta="Dates confirmed Sept 28, 2026. Teen, college, and insurance items live here so the email can stay short.",
+    deadlines_meta="Teen, college, and insurance items live here so the email can stay short.",
     three_things=[
         first_hand_thing(("Sun", "15", "Nov"), "Sun Nov 15"),
         dict(chip=("Tue", "3", "Nov"), items=[dict(
@@ -503,7 +503,7 @@ NOV.update(
 
 DEC.update(
     confirmed=CONFIRMED,
-    deadlines_meta="Dates confirmed Sept 28, 2026. Teen, college, and insurance items live here so the email can stay short.",
+    deadlines_meta="Teen, college, and insurance items live here so the email can stay short.",
     three_things=[
         dict(chip=("Fri", "18", "Dec"), items=[dict(
             title="Winter break: last day Fri Dec 18, back Tue Jan 5",
@@ -552,7 +552,7 @@ DEC.update(
 
 JAN.update(
     confirmed=CONFIRMED,
-    deadlines_meta="Dates confirmed Sept 28, 2026. Teen, college, and benefits items live here so the email can stay short.",
+    deadlines_meta="Teen, college, and benefits items live here so the email can stay short.",
     three_things=[
         dict(chip=("Tue", "5", "Jan"), items=[dict(
             title="Back to school Tue Jan 5 (no school Mon Jan 4)",
@@ -607,7 +607,7 @@ JAN.update(
 
 FEB.update(
     confirmed=CONFIRMED,
-    deadlines_meta="Dates confirmed Sept 28, 2026. Teen, college, and school-choice items live here so the email can stay short.",
+    deadlines_meta="Teen, college, and school-choice items live here so the email can stay short.",
     three_things=[
         first_hand_thing(("Mon", "15", "Feb"), "Mon Feb 15"),
         dict(chip=("Tue", "16", "Feb"), items=[dict(
